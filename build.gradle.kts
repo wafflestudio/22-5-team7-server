@@ -3,8 +3,8 @@ plugins {
 	kotlin("plugin.spring") version "1.9.25"
 	id("org.springframework.boot") version "3.4.1"
 	id("io.spring.dependency-management") version "1.1.7"
-	id("gg.jte.gradle") version "3.1.12"
 	kotlin("plugin.jpa") version "1.9.25"
+	id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
 }
 
 group = "com.toyProject7"
@@ -24,9 +24,12 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-	implementation("gg.jte:jte:3.1.12")
-	implementation("gg.jte:jte-spring-boot-starter-3:3.1.12")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+	implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
+	implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
+	implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+	implementation("org.mindrot:jbcrypt:0.4")
 	runtimeOnly("com.mysql:mysql-connector-j")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
@@ -39,10 +42,6 @@ kotlin {
 	}
 }
 
-jte {
-	generate()
-	binaryStaticContent = true
-}
 
 allOpen {
 	annotation("jakarta.persistence.Entity")
