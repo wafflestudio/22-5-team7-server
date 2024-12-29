@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class KarrotApplication
 
 fun main(args: Array<String>) {
-	runApplication<KarrotApplication>(*args)
+    runApplication<KarrotApplication>(*args)
 }
