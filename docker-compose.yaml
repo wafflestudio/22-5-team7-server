@@ -3,7 +3,7 @@ version: '3.8'
 services:
   mysql:
     image: mysql:8.4
-    container_name: mysql-db
+    container_name: karrot-db
     ports:
       - "3306:3306"
     environment:
