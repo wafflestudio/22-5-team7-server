@@ -11,3 +11,21 @@ services:
       MYSQL_DATABASE: testdb
       MYSQL_USER: user
       MYSQL_PASSWORD: somepassword
+    networks:
+      - my-network
+
+  karrot:
+    image: narcoslocotaco/karrot_backend
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/testdb
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: somepassword
+    ports:
+      - "8080:8080"
+    networks:
+      - my-network
+
+networks:
+  my-network:
