@@ -8,9 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
-
 @RestController
-class UserController (
+class UserController(
     private val userService: UserService,
 ) {
     @PostMapping("/auth/register")
@@ -35,7 +34,6 @@ class UserController (
     ): ResponseEntity<UserMeResponse> {
         return ResponseEntity.ok(UserMeResponse(user.userId, user.nickname))
     }
-
 }
 
 data class SignUpRequest(
@@ -46,7 +44,7 @@ data class SignUpRequest(
 )
 
 data class SignUpResponse(
-    val user: User
+    val user: User,
 )
 
 data class SignInRequest(

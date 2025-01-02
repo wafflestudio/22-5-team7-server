@@ -1,4 +1,3 @@
 package com.toyProject7.karrot.chatroom.persistence
 
-class ChatroomRepository {
-}
+class ChatroomRepository
