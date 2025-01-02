@@ -17,4 +17,6 @@ class UserEntity(
     var location: String,
     @Column(name = "temperature")
     var temperature: Double,
+    @Column(name = "email")
+    var email: String,
 )

@@ -8,6 +8,7 @@ data class User(
     val userId: String,
     val location: String,
     val temperature: Double,
+    val email: String,
 ) {
     companion object {
         fun fromEntity(entity: UserEntity): User {
@@ -17,6 +18,7 @@ data class User(
                 userId = entity.userId,
                 location = entity.location,
                 temperature = entity.temperature,
+                email = entity.email,
             )
         }
     }
