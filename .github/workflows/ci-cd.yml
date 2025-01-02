@@ -7,11 +7,9 @@ on:
   push:
     branches:
       - "main"
-      - "feat/*"
   pull_request:
     branches:
       - "main"
-      - "feat/*"
 
 permissions:
   contents: read
@@ -33,85 +31,6 @@ jobs:
       - name: Lint Check
         run: ./gradlew ktlintCheck
 
-      # 환경별 yml 파일 생성(1) - application.yml
-      - name: make application.yml
-        if: |
-          contains(github.ref, 'main') ||
-          contains(github.ref, 'feat/*')
-        run: |
-          mkdir ./src/main/resources # resources 폴더 생성
-          cd ./src/main/resources # resources 폴더로 이동
-          touch ./application.yml # application.yml 생성
-          echo "${{ secrets.YML }}" > ./application.yml # github actions에서 설정한 값을 application.yml 파일에 쓰기
-        shell: bash
-
-      # 환경별 yml 파일 생성(2) - dev
-      - name: make application-dev.yml
-        if: contains(github.ref, 'feat/*')
-        run: |
-          cd ./src/main/resources
-          touch ./application-dev.yml
-          echo "${{ secrets.YML_DEV }}" > ./application-dev.yml
-        shell: bash
-
-      # 환경별 yml 파일 생성(3) - prod
-      - name: make application-prod.yml
-        if: contains(github.ref, 'main')
-        run: |
-          cd ./src/main/resources
-          touch ./application-prod.yml
-          echo "${{ secrets.YML_PROD }}" > ./application-prod.yml
-        shell: bash
-
       # gradle build
       - name: Build with Gradle
         run: ./gradlew build -x test
-
-      # docker build & push to production
-      - name: Docker build & push to prod
-        if: contains(github.ref, 'main')
-        run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -f Dockerfile-dev -t ${{ secrets.DOCKER_USERNAME }}/docker-test-prod .
-          docker push ${{ secrets.DOCKER_USERNAME }}/docker-test-prod
-
-      # docker build & push to develop
-      - name: Docker build & push to dev
-        if: contains(github.ref, 'feat/*')
-        run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -f Dockerfile-dev -t ${{ secrets.DOCKER_USERNAME }}/docker-test-dev .
-          docker push ${{ secrets.DOCKER_USERNAME }}/docker-test-dev
-
-      ## deploy to production
-      - name: Deploy to prod
-        uses: appleboy/ssh-action@master
-        id: deploy-prod
-        if: contains(github.ref, 'main')
-        with:
-          host: ${{ secrets.HOST_PROD }} # EC2 퍼블릭 IPv4 DNS
-          username: ubuntu
-          key: ${{ secrets.PRIVATE_KEY }}
-          envs: GITHUB_SHA
-          script: |
-            sudo docker ps
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-test-prod
-            sudo docker run -d -p 8082:8082 ${{ secrets.DOCKER_USERNAME }}/docker-test-prod
-            sudo docker image prune -f
-
-      ## deploy to develop
-      - name: Deploy to dev
-        uses: appleboy/ssh-action@master
-        id: deploy-dev
-        if: contains(github.ref, 'develop')
-        with:
-          host: ${{ secrets.HOST_DEV }} # EC2 퍼블릭 IPv4 DNS
-          username: ${{ secrets.USERNAME }} # ubuntu
-          password: ${{ secrets.PASSWORD }}
-          port: 22
-          key: ${{ secrets.PRIVATE_KEY }}
-          script: |
-            sudo docker ps
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-test-dev
-            sudo docker run -d -p 8081:8081 ${{ secrets.DOCKER_USERNAME }}/docker-test-dev
-            sudo docker image prune -f
