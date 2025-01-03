@@ -55,12 +55,15 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/karrot  
 
       # AccessToken 발급시
-      - name: Run Application with JWT Secret Key
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Build and run application
         env:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
         run: |
-          echo "Starting application with JWT Secret Key..."
-          ./gradlew run
+          ./gradlew build
+          ./gradlew bootRun
 
   CD:
     runs-on: ubuntu-latest
