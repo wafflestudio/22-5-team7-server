@@ -16,14 +16,14 @@ spring:
       client:
         registration:
           google:
-            clientId: 'GOOGLE_CLIENT_ID'
-            clientSecret: 'GOOGLE_CLIENT_SECRET'
+            clientId: '${GOOGLE_CLIENT_ID}'
+            clientSecret: '${GOOGLE_CLIENT_SECRET}'
             scope:
               - email
               - profile
           naver:
-            clientId: 'NAVER_CLIENT_ID'
-            clientSecret: 'NAVER_CLIENT_SECRET'
+            clientId: '${NAVER_CLIENT_ID}'
+            clientSecret: '${NAVER_CLIENT_SECRET}'
             clientAuthenticationMethod: post
             authorizationGrantType: authorization_code
             redirectUri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
@@ -33,8 +33,8 @@ spring:
               - profile_image
             clientName: Naver
           kakao:
-            clientId: 'KAKAO_CLIENT_ID'
-            clientSecret: 'KAKAO_CLIENT_SECRET'
+            clientId: '${KAKAO_CLIENT_ID}'
+            clientSecret: '${KAKAO_CLIENT_SECRET}'
             clientAuthenticationMethod: post
             authorizationGrantType: authorization_code
             redirectUri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
@@ -56,12 +56,24 @@ spring:
             userNameAttribute: id
   profiles:
     active: dev
+  graphql:
+    cors:
+      allowed-headers: '*'
+      max-age: 3600
+      allowed-origins: 'http://localhost:3000'
+      allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+
+
+# jwt secret key 설정
+jwt:
+  secret:
+    key: '8sknjlO3NPTBqo319DHLNqsQAfRJEdKsETOds'
 
 app:
   auth:
     tokenSecret: TOKEN_SECRET
-    tokenExpiry: 1800000
-    refreshTokenExpiry: 604800000
+    tokenExpiry: 1800000 #30분
+    refreshTokenExpiry: 604800000 #7일
   oauth2:
     authorizedRedirectUris:
       - http://localhost:3000/oauth/redirect
