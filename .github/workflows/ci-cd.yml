@@ -63,7 +63,7 @@ jobs:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
         run: |
           ./gradlew build
-          ./gradlew bootRun
+          ./gradlew test
 
   CD:
     runs-on: ubuntu-latest
@@ -88,5 +88,7 @@ jobs:
             sudo docker stop $(sudo docker ps -q)
             sudo docker rm $(sudo docker ps -aq)
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/karrot
-            sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/karrot
+            sudo docker run -d -p 8080:8080 \
+              -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+              ${{ secrets.DOCKER_USERNAME }}/karrot
             sudo docker image prune -f
