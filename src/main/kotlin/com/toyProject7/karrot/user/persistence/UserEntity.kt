@@ -13,7 +13,7 @@ class UserEntity(
     val id: String? = null,
     @Column(name = "nickname", nullable = false)
     var nickname: String,
-    @Column(name = "userId", nullable = false)
+    @Column(name = "user_id", nullable = false)
     var userId: String,
     @Column(name = "hashed_password", nullable = false)
     var hashedPassword: String,
