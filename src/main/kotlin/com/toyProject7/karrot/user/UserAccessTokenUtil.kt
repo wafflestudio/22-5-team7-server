@@ -13,12 +13,12 @@ object UserAccessTokenUtil {
 
     private const val JWT_EXPIRATION_TIME = 1000 * 60 * 60 * 2 // 2 hours
 
-    fun generateAccessToken(username: String): String {
+    fun generateAccessToken(id: String): String {
         val now = Date()
         val expiryDate = Date(now.time + JWT_EXPIRATION_TIME)
         return Jwts.builder()
             .signWith(SECRET_KEY)
-            .setSubject(username)
+            .setSubject(id)
             .setIssuedAt(now)
             .setExpiration(expiryDate)
             .compact()
