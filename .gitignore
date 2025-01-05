@@ -6,7 +6,7 @@ build/
 !**/src/test/**/build/
 
 ### ./env ###
-JWT_SECRET_KEY=your_secret_key
+.env
 
 ### STS ###
 .apt_generated
