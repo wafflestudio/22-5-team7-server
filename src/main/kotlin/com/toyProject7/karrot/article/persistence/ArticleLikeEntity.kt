@@ -8,31 +8,21 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToMany
-import jakarta.persistence.OneToOne
 import java.time.Instant
 
-@Entity(name = "articles")
-class ArticleEntity (
+@Entity(name = "article_likes")
+class ArticleLikeEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: String? = null,
     @ManyToOne
-    @JoinColumn(name = "seller_id")
-    var seller: UserEntity,
-    @OneToOne
-    @JoinColumn(name = "buyer_id")
-    var buyer: UserEntity,
-    @Column(columnDefinition = "TEXT")
-    var title: String,
-    @Column(columnDefinition = "TEXT")
-    var content: String,
-    @Column
-    var price: Int,
-    @Column(name = "is_selled")
-    var isSelled: Boolean,
-    @OneToMany(mappedBy = "article")
-    var articleLikes: List<ArticleLikeEntity> = emptyList(),
+    @JoinColumn(name = "article_id")
+    var article: ArticleEntity,
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    var user: UserEntity,
     @Column(name = "created_at", nullable = false)
     var createdAt: Instant,
+    @Column(name = "updated_at", nullable = false)
+    var updatedAt: Instant,
 )
