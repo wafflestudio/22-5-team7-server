@@ -34,6 +34,13 @@ class UserController(
     ): ResponseEntity<UserMeResponse> {
         return ResponseEntity.ok(UserMeResponse(user.userId, user.nickname))
     }
+
+    @GetMapping("/api/mypage")
+    fun mypage(
+        @AuthUser user: User,
+    ): ResponseEntity<MyPageResponse> {
+        return ResponseEntity.ok(MyPageResponse(user.nickname, user.temperature))
+    }
 }
 
 data class SignUpRequest(
@@ -59,4 +66,9 @@ data class SignInResponse(
 data class UserMeResponse(
     val userId: String,
     val nickname: String,
+)
+
+data class MyPageResponse(
+    val nickname: String,
+    val temperature: Double,
 )
