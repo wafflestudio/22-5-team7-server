@@ -3,8 +3,10 @@ package com.toyProject7.karrot.user.service
 import com.toyProject7.karrot.user.AuthenticateException
 import com.toyProject7.karrot.user.SignInInvalidPasswordException
 import com.toyProject7.karrot.user.SignInUserNotFoundException
+import com.toyProject7.karrot.user.SignUpBadNicknameException
 import com.toyProject7.karrot.user.SignUpBadPasswordException
 import com.toyProject7.karrot.user.SignUpBadUserIdException
+import com.toyProject7.karrot.user.SignUpInvalidEmailException
 import com.toyProject7.karrot.user.SignUpNicknameConflictException
 import com.toyProject7.karrot.user.SignUpUserIdConflictException
 import com.toyProject7.karrot.user.UserAccessTokenUtil
@@ -33,6 +35,14 @@ class UserService(
         if (password.length < 8 || password.length > 16) {
             throw SignUpBadPasswordException()
         }
+        if (nickname.length < 2 || nickname.length > 10) {
+            throw SignUpBadNicknameException()
+        }
+        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$".toRegex()
+        if (!emailRegex.matches(email)) {
+            throw SignUpInvalidEmailException()
+        }
+
         if (userRepository.existsByUserId(userId)) {
             throw SignUpUserIdConflictException()
         }
