@@ -5,6 +5,9 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+### ./env ###
+JWT_SECRET_KEY=your_secret_key
+
 ### STS ###
 .apt_generated
 .classpath

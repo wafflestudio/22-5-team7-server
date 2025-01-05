@@ -11,7 +11,7 @@ import jakarta.persistence.ManyToOne
 import java.time.Instant
 
 @Entity(name = "article_likes")
-class ArticleLikeEntity (
+class ArticleLikeEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: String? = null,

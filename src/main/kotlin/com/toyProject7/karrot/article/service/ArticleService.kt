@@ -22,15 +22,17 @@ class ArticleService(
 
     fun listSellingAndSoldArticles(userId: String): SellingAndSoldArticlesResponse {
         val articles = articleRepository.findAllBySellerId(userId)
-        val sellingArticles = articles.filter { !it.isSelled }
-            .map { Article.fromEntity(it) }
+        val sellingArticles =
+            articles.filter { !it.isSelled }
+                .map { Article.fromEntity(it) }
 
-        val soldArticles = articles.filter { it.isSelled }
-            .map { Article.fromEntity(it) }
+        val soldArticles =
+            articles.filter { it.isSelled }
+                .map { Article.fromEntity(it) }
 
         return SellingAndSoldArticlesResponse(
             sellingArticles,
-            soldArticles
+            soldArticles,
         )
     }
 

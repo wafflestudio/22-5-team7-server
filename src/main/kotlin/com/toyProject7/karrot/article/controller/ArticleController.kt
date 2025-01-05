@@ -13,7 +13,7 @@ class ArticleController(
 ) {
     @GetMapping("/api/mypage/likes")
     fun getLikedArticles(
-        @AuthUser user: User
+        @AuthUser user: User,
     ): ResponseEntity<LikedArticlesResponse> {
         val articles = articleService.listLikedArticles(user.userId)
         return ResponseEntity.ok(articles)
@@ -21,7 +21,7 @@ class ArticleController(
 
     @GetMapping("/api/mypage/sells")
     fun getSellingAndSoldArticles(
-        @AuthUser user: User
+        @AuthUser user: User,
     ): ResponseEntity<SellingAndSoldArticlesResponse> {
         val articles = articleService.listSellingAndSoldArticles(user.userId)
         return ResponseEntity.ok(articles)
@@ -29,7 +29,7 @@ class ArticleController(
 
     @GetMapping("/api/mypage/buys")
     fun getBoughtArticles(
-        @AuthUser user: User
+        @AuthUser user: User,
     ): ResponseEntity<BoughtArticlesResponse> {
         val articles = articleService.listBoughtArticles(user.userId)
         return ResponseEntity.ok(articles)

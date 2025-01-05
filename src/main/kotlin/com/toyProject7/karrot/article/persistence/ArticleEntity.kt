@@ -13,7 +13,7 @@ import jakarta.persistence.OneToOne
 import java.time.Instant
 
 @Entity(name = "articles")
-class ArticleEntity (
+class ArticleEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: String? = null,
@@ -22,7 +22,7 @@ class ArticleEntity (
     var seller: UserEntity,
     @OneToOne
     @JoinColumn(name = "buyer_id")
-    var buyer: UserEntity,
+    var buyer: UserEntity? = null,
     @Column(columnDefinition = "TEXT")
     var title: String,
     @Column(columnDefinition = "TEXT")
@@ -32,7 +32,7 @@ class ArticleEntity (
     @Column(name = "is_selled")
     var isSelled: Boolean,
     @OneToMany(mappedBy = "article")
-    var articleLikes: List<ArticleLikeEntity> = emptyList(),
+    var articleLikes: MutableList<ArticleLikeEntity> = mutableListOf(),
     @Column(name = "created_at", nullable = false)
     var createdAt: Instant,
 )

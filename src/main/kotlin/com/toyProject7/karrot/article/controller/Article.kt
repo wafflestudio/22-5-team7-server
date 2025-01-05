@@ -7,7 +7,7 @@ import java.time.Instant
 data class Article(
     val id: String,
     val seller: User,
-    val buyer: User,
+    val buyer: User?,
     val title: String,
     val content: String,
     val price: Int,
@@ -20,7 +20,7 @@ data class Article(
             return Article(
                 id = entity.id!!,
                 seller = User.fromEntity(entity.seller),
-                buyer = User.fromEntity(entity.buyer),
+                buyer = entity.buyer?.let { User.fromEntity(it) },
                 title = entity.title,
                 content = entity.content,
                 price = entity.price,
