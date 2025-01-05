@@ -37,9 +37,16 @@ jobs:
       - name: Lint Check
         run: ./gradlew ktlintCheck
 
-      # gradle build
-      - name: Build with Gradle
-        run: ./gradlew build
+      # AccessToken 발급시
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Build and run application
+        env:
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+        run: |
+          ./gradlew build
+          ./gradlew test
 
       # Docker 로그인
       - name: Docker login
@@ -53,17 +60,6 @@ jobs:
         run: |
           docker build -f ./Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/karrot .
           docker push ${{ secrets.DOCKER_USERNAME }}/karrot  
-
-      # AccessToken 발급시
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Build and run application
-        env:
-          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-        run: |
-          ./gradlew build
-          ./gradlew test
 
   CD:
     runs-on: ubuntu-latest

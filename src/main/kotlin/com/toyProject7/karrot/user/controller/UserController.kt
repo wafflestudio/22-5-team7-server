@@ -28,7 +28,7 @@ class UserController(
         return ResponseEntity.ok(SignInResponse(accessToken))
     }
 
-    @GetMapping("/users/me")
+    @GetMapping("/auth/me")
     fun me(
         @AuthUser user: User,
     ): ResponseEntity<UserMeResponse> {
