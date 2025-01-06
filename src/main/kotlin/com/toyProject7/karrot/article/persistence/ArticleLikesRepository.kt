@@ -1,3 +1,5 @@
 package com.toyProject7.karrot.article.persistence
 
-class ArticleLikesRepository
+import org.springframework.data.jpa.repository.JpaRepository
+
+interface ArticleLikesRepository : JpaRepository<ArticleLikesEntity, String>
