@@ -64,7 +64,7 @@ class ArticleService(
     fun deleteArticle(
         articleId: Long,
         id: String,
-    )  {
+    ) {
         val user = userService.getUserEntityById(id)
         val articleEntity = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
         if (articleEntity.seller.userId != user.userId) {
