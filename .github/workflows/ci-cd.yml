@@ -37,9 +37,16 @@ jobs:
       - name: Lint Check
         run: ./gradlew ktlintCheck
 
-      # gradle build
-      - name: Build with Gradle
-        run: ./gradlew build
+      # AccessToken 발급시
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Build and run application
+        env:
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+        run: |
+          ./gradlew build
+          ./gradlew test
 
       # Docker 로그인
       - name: Docker login
@@ -77,5 +84,7 @@ jobs:
             sudo docker stop $(sudo docker ps -q)
             sudo docker rm $(sudo docker ps -aq)
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/karrot
-            sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/karrot
+            sudo docker run -d -p 8080:8080 \
+              -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+              ${{ secrets.DOCKER_USERNAME }}/karrot
             sudo docker image prune -f
