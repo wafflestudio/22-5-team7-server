@@ -11,6 +11,8 @@ import com.toyProject7.karrot.user.SignUpNicknameConflictException
 import com.toyProject7.karrot.user.SignUpUserIdConflictException
 import com.toyProject7.karrot.user.UserAccessTokenUtil
 import com.toyProject7.karrot.user.controller.User
+import com.toyProject7.karrot.user.persistence.NormalUser
+import com.toyProject7.karrot.user.persistence.SocialUser
 import com.toyProject7.karrot.user.persistence.UserEntity
 import com.toyProject7.karrot.user.persistence.UserRepository
 import org.mindrot.jbcrypt.BCrypt
@@ -52,7 +54,7 @@ class UserService(
         val encryptedPassword = BCrypt.hashpw(password, BCrypt.gensalt())
         val user =
             userRepository.save(
-                UserEntity(
+                NormalUser(
                     nickname = nickname,
                     userId = userId,
                     hashedPassword = encryptedPassword,
@@ -69,7 +71,7 @@ class UserService(
         userId: String,
         password: String,
     ): Pair<User, String> {
-        val targetUser = userRepository.findByUserId(userId) ?: throw SignInUserNotFoundException()
+        val targetUser = userRepository.findNormalUserByUserId(userId) ?: throw SignInUserNotFoundException()
         if (!BCrypt.checkpw(password, targetUser.hashedPassword)) {
             throw SignInInvalidPasswordException()
         }
@@ -80,13 +82,29 @@ class UserService(
     @Transactional
     fun authenticate(accessToken: String): User {
         val id = UserAccessTokenUtil.validateAccessTokenGetUserId(accessToken) ?: throw AuthenticateException()
-        val user = userRepository.findByIdOrNull(id) ?: throw AuthenticateException()
+        val user = userRepository.findNormalUserById(id) ?: throw AuthenticateException()
         return User.fromEntity(user)
     }
     fun createOrRetrieveSocialUser(email: String, providerId: String, provider: String, username: String): User {
         // Check if the user exists by email
-        val existingUser = userRepository.findByEmail(email)
-        return existingUser ?: userRepository.save(User(email = email, username = username, provider = provider, providerId = providerId))
+        val existingUser = userRepository.findSocialUserByEmail(email)
+
+        return existingUser?.let {
+            // Convert existingUser (of type SocialUser) to User DTO
+            User.fromEntity(it)
+        } ?: run {
+            // If the user doesn't exist, create a new one
+            val newUser = SocialUser(
+                email = email,
+                nickname = username,
+                provider = provider,
+                providerId = providerId,
+                location = "void",
+                temperature = 36.5,
+                )
+            val savedUser = userRepository.save(newUser) // This should save as SocialUser
+            User.fromEntity(savedUser) // Convert and return as User DTO
+        }
     }
 }
 

@@ -18,8 +18,8 @@ class SocialLoginUserService(private val userService: UserService) : OAuth2UserS
         val oauth2User = oAuth2UserService.loadUser(userRequest)
 
         // Extract attributes
-        val provider = userRequest.clientRegistration.registrationId // e.g., "google"
-        val email = oauth2User.getAttribute<String>("email") ?: throw OAuth2AuthenticationException("Email not found in attributes")
+        val provider = userRequest.clientRegistration.registrationId
+        val email = oauth2User.getAttribute<String>("email") ?: throw OAuth2AuthenticationException
         val providerId = oauth2User.getAttribute<String>("sub") ?: throw OAuth2AuthenticationException("Provider ID not found in attributes")
         val name = oauth2User.getAttribute<String>("name") ?: throw OAuth2AuthenticationException("Name not found in attributes")
 

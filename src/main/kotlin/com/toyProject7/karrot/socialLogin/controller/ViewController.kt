@@ -10,7 +10,7 @@ class ViewController {
 
     @GetMapping("/profile")
     fun profile(token: OAuth2AuthenticationToken, model: Model): String {
-        model.addAttribute("name", token.principal.getAttribute<String>("name"))
+        model.addAttribute("name", w)
         model.addAttribute("email", token.principal.getAttribute<String>("email"))
         model.addAttribute("photo", token.principal.getAttribute<String>("picture"))
         return "user-profile"
