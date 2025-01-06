@@ -12,6 +12,7 @@ import com.toyProject7.karrot.user.SignUpUserIdConflictException
 import com.toyProject7.karrot.user.UserAccessTokenUtil
 import com.toyProject7.karrot.user.controller.User
 import com.toyProject7.karrot.user.persistence.NormalUser
+import com.toyProject7.karrot.user.persistence.NormalUserRepository
 import com.toyProject7.karrot.user.persistence.SocialUser
 import com.toyProject7.karrot.user.persistence.UserEntity
 import com.toyProject7.karrot.user.persistence.UserRepository
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class UserService(
     private val userRepository: UserRepository,
+    private val normalUserRepository: NormalUserRepository,
 ) {
     @Transactional
     fun signUp(
@@ -45,10 +47,10 @@ class UserService(
             throw SignUpInvalidEmailException()
         }
 
-        if (userRepository.existsByUserId(userId)) {
+        if (normalUserRepository.existsByUserId(userId)) {
             throw SignUpUserIdConflictException()
         }
-        if (userRepository.existsByNickname(nickname)) {
+        if (normalUserRepository.existsByNickname(nickname)) {
             throw SignUpNicknameConflictException()
         }
         val encryptedPassword = BCrypt.hashpw(password, BCrypt.gensalt())

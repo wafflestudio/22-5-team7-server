@@ -3,7 +3,6 @@ package com.toyProject7.karrot.user.controller
 import com.toyProject7.karrot.user.persistence.NormalUser
 import com.toyProject7.karrot.user.persistence.SocialUser
 import com.toyProject7.karrot.user.persistence.UserEntity
-import org.hibernate.validator.internal.constraintvalidators.bv.number.sign.NegativeOrZeroValidatorForNumber
 
 data class User(
     val id: String,
