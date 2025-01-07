@@ -12,7 +12,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 
-@Entity(name = "manners")
+@Entity(name = "manner")
 class MannerEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
