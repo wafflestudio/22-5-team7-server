@@ -12,6 +12,7 @@ data class Article(
     val content: String,
     val price: Int,
     val isSelled: Boolean,
+    val location: String,
     val createdAt: Instant,
     val likeCount: Int,
 ) {
@@ -25,6 +26,7 @@ data class Article(
                 content = entity.content,
                 price = entity.price,
                 isSelled = entity.isSelled,
+                location = entity.location,
                 createdAt = entity.createdAt,
                 likeCount = entity.articleLikes.size,
             )

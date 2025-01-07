@@ -31,6 +31,8 @@ class ArticleEntity(
     var price: Int,
     @Column(name = "is_selled")
     var isSelled: Boolean,
+    @Column
+    var location: String,
     @OneToMany(mappedBy = "article")
     var articleLikes: MutableList<ArticleLikeEntity> = mutableListOf(),
     @Column(name = "created_at", nullable = false)

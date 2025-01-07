@@ -22,7 +22,7 @@ class UserController(
 
     @PostMapping("/auth/login")
     fun signIn(
-        @RequestBody request: SignInRequest,
+        @RequestBody request: SignInRequesgjt,
     ): ResponseEntity<SignInResponse> {
         val (_, accessToken) = userService.signIn(request.userId, request.password)
         return ResponseEntity.ok(SignInResponse(accessToken))
