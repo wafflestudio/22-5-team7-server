@@ -12,11 +12,11 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 
-@Entity
+@Entity(name = "manners")
 class MannerEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    val id: Long? = null,
+    val id: String? = null,
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     val user: UserEntity,
