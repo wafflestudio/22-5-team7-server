@@ -2,12 +2,14 @@ package com.toyProject7.karrot.article.controller
 
 import java.time.Instant
 
+// article's preview information
 data class Item(
-    val id: String,
+    val id: Long,
     val title: String,
+    val price: Int,
+    val status: String,
     val location: String,
     val createdAt: Instant,
-    val price: Int,
     val likeCount: Int,
 ) {
     companion object {
@@ -15,9 +17,10 @@ data class Item(
             return Item(
                 id = article.id,
                 title = article.title,
+                price = article.price,
+                status = article.status,
                 location = article.location,
                 createdAt = article.createdAt,
-                price = article.price,
                 likeCount = article.likeCount,
             )
         }

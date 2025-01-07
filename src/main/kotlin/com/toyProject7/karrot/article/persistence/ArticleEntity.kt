@@ -9,32 +9,33 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
-import jakarta.persistence.OneToOne
 import java.time.Instant
 
-@Entity(name = "articles")
+@Entity(name = "article")
 class ArticleEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    val id: String? = null,
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long? = null,
     @ManyToOne
-    @JoinColumn(name = "seller_id")
+    @JoinColumn(name = "seller")
     var seller: UserEntity,
-    @OneToOne
-    @JoinColumn(name = "buyer_id")
-    var buyer: UserEntity? = null,
-    @Column(columnDefinition = "TEXT")
+    @ManyToOne
+    @JoinColumn(name = "buyer")
+    var buyer: UserEntity?,
+    @Column(name = "title", nullable = false)
     var title: String,
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "content", nullable = false)
     var content: String,
-    @Column
+    @Column(name = "price", nullable = false)
     var price: Int,
-    @Column(name = "is_selled")
-    var isSelled: Boolean,
-    @Column
+    @Column(name = "status", nullable = false)
+    var status: String,
+    @Column(name = "location", nullable = false)
     var location: String,
     @OneToMany(mappedBy = "article")
-    var articleLikes: MutableList<ArticleLikeEntity> = mutableListOf(),
+    var articleLikes: MutableList<ArticleLikesEntity> = mutableListOf(),
     @Column(name = "created_at", nullable = false)
     var createdAt: Instant,
+    @Column(name = "updated_at", nullable = false)
+    var updatedAt: Instant,
 )

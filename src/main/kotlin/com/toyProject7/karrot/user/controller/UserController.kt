@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(
     private val userService: UserService,
 ) {
-    @PostMapping("/auth/register")
+    @PostMapping("/auth/sign/up")
     fun signUp(
         @RequestBody request: SignUpRequest,
     ): ResponseEntity<SignUpResponse> {
@@ -20,9 +20,9 @@ class UserController(
         return ResponseEntity.ok(SignUpResponse(user))
     }
 
-    @PostMapping("/auth/login")
+    @PostMapping("/auth/sign/in")
     fun signIn(
-        @RequestBody request: SignInRequesgjt,
+        @RequestBody request: SignInRequest,
     ): ResponseEntity<SignInResponse> {
         val (_, accessToken) = userService.signIn(request.userId, request.password)
         return ResponseEntity.ok(SignInResponse(accessToken))
@@ -32,7 +32,7 @@ class UserController(
     fun me(
         @AuthUser user: User,
     ): ResponseEntity<UserMeResponse> {
-        return ResponseEntity.ok(UserMeResponse(user.userId, user.nickname))
+        return ResponseEntity.ok(UserMeResponse(user.id, user.nickname))
     }
 
     @GetMapping("/api/mypage")
@@ -64,7 +64,7 @@ data class SignInResponse(
 )
 
 data class UserMeResponse(
-    val userId: String,
+    val id: String,
     val nickname: String,
 )
 

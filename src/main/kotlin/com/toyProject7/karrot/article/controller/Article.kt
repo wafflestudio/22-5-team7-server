@@ -5,13 +5,12 @@ import com.toyProject7.karrot.user.controller.User
 import java.time.Instant
 
 data class Article(
-    val id: String,
+    val id: Long,
     val seller: User,
-    val buyer: User?,
     val title: String,
     val content: String,
     val price: Int,
-    val isSelled: Boolean,
+    val status: String,
     val location: String,
     val createdAt: Instant,
     val likeCount: Int,
@@ -21,11 +20,10 @@ data class Article(
             return Article(
                 id = entity.id!!,
                 seller = User.fromEntity(entity.seller),
-                buyer = entity.buyer?.let { User.fromEntity(it) },
                 title = entity.title,
                 content = entity.content,
                 price = entity.price,
-                isSelled = entity.isSelled,
+                status = entity.status,
                 location = entity.location,
                 createdAt = entity.createdAt,
                 likeCount = entity.articleLikes.size,

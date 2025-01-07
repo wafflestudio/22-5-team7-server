@@ -83,4 +83,9 @@ class UserService(
         val user = userRepository.findByIdOrNull(id) ?: throw AuthenticateException()
         return User.fromEntity(user)
     }
+
+    @Transactional
+    fun getUserEntityById(id: String): UserEntity {
+        return userRepository.findByIdOrNull(id) ?: throw AuthenticateException()
+    }
 }
