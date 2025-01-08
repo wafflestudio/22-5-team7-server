@@ -1,5 +1,7 @@
 package com.toyProject7.karrot.user.service
 
+import com.toyProject7.karrot.profile.persistence.ProfileEntity
+import com.toyProject7.karrot.profile.persistence.ProfileRepository
 import com.toyProject7.karrot.user.AuthenticateException
 import com.toyProject7.karrot.user.SignInInvalidPasswordException
 import com.toyProject7.karrot.user.SignInUserNotFoundException
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class UserService(
     private val userRepository: UserRepository,
+    private val profileRepository: ProfileRepository,
 ) {
     @Transactional
     fun signUp(
@@ -61,6 +64,13 @@ class UserService(
                     email = email,
                 ),
             )
+
+        val profileEntity =
+            ProfileEntity(
+                user = user,
+            )
+        profileRepository.save(profileEntity)
+
         return User.fromEntity(user)
     }
 

@@ -1,7 +1,7 @@
 package com.toyProject7.karrot.manner.persistence
 
 import com.toyProject7.karrot.manner.controller.MannerType
-import com.toyProject7.karrot.user.persistence.UserEntity
+import com.toyProject7.karrot.profile.persistence.ProfileEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -18,11 +18,11 @@ class MannerEntity(
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: String? = null,
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    val user: UserEntity,
+    @JoinColumn(name = "profile_id", nullable = false)
+    var profile: ProfileEntity,
     @Enumerated(EnumType.STRING)
     @Column(name = "manner_type", nullable = false)
-    val mannerType: MannerType,
+    var mannerType: MannerType,
     @Column(name = "count", nullable = false)
     var count: Int = 0,
 )

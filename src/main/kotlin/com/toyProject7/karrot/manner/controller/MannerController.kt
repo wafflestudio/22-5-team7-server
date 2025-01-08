@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController
 class MannerController(
     private val mannerService: MannerService,
 ) {
-    @PatchMapping("api/profile/{nickname}/praise/{mannerType}")
+    @PatchMapping("/api/profile/{nickname}/praise/{mannerType}")
     fun increaseMannerCount(
         @PathVariable nickname: String,
         @PathVariable mannerType: MannerType,

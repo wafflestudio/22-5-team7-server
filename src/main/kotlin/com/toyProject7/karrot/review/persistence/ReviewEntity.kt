@@ -19,10 +19,10 @@ class ReviewEntity(
     var content: String,
     @ManyToOne
     @JoinColumn(name = "seller_id", nullable = false)
-    val seller: UserEntity,
+    var seller: UserEntity,
     @ManyToOne
     @JoinColumn(name = "buyer_id", nullable = false)
-    val buyer: UserEntity,
+    var buyer: UserEntity,
     @Column(name = "location", nullable = false)
     var location: String,
     @Column(name = "created_at", nullable = false)

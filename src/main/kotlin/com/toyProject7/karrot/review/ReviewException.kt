@@ -12,14 +12,4 @@ sealed class ReviewException(
 ) : DomainException(errorCode, httpStatusCode, msg, cause)
 
 class ReviewContentLengthOutOfRangeException :
-    ReviewException(
-        errorCode = 0,
-        httpStatusCode = HttpStatus.BAD_REQUEST,
-        msg = "Review content length out of range",
-    )
-
-class UserNotFoundException : ReviewException(
-    errorCode = 0,
-    httpStatusCode = HttpStatus.NOT_FOUND,
-    msg = "User not found",
-)
+    ReviewException(0, HttpStatus.BAD_REQUEST, "Review content length out of range")
