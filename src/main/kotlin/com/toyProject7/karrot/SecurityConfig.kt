@@ -29,18 +29,16 @@ class SecurityConfig(
             .authorizeHttpRequests { registry ->
                 registry
                     .requestMatchers(
-                        "/", "/login", "/css/**", "/js/**", "/images/**", "/oauth2/**"
+                        "/api/auth/**", "oauth2/**"
                     ).permitAll()
                     .anyRequest().authenticated()
             }
             .oauth2Login { oauth2login ->
                 oauth2login
-                    .loginPage("/login")
                     .userInfoEndpoint { userInfo ->
                         userInfo.userService(socialLoginUserService)
                     }
                     .successHandler(customAuthenticationSuccessHandler)
-                    .failureUrl("/login?error=true")
             }
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
             .build()

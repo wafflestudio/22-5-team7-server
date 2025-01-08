@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.stereotype.Component
+import org.springframework.web.util.UriComponentsBuilder
 
 @Component
 class CustomAuthenticationSuccessHandler(
@@ -36,11 +37,13 @@ class CustomAuthenticationSuccessHandler(
         // Generate JWT
         val accessToken = UserAccessTokenUtil.generateAccessToken(user.id)
 
-        // Send the JWT in the response body as JSON
-        val responseBody = mapOf("accessToken" to accessToken, "user" to user)
-        response.contentType = "application/json"
-        response.characterEncoding = "UTF-8"
-        response.writer.write(ObjectMapper().writeValueAsString(responseBody))
+        // Redirect to frontend with JWT included in URL fragment
+        val redirectUri = UriComponentsBuilder.fromUriString("https://your-frontend-domain.com/oauth2/redirect")
+            .fragment("token=$accessToken")
+            .build()
+            .toUriString()
+
+        response.sendRedirect(redirectUri)
     }
 
     private fun extractProviderId(attributes: Map<String, Any>, provider: String): String {
