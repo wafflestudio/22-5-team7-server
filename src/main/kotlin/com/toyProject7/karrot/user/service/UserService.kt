@@ -15,9 +15,11 @@ import com.toyProject7.karrot.user.persistence.NormalUser
 import com.toyProject7.karrot.user.persistence.NormalUserRepository
 import com.toyProject7.karrot.user.persistence.SocialUser
 import com.toyProject7.karrot.user.persistence.UserEntity
+import com.toyProject7.karrot.user.persistence.UserPrincipal
 import com.toyProject7.karrot.user.persistence.UserRepository
 import org.mindrot.jbcrypt.BCrypt
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -108,5 +110,19 @@ class UserService(
             User.fromEntity(savedUser) // Convert and return as User DTO
         }
     }
+
+    fun loadSocialUserByUsername(email: String): UserPrincipal {
+        val user = userRepository.findSocialUserByEmail(email)
+            ?: throw UsernameNotFoundException("User not found with email: $email")
+        return UserPrincipal.create(user)
+    }
+
+    fun loadSocialUserById(id: String): UserPrincipal {
+        val user = userRepository.findById(id)
+            .orElseThrow { UsernameNotFoundException("User not found with id: $id") }
+        return UserPrincipal.create(user)
+    }
+
+
 }
 
