@@ -15,16 +15,6 @@ class SocialLoginUserService(private val userService: UserService) : OAuth2UserS
 
     override fun loadUser(userRequest: OAuth2UserRequest): OAuth2User {
         // Load the user details from the OAuth2 provider
-        val oauth2User = oAuth2UserService.loadUser(userRequest)
-
-        // Extract attributes
-        val provider = userRequest.clientRegistration.registrationId
-        val email = oauth2User.getAttribute<String>("email") ?: throw OAuth2AuthenticationException()
-        val providerId = oauth2User.getAttribute<String>("sub") ?: throw OAuth2AuthenticationException()
-        val name = oauth2User.getAttribute<String>("name") ?: throw OAuth2AuthenticationException()
-
-        // Create or retrieve the user
-        userService.createOrRetrieveSocialUser(email, providerId, provider, name)
-        return oauth2User
+        return oAuth2UserService.loadUser(userRequest)
     }
 }
