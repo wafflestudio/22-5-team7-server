@@ -40,7 +40,7 @@ class ProfileService(
         nickname: String,
         reviewId: Long,
     ): List<Review> {
-        return reviewRepository.findTop10BySellerIdOrBuyerIdAndIdBeforeOrderByCreatedAtDesc(nickname, nickname, reviewId).map {
+        return reviewRepository.findTop10BySellerNicknameOrBuyerNicknameAndIdBeforeOrderByCreatedAtDesc(nickname, nickname, reviewId).map {
                 reviewEntity ->
             Review.fromEntity(reviewEntity)
         }
