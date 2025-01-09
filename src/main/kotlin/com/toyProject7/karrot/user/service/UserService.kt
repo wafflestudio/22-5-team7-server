@@ -88,6 +88,7 @@ class UserService(
         return User.fromEntity(user)
     }
 
+    @Transactional
     fun createOrRetrieveSocialUser(
         email: String,
         providerId: String,
@@ -116,6 +117,7 @@ class UserService(
         }
     }
 
+    @Transactional
     fun loadSocialUserByUsername(email: String): UserPrincipal {
         val user =
             userRepository.findSocialUserByEmail(email)
@@ -123,6 +125,7 @@ class UserService(
         return UserPrincipal.create(user)
     }
 
+    @Transactional
     fun loadSocialUserById(id: String): UserPrincipal {
         val user =
             userRepository.findById(id)
