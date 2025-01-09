@@ -53,7 +53,7 @@ class CustomAuthenticationSuccessHandler(
     ): String {
         return when (provider) {
             "google" -> attributes["sub"] as String
-            "naver" -> (attributes["response"] as Map<String, Any>)["id"] as String
+            "naver" -> (attributes["response"] as Map<*, *>)["id"] as String
             "kakao" -> attributes["id"].toString() // Kakao's id may be Long, convert to String
             else -> throw OAuth2AuthenticationException()
         }
@@ -65,7 +65,7 @@ class CustomAuthenticationSuccessHandler(
     ): String {
         return when (provider) {
             "google" -> attributes["email"] as String
-            "naver" -> (attributes["response"] as Map<String, Any>)["email"] as String
+            "naver" -> (attributes["response"] as Map<*, *>)["email"] as String
             "kakao" -> {
                 val kakaoAccount = attributes["kakao_account"] as Map<String, Any>
                 kakaoAccount["email"] as String
@@ -80,10 +80,10 @@ class CustomAuthenticationSuccessHandler(
     ): String {
         return when (provider) {
             "google" -> attributes["name"] as String
-            "naver" -> (attributes["response"] as Map<String, Any>)["name"] as String
+            "naver" -> (attributes["response"] as Map<*, *>)["name"] as String
             "kakao" -> {
-                val kakaoAccount = attributes["kakao_account"] as Map<String, Any>
-                val profile = kakaoAccount["profile"] as Map<String, Any>
+                val kakaoAccount = attributes["kakao_account"] as Map<*, *>
+                val profile = kakaoAccount["profile"] as Map<*, *>
                 profile["nickname"] as String
             }
             else -> "Unknown"
