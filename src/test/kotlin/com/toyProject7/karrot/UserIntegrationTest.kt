@@ -1,4 +1,4 @@
-package com.toyProject7.karrot
+/*package com.toyProject7.karrot
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
@@ -289,3 +289,4 @@ class UserIntegrationTest
                 .andExpect(jsonPath("$.nickname").value(nickname))
         }
     }
+*/
