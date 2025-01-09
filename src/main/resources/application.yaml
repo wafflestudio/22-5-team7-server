@@ -57,12 +57,6 @@ spring:
             userNameAttribute: id
   profiles:
     active: dev
-  graphql:
-    cors:
-      allowed-headers: '*'
-      max-age: 3600
-      allowed-origins: 'http://localhost:3000'
-      allowed-methods: GET,POST,PUT,DELETE,OPTIONS
 
 app:
   auth:
