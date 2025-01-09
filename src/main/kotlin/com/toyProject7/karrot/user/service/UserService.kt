@@ -11,16 +11,22 @@ import com.toyProject7.karrot.user.SignUpNicknameConflictException
 import com.toyProject7.karrot.user.SignUpUserIdConflictException
 import com.toyProject7.karrot.user.UserAccessTokenUtil
 import com.toyProject7.karrot.user.controller.User
+import com.toyProject7.karrot.user.persistence.NormalUser
+import com.toyProject7.karrot.user.persistence.NormalUserRepository
+import com.toyProject7.karrot.user.persistence.SocialUser
 import com.toyProject7.karrot.user.persistence.UserEntity
+import com.toyProject7.karrot.user.persistence.UserPrincipal
 import com.toyProject7.karrot.user.persistence.UserRepository
 import org.mindrot.jbcrypt.BCrypt
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class UserService(
     private val userRepository: UserRepository,
+    private val normalUserRepository: NormalUserRepository,
 ) {
     @Transactional
     fun signUp(
@@ -43,7 +49,7 @@ class UserService(
             throw SignUpInvalidEmailException()
         }
 
-        if (userRepository.existsByUserId(userId)) {
+        if (normalUserRepository.existsByUserId(userId)) {
             throw SignUpUserIdConflictException()
         }
         if (userRepository.existsByNickname(nickname)) {
@@ -52,7 +58,7 @@ class UserService(
         val encryptedPassword = BCrypt.hashpw(password, BCrypt.gensalt())
         val user =
             userRepository.save(
-                UserEntity(
+                NormalUser(
                     nickname = nickname,
                     userId = userId,
                     hashedPassword = encryptedPassword,
@@ -69,7 +75,7 @@ class UserService(
         userId: String,
         password: String,
     ): Pair<User, String> {
-        val targetUser = userRepository.findByUserId(userId) ?: throw SignInUserNotFoundException()
+        val targetUser = userRepository.findNormalUserByUserId(userId) ?: throw SignInUserNotFoundException()
         if (!BCrypt.checkpw(password, targetUser.hashedPassword)) {
             throw SignInInvalidPasswordException()
         }
@@ -80,8 +86,53 @@ class UserService(
     @Transactional
     fun authenticate(accessToken: String): User {
         val id = UserAccessTokenUtil.validateAccessTokenGetUserId(accessToken) ?: throw AuthenticateException()
-        val user = userRepository.findByIdOrNull(id) ?: throw AuthenticateException()
+        val user = userRepository.findNormalUserById(id) ?: throw AuthenticateException()
         return User.fromEntity(user)
+    }
+
+    @Transactional
+    fun createOrRetrieveSocialUser(
+        email: String,
+        providerId: String,
+        provider: String,
+        username: String,
+    ): User {
+        // Check if the user exists by email
+        val existingUser = userRepository.findSocialUserByEmail(email)
+
+        return existingUser?.let {
+            // Convert existingUser (of type SocialUser) to User DTO
+            User.fromEntity(it)
+        } ?: run {
+            // If the user doesn't exist, create a new one
+            val newUser =
+                SocialUser(
+                    email = email,
+                    nickname = username,
+                    provider = provider,
+                    providerId = providerId,
+                    location = "void",
+                    temperature = 36.5,
+                )
+            val savedUser = userRepository.save(newUser) // This should save as SocialUser
+            User.fromEntity(savedUser) // Convert and return as User DTO
+        }
+    }
+
+    @Transactional
+    fun loadSocialUserByUsername(email: String): UserPrincipal {
+        val user =
+            userRepository.findSocialUserByEmail(email)
+                ?: throw UsernameNotFoundException("User not found with email: $email")
+        return UserPrincipal.create(user)
+    }
+
+    @Transactional
+    fun loadSocialUserById(id: String): UserPrincipal {
+        val user =
+            userRepository.findById(id)
+                .orElseThrow { UsernameNotFoundException("User not found with id: $id") }
+        return UserPrincipal.create(user)
     }
 
     @Transactional

@@ -1,22 +1,25 @@
 package com.toyProject7.karrot.user.persistence
 
 import jakarta.persistence.Column
+import jakarta.persistence.DiscriminatorColumn
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.Inheritance
+import jakarta.persistence.InheritanceType
+import jakarta.persistence.Table
 
-@Entity(name = "users")
+@Entity
+@Table(name = "users") // Table name in the database
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE) // Use single table inheritance
+@DiscriminatorColumn(name = "user_type") // Column to differentiate user types
 class UserEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: String? = null,
     @Column(name = "nickname", nullable = false)
     var nickname: String,
-    @Column(name = "user_id", nullable = false)
-    var userId: String,
-    @Column(name = "hashed_password", nullable = false)
-    var hashedPassword: String,
     @Column(name = "location")
     var location: String,
     @Column(name = "temperature")
