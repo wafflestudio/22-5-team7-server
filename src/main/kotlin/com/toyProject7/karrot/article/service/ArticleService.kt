@@ -48,7 +48,7 @@ class ArticleService(
     ): Article {
         val user = userService.getUserEntityById(id)
         val articleEntity = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
-        if (articleEntity.seller.userId != user.userId) {
+        if (articleEntity.seller.id != user.id) {
             throw ArticlePermissionDeniedException()
         }
         request.title.let { articleEntity.title = it }
@@ -67,7 +67,7 @@ class ArticleService(
     ) {
         val user = userService.getUserEntityById(id)
         val articleEntity = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
-        if (articleEntity.seller.userId != user.userId) {
+        if (articleEntity.seller.id != user.id) {
             throw ArticlePermissionDeniedException()
         }
         articleRepository.delete(articleEntity)
