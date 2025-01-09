@@ -1,6 +1,5 @@
 package com.toyProject7.karrot.socialLogin.handler
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.toyProject7.karrot.socialLogin.OAuth2AuthenticationException
 import com.toyProject7.karrot.user.UserAccessTokenUtil
 import com.toyProject7.karrot.user.service.UserService
@@ -15,11 +14,12 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @Component
 class CustomAuthenticationSuccessHandler(
-    private val userService: UserService
+    private val userService: UserService,
 ) : AuthenticationSuccessHandler {
-
     override fun onAuthenticationSuccess(
-        request: HttpServletRequest, response: HttpServletResponse, authentication: Authentication
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        authentication: Authentication,
     ) {
         val oauth2User = authentication.principal as OAuth2User
         val oauth2Token = authentication as OAuth2AuthenticationToken
@@ -38,15 +38,19 @@ class CustomAuthenticationSuccessHandler(
         val accessToken = UserAccessTokenUtil.generateAccessToken(user.id)
 
         // Redirect to frontend with JWT included in URL fragment
-        val redirectUri = UriComponentsBuilder.fromUriString("https://your-frontend-domain.com/oauth2/redirect")
-            .fragment("token=$accessToken")
-            .build()
-            .toUriString()
+        val redirectUri =
+            UriComponentsBuilder.fromUriString("https://your-frontend-domain.com/oauth2/redirect")
+                .fragment("token=$accessToken")
+                .build()
+                .toUriString()
 
         response.sendRedirect(redirectUri)
     }
 
-    private fun extractProviderId(attributes: Map<String, Any>, provider: String): String {
+    private fun extractProviderId(
+        attributes: Map<String, Any>,
+        provider: String,
+    ): String {
         return when (provider) {
             "google" -> attributes["sub"] as String
             "naver" -> (attributes["response"] as Map<String, Any>)["id"] as String
@@ -55,7 +59,10 @@ class CustomAuthenticationSuccessHandler(
         }
     }
 
-    private fun extractEmail(attributes: Map<String, Any>, provider: String): String {
+    private fun extractEmail(
+        attributes: Map<String, Any>,
+        provider: String,
+    ): String {
         return when (provider) {
             "google" -> attributes["email"] as String
             "naver" -> (attributes["response"] as Map<String, Any>)["email"] as String
@@ -67,7 +74,10 @@ class CustomAuthenticationSuccessHandler(
         }
     }
 
-    private fun extractName(attributes: Map<String, Any>, provider: String): String {
+    private fun extractName(
+        attributes: Map<String, Any>,
+        provider: String,
+    ): String {
         return when (provider) {
             "google" -> attributes["name"] as String
             "naver" -> (attributes["response"] as Map<String, Any>)["name"] as String

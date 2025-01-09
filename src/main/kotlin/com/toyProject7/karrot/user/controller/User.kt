@@ -10,12 +10,10 @@ data class User(
     val location: String,
     val temperature: Double,
     val email: String,
-
-    //Additional Attributes for NormalUser
+    // Additional Attributes for NormalUser
     val userId: String? = null,
     val hashedPassword: String? = null,
-
-    //Additional Attributes for SocialUser
+    // Additional Attributes for SocialUser
     val provider: String? = null,
     val providerId: String? = null,
 ) {
@@ -27,13 +25,10 @@ data class User(
                 location = entity.location,
                 temperature = entity.temperature,
                 email = entity.email,
-
                 userId = (entity as? NormalUser)?.userId,
                 hashedPassword = (entity as? NormalUser)?.hashedPassword,
-
                 provider = (entity as? SocialUser)?.provider,
-                providerId = (entity as? SocialUser)?.providerId
-
+                providerId = (entity as? SocialUser)?.providerId,
             )
         }
     }

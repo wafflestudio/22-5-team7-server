@@ -11,6 +11,7 @@ object UserAccessTokenUtil {
             ?.let { Keys.hmacShaKeyFor(it.toByteArray(StandardCharsets.UTF_8)) }
             ?: throw IllegalStateException("JWT_SECRET_KEY is not set!")
 
+
     private const val JWT_EXPIRATION_TIME = 1000 * 60 * 60 * 2 // 2 hours
 
     fun generateAccessToken(id: String): String {
@@ -40,23 +41,24 @@ object UserAccessTokenUtil {
     }
 
     fun getUserIdFromToken(token: String): String {
-        val claims = Jwts.parserBuilder()
-            .setSigningKey(SECRET_KEY)
-            .build()
-            .parseClaimsJws(token)
+        val claims =
+            Jwts.parserBuilder()
+                .setSigningKey(SECRET_KEY)
+                .build()
+                .parseClaimsJws(token)
         return claims.body.subject
     }
 
     fun validateToken(token: String): Boolean {
         return try {
-            val claims = Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY)
-                .build()
-                .parseClaimsJws(token)
+            val claims =
+                Jwts.parserBuilder()
+                    .setSigningKey(SECRET_KEY)
+                    .build()
+                    .parseClaimsJws(token)
             !claims.body.expiration.before(Date())
         } catch (e: Exception) {
             false
         }
     }
 }
-

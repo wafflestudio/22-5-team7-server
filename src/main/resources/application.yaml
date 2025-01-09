@@ -18,6 +18,7 @@ spring:
           google:
             clientId: '${GOOGLE_CLIENT_ID}'
             clientSecret: '${GOOGLE_CLIENT_SECRET}'
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope:
               - email
               - profile
@@ -62,12 +63,6 @@ spring:
       max-age: 3600
       allowed-origins: 'http://localhost:3000'
       allowed-methods: GET,POST,PUT,DELETE,OPTIONS
-
-
-# jwt secret key 설정
-jwt:
-  secret:
-    key: '8sknjlO3NPTBqo319DHLNqsQAfRJEdKsETOds'
 
 app:
   auth:

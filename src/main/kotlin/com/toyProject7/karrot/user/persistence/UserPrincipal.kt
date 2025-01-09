@@ -9,9 +9,8 @@ data class UserPrincipal(
     private val email: String,
     private val nickname: String,
     private val password: String?,
-    private val authorities: Collection<GrantedAuthority>
+    private val authorities: Collection<GrantedAuthority>,
 ) : UserDetails {
-
     companion object {
         fun create(user: UserEntity): UserPrincipal {
             val authorities = listOf(SimpleGrantedAuthority("ROLE_USER"))
@@ -20,18 +19,25 @@ data class UserPrincipal(
                 id = user.id!!,
                 email = user.email,
                 nickname = user.nickname,
-                password = null, // Password can be null for social login
-                authorities = authorities
+                password = null,
+                authorities = authorities,
             )
         }
     }
 
     override fun getAuthorities(): Collection<GrantedAuthority> = authorities
+
     override fun getPassword(): String? = password
+
     fun getNickname(): String = nickname
+
     override fun getUsername(): String = email
+
     override fun isAccountNonExpired(): Boolean = true
+
     override fun isAccountNonLocked(): Boolean = true
+
     override fun isCredentialsNonExpired(): Boolean = true
+
     override fun isEnabled(): Boolean = true
 }

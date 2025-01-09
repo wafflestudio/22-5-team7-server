@@ -16,20 +16,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 class SecurityConfig(
     private val socialLoginUserService: SocialLoginUserService,
     private val customAuthenticationSuccessHandler: CustomAuthenticationSuccessHandler,
-    private val jwtAuthenticationFilter: JwtAuthenticationFilter
+    private val jwtAuthenticationFilter: JwtAuthenticationFilter,
 ) {
-
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         return http
             .csrf { csrf -> csrf.disable() }
-            .sessionManagement { session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            }
             .authorizeHttpRequests { registry ->
                 registry
                     .requestMatchers(
-                        "/api/auth/**", "oauth2/**"
+                        "/api/auth/**",
+                        "oauth2/**",
                     ).permitAll()
                     .anyRequest().authenticated()
             }

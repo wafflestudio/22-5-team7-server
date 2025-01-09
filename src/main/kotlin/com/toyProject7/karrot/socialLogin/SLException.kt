@@ -10,6 +10,7 @@ sealed class UserException(
     msg: String,
     cause: Throwable? = null,
 ) : DomainException(errorCode, httpStatusCode, msg, cause)
+
 class OAuth2AuthenticationException : UserException(
     errorCode = 0,
     httpStatusCode = HttpStatus.UNAUTHORIZED,
