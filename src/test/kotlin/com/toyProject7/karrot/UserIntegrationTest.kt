@@ -1,16 +1,11 @@
-/*package com.toyProject7.karrot
+package com.toyProject7.karrot
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -20,6 +15,7 @@ class UserIntegrationTest
         private val mvc: MockMvc,
         private val mapper: ObjectMapper,
     ) {
+        /*
         @Test
         fun `회원가입시에 유저 아이디, 비밀번호, 닉네임, 이메일 중 한 가지라도 정해진 규칙에 맞지 않는 경우 Bad Request 응답을 내려준다`() {
             // 잘못된 userId (너무 짧은 경우)
@@ -290,3 +286,4 @@ class UserIntegrationTest
         }
     }
 */
+    }

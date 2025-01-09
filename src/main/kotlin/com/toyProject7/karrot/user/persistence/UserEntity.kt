@@ -9,6 +9,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.Inheritance
 import jakarta.persistence.InheritanceType
 import jakarta.persistence.Table
+
 @Entity
 @Table(name = "users") // Table name in the database
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE) // Use single table inheritance
