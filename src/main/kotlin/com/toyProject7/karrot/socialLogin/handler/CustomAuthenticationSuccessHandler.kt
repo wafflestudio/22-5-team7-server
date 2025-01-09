@@ -67,7 +67,7 @@ class CustomAuthenticationSuccessHandler(
             "google" -> attributes["email"] as String
             "naver" -> (attributes["response"] as Map<*, *>)["email"] as String
             "kakao" -> {
-                val kakaoAccount = attributes["kakao_account"] as Map<String, Any>
+                val kakaoAccount = attributes["kakao_account"] as Map<*, *>
                 kakaoAccount["email"] as String
             }
             else -> throw OAuth2AuthenticationException()
