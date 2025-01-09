@@ -131,5 +131,8 @@ class UserService(
             userRepository.findById(id)
                 .orElseThrow { UsernameNotFoundException("User not found with id: $id") }
         return UserPrincipal.create(user)
+        
+    fun getUserEntityById(id: String): UserEntity {
+        return userRepository.findByIdOrNull(id) ?: throw AuthenticateException()
     }
 }

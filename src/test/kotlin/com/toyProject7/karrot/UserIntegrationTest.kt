@@ -20,7 +20,7 @@ class UserIntegrationTest
         fun `회원가입시에 유저 아이디, 비밀번호, 닉네임, 이메일 중 한 가지라도 정해진 규칙에 맞지 않는 경우 Bad Request 응답을 내려준다`() {
             // 잘못된 userId (너무 짧은 경우)
             mvc.perform(
-                post("/auth/register")
+                post("/auth/sign/up")
                     .content(
                         mapper.writeValueAsString(
                             mapOf(
@@ -38,7 +38,7 @@ class UserIntegrationTest
 
             // 잘못된 password (너무 짧은 경우)
             mvc.perform(
-                post("/auth/register")
+                post("/auth/sign/up")
                     .content(
                         mapper.writeValueAsString(
                             mapOf(
@@ -56,7 +56,7 @@ class UserIntegrationTest
 
             // 잘못된 nickname (너무 긴 경우)
             mvc.perform(
-                post("/auth/register")
+                post("/auth/sign/up")
                     .content(
                         mapper.writeValueAsString(
                             mapOf(
@@ -74,7 +74,7 @@ class UserIntegrationTest
 
             // 잘못된 email 형식 (이메일 형식에 맞지 않는 경우)
             mvc.perform(
-                post("/auth/register")
+                post("/auth/sign/up")
                     .content(
                         mapper.writeValueAsString(
                             mapOf(
@@ -92,7 +92,7 @@ class UserIntegrationTest
 
             // 회원가입 성공 계정 1
             mvc.perform(
-                post("/auth/register")
+                post("/auth/sign/up")
                     .content(
                         mapper.writeValueAsString(
                             mapOf(
@@ -112,7 +112,7 @@ class UserIntegrationTest
         fun `회원가입시에 이미 해당 유저 아이디나 닉네임이 존재하면 Conflict 응답을 내려준다`() {
             // 회원가입 성공 계정 2
             mvc.perform(
-                post("/auth/register")
+                post("/auth/sign/up")
                     .content(
                         mapper.writeValueAsString(
                             mapOf(
@@ -129,7 +129,7 @@ class UserIntegrationTest
 
             // 유저 아이디가 존재하는 경우
             mvc.perform(
-                post("/auth/register")
+                post("/auth/sign/up")
                     .content(
                         mapper.writeValueAsString(
                             mapOf(
@@ -147,7 +147,7 @@ class UserIntegrationTest
 
             // 유저 닉네임이 존재하는 경우
             mvc.perform(
-                post("/auth/register")
+                post("/auth/sign/up")
                     .content(
                         mapper.writeValueAsString(
                             mapOf(
@@ -168,7 +168,7 @@ class UserIntegrationTest
         fun `로그인 정보가 정확하지 않으면 Unauthorized 응답을 내려준다`() {
             // 회원가입 성공 계정 3
             mvc.perform(
-                post("/auth/register")
+                post("/auth/sign/up")
                     .content(
                         mapper.writeValueAsString(
                             mapOf(
@@ -185,7 +185,7 @@ class UserIntegrationTest
 
             // 유저 아이디가 존재하지 않는 경우
             mvc.perform(
-                post("/auth/login")
+                post("/auth/sign/in")
                     .content(
                         mapper.writeValueAsString(
                             mapOf(
@@ -201,7 +201,7 @@ class UserIntegrationTest
 
             // 유저 아이디가 존재하지만 비밀번호가 틀렸을 경우
             mvc.perform(
-                post("/auth/login")
+                post("/auth/sign/in")
                     .content(
                         mapper.writeValueAsString(
                             mapOf(
@@ -217,7 +217,7 @@ class UserIntegrationTest
 
             // 계정 3에 로그인 성공
             mvc.perform(
-                post("/auth/login")
+                post("/auth/sign/in")
                     .content(
                         mapper.writeValueAsString(
                             mapOf(
@@ -231,59 +231,59 @@ class UserIntegrationTest
                 .andExpect(status().isOk)
         }
 
-        @Test
-        fun `잘못된 인증 토큰으로 인증시 Unauthorized 응답을 내려준다`() {
-            // 회원가입 성공 계정 4
-            val (userId, password, nickname) = Triple("Karrot4", "KarrotMarket4", "모두!!얼음!!!")
-            mvc.perform(
-                post("/auth/register")
-                    .content(
-                        mapper.writeValueAsString(
-                            mapOf(
-                                "userId" to userId,
-                                "password" to password,
-                                "nickname" to nickname,
-                                "email" to "Karrot4@gmail.com",
-                            ),
-                        ),
-                    )
-                    .contentType(MediaType.APPLICATION_JSON),
-            )
-                .andExpect(status().isOk)
-
-            val accessToken =
-                mvc.perform(
-                    post("/auth/login")
-                        .content(
-                            mapper.writeValueAsString(
-                                mapOf(
-                                    "userId" to userId,
-                                    "password" to password,
-                                ),
-                            ),
-                        )
-                        .contentType(MediaType.APPLICATION_JSON),
-                )
-                    .andExpect(status().isOk)
-                    .andReturn()
-                    .response.getContentAsString(Charsets.UTF_8)
-                    .let { mapper.readTree(it).get("accessToken").asText() }
-
-            mvc.perform(
-                get("/auth/me")
-                    .header("Authorization", "Bearer Bad"),
-            )
-                .andExpect(status().isUnauthorized)
-                .andExpect(jsonPath("$.error").value("Authenticate failed"))
-
-            mvc.perform(
-                get("/auth/me")
-                    .header("Authorization", "Bearer $accessToken"),
-            )
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.userId").value(userId))
-                .andExpect(jsonPath("$.nickname").value(nickname))
-        }
+//        @Test
+//        fun `잘못된 인증 토큰으로 인증시 Unauthorized 응답을 내려준다`() {
+//            // 회원가입 성공 계정 4
+//            val (userId, password, nickname) = Triple("Karrot4", "KarrotMarket4", "모두!!얼음!!!")
+//            mvc.perform(
+//                post("/auth/sign/up")
+//                    .content(
+//                        mapper.writeValueAsString(
+//                            mapOf(
+//                                "userId" to userId,
+//                                "password" to password,
+//                                "nickname" to nickname,
+//                                "email" to "Karrot4@gmail.com",
+//                            ),
+//                        ),
+//                    )
+//                    .contentType(MediaType.APPLICATION_JSON),
+//            )
+//                .andExpect(status().isOk)
+//
+//            val accessToken =
+//                mvc.perform(
+//                    post("/auth/sign/in")
+//                        .content(
+//                            mapper.writeValueAsString(
+//                                mapOf(
+//                                    "userId" to userId,
+//                                    "password" to password,
+//                                ),
+//                            ),
+//                        )
+//                        .contentType(MediaType.APPLICATION_JSON),
+//                )
+//                    .andExpect(status().isOk)
+//                    .andReturn()
+//                    .response.getContentAsString(Charsets.UTF_8)
+//                    .let { mapper.readTree(it).get("accessToken").asText() }
+//
+//            mvc.perform(
+//                get("/auth/me")
+//                    .header("Authorization", "Bearer Bad"),
+//            )
+//                .andExpect(status().isUnauthorized)
+//                .andExpect(jsonPath("$.error").value("Authenticate failed"))
+//
+//            mvc.perform(
+//                get("/auth/me")
+//                    .header("Authorization", "Bearer $accessToken"),
+//            )
+//                .andExpect(status().isOk)
+//                .andExpect(jsonPath("$.id").value(userId))
+//                .andExpect(jsonPath("$.nickname").value(nickname))
+//        }
     }
 */
     }
