@@ -46,6 +46,24 @@ class ArticleController(
         return ResponseEntity.ok("Deleted Successfully")
     }
 
+    @PostMapping("api/item/like/{articleId}")
+    fun likeArticle(
+        @PathVariable articleId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<String> {
+        articleService.likeArticle(articleId, user.id)
+        return ResponseEntity.ok("Liked Successfully")
+    }
+
+    @PostMapping("api/item/unlike/{articleId}")
+    fun unlikeArticle(
+        @PathVariable articleId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<String> {
+        articleService.unlikeArticle(articleId, user.id)
+        return ResponseEntity.ok("Unliked Successfully")
+    }
+
     @GetMapping("api/item/get/{articleId}")
     fun getArticle(
         @PathVariable articleId: Long,
@@ -59,6 +77,19 @@ class ArticleController(
     ): ResponseEntity<List<Item>> {
         val articles: List<ArticleEntity> = articleService.getPreviousArticles(articleId)
         val response: List<Item> =
+            articles.map { article ->
+                Item.fromArticle(Article.fromEntity(article))
+            }
+        return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("/api/mypage/likes")
+    fun getArticlesThatUserLikes(
+        @RequestParam("articleId") articleId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<List<Item>> {
+        val articles: List<ArticleEntity> = articleService.getArticlesThatUserLikes(user.id, articleId)
+        val response =
             articles.map { article ->
                 Item.fromArticle(Article.fromEntity(article))
             }

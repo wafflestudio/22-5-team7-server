@@ -5,6 +5,8 @@ import com.toyProject7.karrot.article.ArticlePermissionDeniedException
 import com.toyProject7.karrot.article.controller.Article
 import com.toyProject7.karrot.article.controller.PostArticleRequest
 import com.toyProject7.karrot.article.persistence.ArticleEntity
+import com.toyProject7.karrot.article.persistence.ArticleLikesEntity
+import com.toyProject7.karrot.article.persistence.ArticleLikesRepository
 import com.toyProject7.karrot.article.persistence.ArticleRepository
 import com.toyProject7.karrot.user.service.UserService
 import org.springframework.data.repository.findByIdOrNull
@@ -15,6 +17,7 @@ import java.time.Instant
 @Service
 class ArticleService(
     private val articleRepository: ArticleRepository,
+    private val articleLikesRepository: ArticleLikesRepository,
     private val userService: UserService,
 ) {
     @Transactional
@@ -74,6 +77,37 @@ class ArticleService(
     }
 
     @Transactional
+    fun likeArticle(
+        articleId: Long,
+        id: String,
+    ) {
+        val articleEntity = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
+        val userEntity = userService.getUserEntityById(id)
+        if (articleEntity.articleLikes.any { it.user.id == userEntity.id }) {
+            return
+        }
+        val articleLikesEntity =
+            articleLikesRepository.save(
+                ArticleLikesEntity(article = articleEntity, user = userEntity, createdAt = Instant.now(), updatedAt = Instant.now()),
+            )
+        articleEntity.articleLikes += articleLikesEntity
+        articleRepository.save(articleEntity)
+    }
+
+    @Transactional
+    fun unlikeArticle(
+        articleId: Long,
+        id: String,
+    ) {
+        val articleEntity = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
+        val userEntity = userService.getUserEntityById(id)
+        val toBeRemoved: ArticleLikesEntity = articleEntity.articleLikes.find { it.user.id == userEntity.id } ?: return
+        articleEntity.articleLikes -= toBeRemoved
+        articleLikesRepository.delete(toBeRemoved)
+        articleRepository.save(articleEntity)
+    }
+
+    @Transactional
     fun getArticle(articleId: Long): Article {
         val articleEntity = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
         return Article.fromEntity(articleEntity)
@@ -82,6 +116,18 @@ class ArticleService(
     @Transactional
     fun getPreviousArticles(articleId: Long): List<ArticleEntity> {
         return articleRepository.findTop10ByIdBeforeOrderByCreatedAtDesc(articleId)
+    }
+
+    @Transactional
+    fun getArticlesThatUserLikes(
+        id: String,
+        articleId: Long,
+    ): List<ArticleEntity> {
+        val userEntity = userService.getUserEntityById(id)
+        return articleLikesRepository.findTop10ByUserAndArticleIdLessThanOrderByArticleIdDesc(
+            userEntity,
+            articleId,
+        ).map { it.article }
     }
 
     @Transactional
