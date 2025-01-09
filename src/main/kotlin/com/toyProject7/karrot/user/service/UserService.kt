@@ -50,7 +50,7 @@ class UserService(
         if (normalUserRepository.existsByUserId(userId)) {
             throw SignUpUserIdConflictException()
         }
-        if (normalUserRepository.existsByNickname(nickname)) {
+        if (userRepository.existsByNickname(nickname)) {
             throw SignUpNicknameConflictException()
         }
         val encryptedPassword = BCrypt.hashpw(password, BCrypt.gensalt())

@@ -19,4 +19,6 @@ interface UserRepository : JpaRepository<UserEntity, String> {
     fun findSocialUserByEmail(
         @Param("email") email: String,
     ): SocialUser?
+
+    fun existsByNickname(nickname: String): Boolean
 }
