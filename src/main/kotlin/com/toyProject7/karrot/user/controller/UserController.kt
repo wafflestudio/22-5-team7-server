@@ -24,8 +24,8 @@ class UserController(
     fun signIn(
         @RequestBody request: SignInRequest,
     ): ResponseEntity<SignInResponse> {
-        val (_, accessToken) = userService.signIn(request.userId, request.password)
-        return ResponseEntity.ok(SignInResponse(accessToken))
+        val (user, accessToken) = userService.signIn(request.userId, request.password)
+        return ResponseEntity.ok(SignInResponse(user, accessToken))
     }
 
     @GetMapping("/auth/me")
@@ -56,6 +56,7 @@ data class SignInRequest(
 )
 
 data class SignInResponse(
+    val user: User,
     val accessToken: String,
 )
 
