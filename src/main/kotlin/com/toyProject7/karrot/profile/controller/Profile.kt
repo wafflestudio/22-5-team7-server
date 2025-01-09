@@ -10,7 +10,6 @@ data class Profile(
     val user: User,
     val manners: List<Manner>,
     val reviews: List<Review>,
-    val mannerCount: Int,
     val reviewCount: Int,
 ) {
     companion object {
@@ -20,7 +19,6 @@ data class Profile(
                 user = User.fromEntity(entity.user),
                 manners = entity.manners.map { mannerEntity -> Manner.fromEntity(mannerEntity) },
                 reviews = entity.reviews.map { reviewEntity -> Review.fromEntity(reviewEntity) },
-                mannerCount = entity.manners.size,
                 reviewCount = entity.reviews.size,
             )
         }
