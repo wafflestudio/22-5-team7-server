@@ -6,6 +6,6 @@ object SecurityConstants {
             "/api/auth/**",
             "/oauth2/**",
             "/auth/**",
-            "/login/oauth2/**"
+            "/login/oauth2/**",
         )
 }
