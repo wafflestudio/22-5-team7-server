@@ -1,6 +1,7 @@
 package com.toyProject7.karrot
 
 import com.toyProject7.karrot.security.JwtAuthenticationFilter
+import com.toyProject7.karrot.security.SecurityConstants
 import com.toyProject7.karrot.socialLogin.handler.CustomAuthenticationSuccessHandler
 import com.toyProject7.karrot.socialLogin.service.SocialLoginUserService
 import org.springframework.context.annotation.Bean
@@ -26,9 +27,7 @@ class SecurityConfig(
             .authorizeHttpRequests { registry ->
                 registry
                     .requestMatchers(
-                        "/api/auth/**",
-                        "/oauth2/**",
-                        "/auth/**",
+                        *SecurityConstants.PUBLIC_PATHS,
                     ).permitAll()
                     .anyRequest().authenticated()
             }
