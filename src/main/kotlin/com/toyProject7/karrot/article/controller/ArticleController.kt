@@ -128,4 +128,5 @@ data class PostArticleRequest(
     val content: String,
     val price: Int,
     val location: String,
+    val imageCount: Int,
 )

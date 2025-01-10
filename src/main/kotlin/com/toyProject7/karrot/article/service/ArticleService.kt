@@ -8,17 +8,20 @@ import com.toyProject7.karrot.article.persistence.ArticleEntity
 import com.toyProject7.karrot.article.persistence.ArticleLikesEntity
 import com.toyProject7.karrot.article.persistence.ArticleLikesRepository
 import com.toyProject7.karrot.article.persistence.ArticleRepository
+import com.toyProject7.karrot.image.service.ImageService
 import com.toyProject7.karrot.user.service.UserService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 @Service
 class ArticleService(
     private val articleRepository: ArticleRepository,
     private val articleLikesRepository: ArticleLikesRepository,
     private val userService: UserService,
+    private val imageService: ImageService,
 ) {
     @Transactional
     fun postArticle(
@@ -35,11 +38,17 @@ class ArticleService(
                 price = request.price,
                 status = "판매 중",
                 location = request.location,
+                imageS3Url = emptyList(),
+                imagePresignedUrl = emptyList(),
                 createdAt = Instant.now(),
                 updatedAt = Instant.now(),
-            ).let {
-                articleRepository.save(it)
-            }
+                viewCount = 1,
+            )
+        val imageS3Url: List<String> = imageService.postImageUrl("article", articleEntity.id!!, request.imageCount)
+        val imagePresignedUrl: List<String> = imageService.generatePresignedUrl(imageS3Url)
+        articleEntity.imageS3Url = imageS3Url
+        articleEntity.imagePresignedUrl = imagePresignedUrl
+        articleRepository.save(articleEntity)
         return Article.fromEntity(articleEntity)
     }
 
@@ -51,13 +60,19 @@ class ArticleService(
     ): Article {
         val user = userService.getUserEntityById(id)
         val articleEntity = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
-        if (articleEntity.seller.userId != user.userId) {
+        if (articleEntity.seller.id != user.id) {
             throw ArticlePermissionDeniedException()
         }
         request.title.let { articleEntity.title = it }
         request.content.let { articleEntity.content = it }
         request.price.let { articleEntity.price = it }
         request.location.let { articleEntity.location = it }
+        imageService.deleteImageUrl(articleEntity.imageS3Url)
+        val imageS3Url: List<String> = imageService.postImageUrl("article", articleId, request.imageCount)
+        val imagePresignedUrl: List<String> = imageService.generatePresignedUrl(imageS3Url)
+        articleEntity.imageS3Url = imageS3Url
+        articleEntity.imagePresignedUrl = imagePresignedUrl
+        articleEntity.viewCount += 1
         articleEntity.updatedAt = Instant.now()
         articleRepository.save(articleEntity)
         return Article.fromEntity(articleEntity)
@@ -70,9 +85,10 @@ class ArticleService(
     ) {
         val user = userService.getUserEntityById(id)
         val articleEntity = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
-        if (articleEntity.seller.userId != user.userId) {
+        if (articleEntity.seller.id != user.id) {
             throw ArticlePermissionDeniedException()
         }
+        imageService.deleteImageUrl(articleEntity.imageS3Url)
         articleRepository.delete(articleEntity)
     }
 
@@ -110,12 +126,28 @@ class ArticleService(
     @Transactional
     fun getArticle(articleId: Long): Article {
         val articleEntity = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
+        articleEntity.viewCount += 1
+        val stringList: List<ArticleEntity> = listOf(articleEntity)
+        refreshPresignedUrlIfExpired(stringList)
         return Article.fromEntity(articleEntity)
     }
 
     @Transactional
+    fun refreshPresignedUrlIfExpired(articles: List<ArticleEntity>) {
+        articles.forEach { article ->
+            if (ChronoUnit.MINUTES.between(article.updatedAt, Instant.now()) >= 10) {
+                article.imagePresignedUrl = imageService.generatePresignedUrl(article.imageS3Url)
+                article.updatedAt = Instant.now()
+                articleRepository.save(article)
+            }
+        }
+    }
+
+    @Transactional
     fun getPreviousArticles(articleId: Long): List<ArticleEntity> {
-        return articleRepository.findTop10ByIdBeforeOrderByCreatedAtDesc(articleId)
+        val articles = articleRepository.findTop10ByIdBeforeOrderByCreatedAtDesc(articleId)
+        refreshPresignedUrlIfExpired(articles)
+        return articles
     }
 
     @Transactional
@@ -124,10 +156,13 @@ class ArticleService(
         articleId: Long,
     ): List<ArticleEntity> {
         val userEntity = userService.getUserEntityById(id)
-        return articleLikesRepository.findTop10ByUserAndArticleIdLessThanOrderByArticleIdDesc(
-            userEntity,
-            articleId,
-        ).map { it.article }
+        val articles =
+            articleLikesRepository.findTop10ByUserAndArticleIdLessThanOrderByArticleIdDesc(
+                userEntity,
+                articleId,
+            ).map { it.article }
+        refreshPresignedUrlIfExpired(articles)
+        return articles
     }
 
     @Transactional
@@ -136,7 +171,9 @@ class ArticleService(
         articleId: Long,
     ): List<ArticleEntity> {
         val seller = userService.getUserEntityById(id)
-        return articleRepository.findTop10BySellerAndIdLessThanOrderByIdDesc(seller, articleId)
+        val articles = articleRepository.findTop10BySellerAndIdLessThanOrderByIdDesc(seller, articleId)
+        refreshPresignedUrlIfExpired(articles)
+        return articles
     }
 
     @Transactional
@@ -145,6 +182,8 @@ class ArticleService(
         articleId: Long,
     ): List<ArticleEntity> {
         val buyer = userService.getUserEntityById(id)
-        return articleRepository.findTop10ByBuyerAndIdLessThanOrderByIdDesc(buyer, articleId)
+        val articles = articleRepository.findTop10ByBuyerAndIdLessThanOrderByIdDesc(buyer, articleId)
+        refreshPresignedUrlIfExpired(articles)
+        return articles
     }
 }

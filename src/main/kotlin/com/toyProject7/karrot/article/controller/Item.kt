@@ -9,6 +9,7 @@ data class Item(
     val price: Int,
     val status: String,
     val location: String,
+    val imagePresignedUrl: String,
     val createdAt: Instant,
     val likeCount: Int,
 ) {
@@ -19,7 +20,8 @@ data class Item(
                 title = article.title,
                 price = article.price,
                 status = article.status,
-                location = article.location,
+                location = article.seller.location,
+                imagePresignedUrl = article.imagePresignedUrl.first(),
                 createdAt = article.createdAt,
                 likeCount = article.likeCount,
             )
