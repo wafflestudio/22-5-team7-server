@@ -25,7 +25,7 @@ spring:
           naver:
             clientId: '${NAVER_CLIENT_ID}'
             clientSecret: '${NAVER_CLIENT_SECRET}'
-            clientAuthenticationMethod: post
+            clientAuthenticationMethod: client_secret_post
             authorizationGrantType: authorization_code
             redirectUri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
             scope:
@@ -36,7 +36,7 @@ spring:
           kakao:
             clientId: '${KAKAO_CLIENT_ID}'
             clientSecret: '${KAKAO_CLIENT_SECRET}'
-            clientAuthenticationMethod: post
+            clientAuthenticationMethod: client_secret_post
             authorizationGrantType: authorization_code
             redirectUri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
             scope:
@@ -49,24 +49,13 @@ spring:
             authorizationUri: https://nid.naver.com/oauth2.0/authorize
             tokenUri: https://nid.naver.com/oauth2.0/token
             userInfoUri: https://openapi.naver.com/v1/nid/me
+            user-info-authentication-method: header
             userNameAttribute: response
           kakao:
             authorizationUri: https://kauth.kakao.com/oauth/authorize
             tokenUri: https://kauth.kakao.com/oauth/token
             userInfoUri: https://kapi.kakao.com/v2/user/me
+            user-info-authentication-method: header
             userNameAttribute: id
   profiles:
     active: dev
-
-app:
-  auth:
-    tokenSecret: TOKEN_SECRET
-    tokenExpiry: 1800000 #30분
-    refreshTokenExpiry: 604800000 #7일
-  oauth2:
-    authorizedRedirectUris:
-      - http://localhost:3000/oauth/redirect
-
-cache:
-  expire-after-write: 1m
-  maximum-size: 100
