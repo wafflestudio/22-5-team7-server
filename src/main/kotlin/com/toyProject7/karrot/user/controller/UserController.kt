@@ -34,9 +34,6 @@ class UserController(
     fun me(
         @AuthUser user: User,
     ): ResponseEntity<UserMeResponse> {
-        if (user.userId == null) {
-            throw IllegalStateException("User ID cannot be null for NormalUser")
-        }
         return ResponseEntity.ok(UserMeResponse(user.id, user.nickname))
     }
 }

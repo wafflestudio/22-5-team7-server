@@ -33,6 +33,9 @@ class AwsS3Config {
             )
         }
 
-        return S3Presigner.builder().region(Region.of(regionName)).build()
+        return S3Presigner.builder()
+            .region(Region.of(regionName))
+            .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+            .build()
     }
 }
