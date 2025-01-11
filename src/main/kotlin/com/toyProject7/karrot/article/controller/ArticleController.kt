@@ -11,14 +11,16 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
+@RequestMapping("/api")
 class ArticleController(
     private val articleService: ArticleService,
 ) {
-    @PostMapping("api/item/post")
+    @PostMapping("/item/post")
     fun postArticle(
         @RequestBody request: PostArticleRequest,
         @AuthUser user: User,
@@ -27,7 +29,7 @@ class ArticleController(
         return ResponseEntity.ok(article)
     }
 
-    @PutMapping("api/item/edit/{articleId}")
+    @PutMapping("/item/edit/{articleId}")
     fun editArticle(
         @RequestBody request: PostArticleRequest,
         @PathVariable articleId: Long,
@@ -37,7 +39,7 @@ class ArticleController(
         return ResponseEntity.ok(article)
     }
 
-    @DeleteMapping("api/item/delete/{articleId}")
+    @DeleteMapping("/item/delete/{articleId}")
     fun deleteArticle(
         @PathVariable articleId: Long,
         @AuthUser user: User,
@@ -46,14 +48,32 @@ class ArticleController(
         return ResponseEntity.ok("Deleted Successfully")
     }
 
-    @GetMapping("api/item/get/{articleId}")
+    @PostMapping("/item/like/{articleId}")
+    fun likeArticle(
+        @PathVariable articleId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<String> {
+        articleService.likeArticle(articleId, user.id)
+        return ResponseEntity.ok("Liked Successfully")
+    }
+
+    @PostMapping("/item/unlike/{articleId}")
+    fun unlikeArticle(
+        @PathVariable articleId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<String> {
+        articleService.unlikeArticle(articleId, user.id)
+        return ResponseEntity.ok("Unliked Successfully")
+    }
+
+    @GetMapping("/item/get/{articleId}")
     fun getArticle(
         @PathVariable articleId: Long,
     ): ResponseEntity<Article> {
         return ResponseEntity.ok(articleService.getArticle(articleId))
     }
 
-    @GetMapping("/api/home")
+    @GetMapping("/home")
     fun getPreviousArticles(
         @RequestParam("articleId") articleId: Long,
     ): ResponseEntity<List<Item>> {
@@ -65,7 +85,20 @@ class ArticleController(
         return ResponseEntity.ok(response)
     }
 
-    @GetMapping("/api/mypage/sells")
+    @GetMapping("/mypage/likes")
+    fun getArticlesThatUserLikes(
+        @RequestParam("articleId") articleId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<List<Item>> {
+        val articles: List<ArticleEntity> = articleService.getArticlesThatUserLikes(user.id, articleId)
+        val response =
+            articles.map { article ->
+                Item.fromArticle(Article.fromEntity(article))
+            }
+        return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("/mypage/sells")
     fun getArticlesBySeller(
         @RequestParam("articleId") articleId: Long,
         @AuthUser user: User,
@@ -78,7 +111,7 @@ class ArticleController(
         return ResponseEntity.ok(response)
     }
 
-    @GetMapping("/api/mypage/buys")
+    @GetMapping("/mypage/buys")
     fun getArticlesByBuyer(
         @RequestParam("articleId") articleId: Long,
         @AuthUser user: User,
@@ -97,4 +130,5 @@ data class PostArticleRequest(
     val content: String,
     val price: Int,
     val location: String,
+    val imageCount: Int,
 )
