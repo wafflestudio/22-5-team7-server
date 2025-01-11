@@ -1,5 +1,6 @@
 package com.toyProject7.karrot.profile.service
 
+import com.toyProject7.karrot.article.persistence.ArticleRepository
 import com.toyProject7.karrot.manner.controller.Manner
 import com.toyProject7.karrot.profile.ProfileNotFoundException
 import com.toyProject7.karrot.profile.controller.Profile
@@ -16,24 +17,27 @@ class ProfileService(
     private val profileRepository: ProfileRepository,
     private val userRepository: UserRepository,
     private val reviewRepository: ReviewRepository,
+    private val articleRepository: ArticleRepository,
 ) {
     fun getMyProfile(user: User): Profile {
         val profileEntity = profileRepository.findByUserId(user.id) ?: throw ProfileNotFoundException()
-        return Profile.fromEntity(profileEntity)
+        val itemCount = getItemCount(user.id)
+        return Profile.fromEntity(profileEntity, itemCount)
     }
 
     fun getProfile(nickname: String): Profile {
         val userEntity = userRepository.findByNickname(nickname) ?: throw UserNotFoundException()
         val user = User.fromEntity(userEntity)
         val profileEntity = profileRepository.findByUserId(user.id) ?: throw ProfileNotFoundException()
-        return Profile.fromEntity(profileEntity)
+        val itemCount = getItemCount(user.id)
+        return Profile.fromEntity(profileEntity, itemCount)
     }
 
     fun getManner(nickname: String): List<Manner> {
         val userEntity = userRepository.findByNickname(nickname) ?: throw UserNotFoundException()
         val user = User.fromEntity(userEntity)
         val profileEntity = profileRepository.findByUserId(user.id) ?: throw ProfileNotFoundException()
-        return Profile.fromEntity(profileEntity).manners
+        return Profile.fromEntity(profileEntity, 0).manners
     }
 
     fun getPreviousReviews(
@@ -44,5 +48,9 @@ class ProfileService(
                 reviewEntity ->
             Review.fromEntity(reviewEntity)
         }
+    }
+
+    fun getItemCount(id: String): Int {
+        return articleRepository.countBySellerId(id)
     }
 }

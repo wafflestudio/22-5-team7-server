@@ -15,4 +15,6 @@ interface ArticleRepository : JpaRepository<ArticleEntity, Long> {
         buyer: UserEntity,
         id: Long,
     ): List<ArticleEntity>
+
+    fun countBySellerId(id: String): Int
 }
