@@ -2,6 +2,8 @@ package com.toyProject7.karrot.article.service
 
 import com.toyProject7.karrot.article.ArticleNotFoundException
 import com.toyProject7.karrot.article.ArticlePermissionDeniedException
+import com.toyProject7.karrot.article.PresignedUrlListIsEmptyException
+import com.toyProject7.karrot.article.S3UrlListIsEmptyException
 import com.toyProject7.karrot.article.controller.Article
 import com.toyProject7.karrot.article.controller.PostArticleRequest
 import com.toyProject7.karrot.article.persistence.ArticleEntity
@@ -47,8 +49,10 @@ class ArticleService(
         if (request.imageCount > 0) {
             val imageS3Url: List<String> = imageService.postImageUrl("article", articleEntity.id!!, request.imageCount)
             articleEntity.imageS3Url = imageS3Url
+            if (imageS3Url.isEmpty()) throw S3UrlListIsEmptyException()
             val imagePresignedUrl: List<String> = imageService.generatePresignedUrl(imageS3Url)
             articleEntity.imagePresignedUrl = imagePresignedUrl
+            if (imagePresignedUrl.isEmpty()) throw PresignedUrlListIsEmptyException()
             articleEntity.updatedAt = Instant.now()
         }
         articleRepository.save(articleEntity)
@@ -146,7 +150,9 @@ class ArticleService(
     fun refreshPresignedUrlIfExpired(articles: List<ArticleEntity>) {
         articles.forEach { article ->
             if (article.imageS3Url.isNotEmpty() && ChronoUnit.MINUTES.between(article.updatedAt, Instant.now()) >= 10) {
-                article.imagePresignedUrl = imageService.generatePresignedUrl(article.imageS3Url)
+                val presigned = imageService.generatePresignedUrl(article.imageS3Url)
+                if (presigned.isEmpty()) throw PresignedUrlListIsEmptyException()
+                article.imagePresignedUrl = presigned
                 article.updatedAt = Instant.now()
                 articleRepository.save(article)
             }
