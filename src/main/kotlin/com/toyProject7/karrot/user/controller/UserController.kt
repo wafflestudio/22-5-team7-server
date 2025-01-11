@@ -24,14 +24,17 @@ class UserController(
     fun signIn(
         @RequestBody request: SignInRequest,
     ): ResponseEntity<SignInResponse> {
-        val (_, accessToken) = userService.signIn(request.userId, request.password)
-        return ResponseEntity.ok(SignInResponse(accessToken))
+        val (user, accessToken) = userService.signIn(request.userId, request.password)
+        return ResponseEntity.ok(SignInResponse(user, accessToken))
     }
 
     @GetMapping("/auth/me")
     fun me(
         @AuthUser user: User,
     ): ResponseEntity<UserMeResponse> {
+        if (user.userId == null) {
+            throw IllegalStateException("User ID cannot be null for NormalUser")
+        }
         return ResponseEntity.ok(UserMeResponse(user.id, user.nickname))
     }
 }
@@ -53,6 +56,7 @@ data class SignInRequest(
 )
 
 data class SignInResponse(
+    val user: User,
     val accessToken: String,
 )
 
