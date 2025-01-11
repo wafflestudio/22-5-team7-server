@@ -1,5 +1,8 @@
 package com.toyProject7.karrot.image.service
 
+import com.toyProject7.karrot.image.ImageDeleteException
+import com.toyProject7.karrot.image.ImagePresignedUrlCreateException
+import com.toyProject7.karrot.image.ImageS3UrlCreateException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import software.amazon.awssdk.services.s3.S3Client
@@ -22,7 +25,7 @@ class ImageService(
         imageCount: Int,
     ): List<String> {
         val imageS3Url: MutableList<String> = mutableListOf()
-        for (number in 0..imageCount) {
+        for (number in 1..imageCount) {
             imageS3Url += generateS3Path(type, typeId, number)
         }
         return imageS3Url
@@ -37,24 +40,28 @@ class ImageService(
             )
         }
 
-        // S3 객체 식별자 리스트 생성
-        val objectIdentifiers =
-            imageS3Url.map { s3Url ->
-                val objectKey = s3Url.removePrefix("s3://$bucketName/")
-                ObjectIdentifier.builder().key(objectKey).build()
-            }
-
-        // 삭제 요청 생성
-        val deleteObjectsRequest =
-            DeleteObjectsRequest.builder()
-                .bucket(bucketName)
-                .delete { delete ->
-                    delete.objects(objectIdentifiers)
+        try {
+            // S3 객체 식별자 리스트 생성
+            val objectIdentifiers =
+                imageS3Url.map { s3Url ->
+                    val objectKey = s3Url.removePrefix("s3://$bucketName/")
+                    ObjectIdentifier.builder().key(objectKey).build()
                 }
-                .build()
 
-        // S3에서 객체 삭제
-        s3Client.deleteObjects(deleteObjectsRequest)
+            // 삭제 요청 생성
+            val deleteObjectsRequest =
+                DeleteObjectsRequest.builder()
+                    .bucket(bucketName)
+                    .delete { delete ->
+                        delete.objects(objectIdentifiers)
+                    }
+                    .build()
+
+            // S3에서 객체 삭제
+            s3Client.deleteObjects(deleteObjectsRequest)
+        } catch (e: Exception) {
+            throw ImageDeleteException()
+        }
     }
 
     fun generateS3Path(
@@ -68,8 +75,12 @@ class ImageService(
                 "AWS_S3_BUCKET environment variable is missing. Please configure it.",
             )
         }
-        val path = "$type/$typeId/image_$imageIndex.jpg"
-        return "s3://$bucketName/$path"
+        try {
+            val path = "$type/$typeId/image_$imageIndex.jpg"
+            return "s3://$bucketName/$path"
+        } catch (e: Exception) {
+            throw ImageS3UrlCreateException()
+        }
     }
 
     fun generatePresignedUrl(imageS3Url: List<String>): List<String> {
@@ -79,25 +90,28 @@ class ImageService(
                 "AWS_S3_BUCKET environment variable is missing. Please configure it.",
             )
         }
+        try {
+            return imageS3Url.map { s3Url ->
+                val objectKey = s3Url.removePrefix("s3://$bucketName/")
 
-        return imageS3Url.map { s3Url ->
-            val objectKey = s3Url.removePrefix("s3://$bucketName/")
+                // Presigned URL을 생성하기 위한 요청 객체 생성
+                val getObjectRequest =
+                    GetObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(objectKey)
+                        .build()
 
-            // Presigned URL을 생성하기 위한 요청 객체 생성
-            val getObjectRequest =
-                GetObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(objectKey)
-                    .build()
+                // Presigned URL 요청 객체 생성
+                val presignedRequest =
+                    GetObjectPresignRequest.builder()
+                        .signatureDuration(ofMinutes(15))
+                        .getObjectRequest(getObjectRequest)
+                        .build()
 
-            // Presigned URL 요청 객체 생성
-            val presignedRequest =
-                GetObjectPresignRequest.builder()
-                    .signatureDuration(ofMinutes(15))
-                    .getObjectRequest(getObjectRequest)
-                    .build()
-
-            s3Presigner.presignGetObject(presignedRequest).url().toString()
+                s3Presigner.presignGetObject(presignedRequest).url().toString()
+            }
+        } catch (e: Exception) {
+            throw ImagePresignedUrlCreateException()
         }
     }
 }

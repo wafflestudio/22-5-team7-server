@@ -21,7 +21,7 @@ data class Item(
                 price = article.price,
                 status = article.status,
                 location = article.seller.location,
-                imagePresignedUrl = article.imagePresignedUrl.first(),
+                imagePresignedUrl = article.imagePresignedUrl.first().ifEmpty { "" },
                 createdAt = article.createdAt,
                 likeCount = article.likeCount,
             )

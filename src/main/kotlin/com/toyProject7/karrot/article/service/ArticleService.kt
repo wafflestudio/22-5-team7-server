@@ -44,10 +44,13 @@ class ArticleService(
                 updatedAt = Instant.now(),
                 viewCount = 1,
             )
-        val imageS3Url: List<String> = imageService.postImageUrl("article", articleEntity.id!!, request.imageCount)
-        val imagePresignedUrl: List<String> = imageService.generatePresignedUrl(imageS3Url)
-        articleEntity.imageS3Url = imageS3Url
-        articleEntity.imagePresignedUrl = imagePresignedUrl
+        if (request.imageCount > 0) {
+            val imageS3Url: List<String> = imageService.postImageUrl("article", articleEntity.id!!, request.imageCount)
+            articleEntity.imageS3Url = imageS3Url
+            val imagePresignedUrl: List<String> = imageService.generatePresignedUrl(imageS3Url)
+            articleEntity.imagePresignedUrl = imagePresignedUrl
+            articleEntity.updatedAt = Instant.now()
+        }
         articleRepository.save(articleEntity)
         return Article.fromEntity(articleEntity)
     }
@@ -63,17 +66,21 @@ class ArticleService(
         if (articleEntity.seller.id != user.id) {
             throw ArticlePermissionDeniedException()
         }
-        request.title.let { articleEntity.title = it }
-        request.content.let { articleEntity.content = it }
-        request.price.let { articleEntity.price = it }
-        request.location.let { articleEntity.location = it }
-        imageService.deleteImageUrl(articleEntity.imageS3Url)
-        val imageS3Url: List<String> = imageService.postImageUrl("article", articleId, request.imageCount)
-        val imagePresignedUrl: List<String> = imageService.generatePresignedUrl(imageS3Url)
-        articleEntity.imageS3Url = imageS3Url
-        articleEntity.imagePresignedUrl = imagePresignedUrl
+        articleEntity.title = request.title
+        articleEntity.content = request.content
+        articleEntity.price = request.price
+        articleEntity.location = request.location
+        if (articleEntity.imageS3Url.isNotEmpty()) {
+            imageService.deleteImageUrl(articleEntity.imageS3Url)
+        }
+        if (request.imageCount > 0) {
+            val imageS3Url: List<String> = imageService.postImageUrl("article", articleId, request.imageCount)
+            articleEntity.imageS3Url = imageS3Url
+            val imagePresignedUrl: List<String> = imageService.generatePresignedUrl(imageS3Url)
+            articleEntity.imagePresignedUrl = imagePresignedUrl
+            articleEntity.updatedAt = Instant.now()
+        }
         articleEntity.viewCount += 1
-        articleEntity.updatedAt = Instant.now()
         articleRepository.save(articleEntity)
         return Article.fromEntity(articleEntity)
     }
@@ -88,7 +95,9 @@ class ArticleService(
         if (articleEntity.seller.id != user.id) {
             throw ArticlePermissionDeniedException()
         }
-        imageService.deleteImageUrl(articleEntity.imageS3Url)
+        if (articleEntity.imageS3Url.isNotEmpty()) {
+            imageService.deleteImageUrl(articleEntity.imageS3Url)
+        }
         articleRepository.delete(articleEntity)
     }
 
@@ -126,16 +135,17 @@ class ArticleService(
     @Transactional
     fun getArticle(articleId: Long): Article {
         val articleEntity = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
+        val article: List<ArticleEntity> = listOf(articleEntity)
+        refreshPresignedUrlIfExpired(article)
         articleEntity.viewCount += 1
-        val stringList: List<ArticleEntity> = listOf(articleEntity)
-        refreshPresignedUrlIfExpired(stringList)
+        articleRepository.save(articleEntity)
         return Article.fromEntity(articleEntity)
     }
 
     @Transactional
     fun refreshPresignedUrlIfExpired(articles: List<ArticleEntity>) {
         articles.forEach { article ->
-            if (ChronoUnit.MINUTES.between(article.updatedAt, Instant.now()) >= 10) {
+            if (article.imageS3Url.isNotEmpty() && ChronoUnit.MINUTES.between(article.updatedAt, Instant.now()) >= 10) {
                 article.imagePresignedUrl = imageService.generatePresignedUrl(article.imageS3Url)
                 article.updatedAt = Instant.now()
                 articleRepository.save(article)
