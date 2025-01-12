@@ -27,7 +27,7 @@ data class Article(
                 price = entity.price,
                 status = entity.status,
                 location = entity.location,
-                imagePresignedUrl = entity.imagePresignedUrl.ifEmpty { emptyList() },
+                imagePresignedUrl = entity.imagePresignedUrls.map { imageUrlEntity -> imageUrlEntity.url }.ifEmpty { emptyList() },
                 createdAt = entity.createdAt,
                 likeCount = entity.articleLikes.size,
                 viewCount = entity.viewCount,
