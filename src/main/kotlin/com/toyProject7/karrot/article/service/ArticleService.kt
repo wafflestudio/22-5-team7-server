@@ -2,14 +2,14 @@ package com.toyProject7.karrot.article.service
 
 import com.toyProject7.karrot.article.ArticleNotFoundException
 import com.toyProject7.karrot.article.ArticlePermissionDeniedException
-import com.toyProject7.karrot.article.PresignedUrlListIsEmptyException
-import com.toyProject7.karrot.article.S3UrlListIsEmptyException
 import com.toyProject7.karrot.article.controller.Article
 import com.toyProject7.karrot.article.controller.PostArticleRequest
 import com.toyProject7.karrot.article.persistence.ArticleEntity
 import com.toyProject7.karrot.article.persistence.ArticleLikesEntity
 import com.toyProject7.karrot.article.persistence.ArticleLikesRepository
 import com.toyProject7.karrot.article.persistence.ArticleRepository
+import com.toyProject7.karrot.image.persistence.ImageUrlEntity
+import com.toyProject7.karrot.image.persistence.ImageUrlRepository
 import com.toyProject7.karrot.image.service.ImageService
 import com.toyProject7.karrot.user.service.UserService
 import org.springframework.data.repository.findByIdOrNull
@@ -22,6 +22,7 @@ import java.time.temporal.ChronoUnit
 class ArticleService(
     private val articleRepository: ArticleRepository,
     private val articleLikesRepository: ArticleLikesRepository,
+    private val imageUrlRepository: ImageUrlRepository,
     private val userService: UserService,
     private val imageService: ImageService,
 ) {
@@ -40,19 +41,21 @@ class ArticleService(
                 price = request.price,
                 status = "판매 중",
                 location = request.location,
-                imageS3Url = emptyList(),
-                imagePresignedUrl = emptyList(),
+                imageS3Urls = mutableListOf(),
+                imagePresignedUrls = mutableListOf(),
                 createdAt = Instant.now(),
                 updatedAt = Instant.now(),
                 viewCount = 1,
             )
+        articleRepository.save(articleEntity)
         if (request.imageCount > 0) {
-            val imageS3Url: List<String> = imageService.postImageUrl("article", articleEntity.id!!, request.imageCount)
-            articleEntity.imageS3Url = imageS3Url
-            if (imageS3Url.isEmpty()) throw S3UrlListIsEmptyException()
-            val imagePresignedUrl: List<String> = imageService.generatePresignedUrl(imageS3Url)
-            articleEntity.imagePresignedUrl = imagePresignedUrl
-            if (imagePresignedUrl.isEmpty()) throw PresignedUrlListIsEmptyException()
+            for (number in 1..request.imageCount) {
+                val imageS3Url: ImageUrlEntity = imageService.postImageUrl("article", articleEntity.id!!, number)
+                articleEntity.imageS3Urls += imageS3Url
+
+                val imagePresignedUrl: ImageUrlEntity = imageService.generatePresignedUrl(imageS3Url.url, articleEntity.id!!, number)
+                articleEntity.imagePresignedUrls += imagePresignedUrl
+            }
             articleEntity.updatedAt = Instant.now()
         }
         articleRepository.save(articleEntity)
@@ -74,14 +77,20 @@ class ArticleService(
         articleEntity.content = request.content
         articleEntity.price = request.price
         articleEntity.location = request.location
-        if (articleEntity.imageS3Url.isNotEmpty()) {
-            imageService.deleteImageUrl(articleEntity.imageS3Url)
+        if (articleEntity.imageS3Urls.isNotEmpty()) {
+            imageService.deleteImageUrl(articleEntity.imageS3Urls)
+            articleEntity.imagePresignedUrls.map { imageUrlEntity -> imageUrlRepository.delete(imageUrlEntity) }
+            articleEntity.imageS3Urls = mutableListOf()
+            articleEntity.imagePresignedUrls = mutableListOf()
         }
         if (request.imageCount > 0) {
-            val imageS3Url: List<String> = imageService.postImageUrl("article", articleId, request.imageCount)
-            articleEntity.imageS3Url = imageS3Url
-            val imagePresignedUrl: List<String> = imageService.generatePresignedUrl(imageS3Url)
-            articleEntity.imagePresignedUrl = imagePresignedUrl
+            for (number in 1..request.imageCount) {
+                val imageS3Url: ImageUrlEntity = imageService.postImageUrl("article", articleEntity.id!!, number)
+                articleEntity.imageS3Urls += imageS3Url
+
+                val imagePresignedUrl: ImageUrlEntity = imageService.generatePresignedUrl(imageS3Url.url, articleEntity.id!!, number)
+                articleEntity.imagePresignedUrls += imagePresignedUrl
+            }
             articleEntity.updatedAt = Instant.now()
         }
         articleEntity.viewCount += 1
@@ -99,8 +108,9 @@ class ArticleService(
         if (articleEntity.seller.id != user.id) {
             throw ArticlePermissionDeniedException()
         }
-        if (articleEntity.imageS3Url.isNotEmpty()) {
-            imageService.deleteImageUrl(articleEntity.imageS3Url)
+        if (articleEntity.imageS3Urls.isNotEmpty()) {
+            imageService.deleteImageUrl(articleEntity.imageS3Urls)
+            articleEntity.imagePresignedUrls.map { imageUrlEntity -> imageUrlRepository.delete(imageUrlEntity) }
         }
         articleRepository.delete(articleEntity)
     }
@@ -149,10 +159,10 @@ class ArticleService(
     @Transactional
     fun refreshPresignedUrlIfExpired(articles: List<ArticleEntity>) {
         articles.forEach { article ->
-            if (article.imageS3Url.isNotEmpty() && ChronoUnit.MINUTES.between(article.updatedAt, Instant.now()) >= 10) {
-                val presigned = imageService.generatePresignedUrl(article.imageS3Url)
-                if (presigned.isEmpty()) throw PresignedUrlListIsEmptyException()
-                article.imagePresignedUrl = presigned
+            if (article.imageS3Urls.isNotEmpty() && ChronoUnit.MINUTES.between(article.updatedAt, Instant.now()) >= 10) {
+                for (number in 1..article.imageS3Urls.size) {
+                    imageService.updatePresignedUrl(article.imagePresignedUrls[number - 1], article.imageS3Urls[number - 1].url)
+                }
                 article.updatedAt = Instant.now()
                 articleRepository.save(article)
             }

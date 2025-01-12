@@ -10,7 +10,6 @@ object UserAccessTokenUtil {
         System.getenv("JWT_SECRET_KEY")
             ?.let { Keys.hmacShaKeyFor(it.toByteArray(StandardCharsets.UTF_8)) }
             ?: throw IllegalStateException("JWT_SECRET_KEY is not set!")
-
     private const val JWT_EXPIRATION_TIME = 1000 * 60 * 60 * 2 // 2 hours
 
     fun generateAccessToken(id: String): String {
