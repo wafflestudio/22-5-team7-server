@@ -1,4 +1,5 @@
 package com.toyProject7.karrot.feed.persistence
 
-class FeedLikesRepository {
-}
+import org.springframework.data.jpa.repository.JpaRepository
+
+interface FeedLikesRepository : JpaRepository<FeedLikesEntity, String>
