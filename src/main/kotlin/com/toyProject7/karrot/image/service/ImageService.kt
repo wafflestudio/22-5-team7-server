@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest
-import software.amazon.awssdk.services.s3.model.GetObjectRequest
 import software.amazon.awssdk.services.s3.model.ObjectIdentifier
+import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import software.amazon.awssdk.services.s3.presigner.S3Presigner
-import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest
 import java.time.Duration.ofMinutes
 
 @Service
@@ -111,23 +111,23 @@ class ImageService(
             val objectKey = imageS3Url.removePrefix("s3://$bucketName/")
 
             // Presigned URL을 생성하기 위한 요청 객체 생성
-            val getObjectRequest =
-                GetObjectRequest.builder()
+            val putObjectRequest =
+                PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(objectKey)
                     .build()
 
             // Presigned URL 요청 객체 생성
             val presignedRequest =
-                GetObjectPresignRequest.builder()
+                PutObjectPresignRequest.builder()
                     .signatureDuration(ofMinutes(15))
-                    .getObjectRequest(getObjectRequest)
+                    .putObjectRequest(putObjectRequest)
                     .build()
 
             val imageUrlEntity =
                 ImageUrlEntity(
                     article = articleRepository.findById(articleId).orElseThrow { ArticleNotFoundException() },
-                    url = s3Presigner.presignGetObject(presignedRequest).url().toString(),
+                    url = s3Presigner.presignPutObject(presignedRequest).url().toString(),
                 )
 
             imageUrlRepository.save(imageUrlEntity)
@@ -152,20 +152,20 @@ class ImageService(
             val objectKey = imageS3Url.removePrefix("s3://$bucketName/")
 
             // Presigned URL을 생성하기 위한 요청 객체 생성
-            val getObjectRequest =
-                GetObjectRequest.builder()
+            val putObjectRequest =
+                PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(objectKey)
                     .build()
 
             // Presigned URL 요청 객체 생성
             val presignedRequest =
-                GetObjectPresignRequest.builder()
+                PutObjectPresignRequest.builder()
                     .signatureDuration(ofMinutes(15))
-                    .getObjectRequest(getObjectRequest)
+                    .putObjectRequest(putObjectRequest)
                     .build()
 
-            imageUrlEntity.url = s3Presigner.presignGetObject(presignedRequest).url().toString()
+            imageUrlEntity.url = s3Presigner.presignPutObject(presignedRequest).url().toString()
             imageUrlRepository.save(imageUrlEntity)
         } catch (e: Exception) {
             throw ImagePresignedUrlCreateException()
