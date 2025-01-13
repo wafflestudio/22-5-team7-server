@@ -36,7 +36,7 @@ class KarrotApplication {
             println("AWS_REGION is set")
         }
         if (System.getenv("GOOGLE_CLI_SECRET") == null) {
-            println("GOOGLE_CLI_SECRET is not set")
+            println("GOOGLE_CLI_SECRET is " + System.getenv("GOOGLE_CLI_SECRET"))
         } else {
             println("GOOGLE_CLI_SECRET is set")
         }
@@ -53,7 +53,7 @@ class KarrotApplication {
         if (System.getenv("GOOGLE_CLI_ID") == null) {
             println("GOOGLE_CLIENT_ID is not set")
         } else {
-            println("GOOGLE_CLI_ID is set")
+            println("GOOGLE_CLI_ID is " + System.getenv("GOOGLE_CLI_ID"))
         }
         // Repeat for other environment variables
         if (System.getenv("NAVER_CLI_ID") == null) {
