@@ -50,18 +50,18 @@ class KarrotApplication {
         } else {
             println("KAKAO_CLI_SECRET is set")
         }
-        if (System.getenv("GOOGLE_CLIENT_ID") == null) {
+        if (System.getenv("GOOGLE_CLI_ID") == null) {
             println("GOOGLE_CLIENT_ID is not set")
         } else {
-            println("GOOGLE_CLIENT_ID is set")
+            println("GOOGLE_CLI_ID is set")
         }
         // Repeat for other environment variables
-        if (System.getenv("NAVER_CLIENT_ID") == null) {
+        if (System.getenv("NAVER_CLI_ID") == null) {
             println("NAVER_CLIENT_ID is not set")
         } else {
             println("NAVER_CLIENT_ID is set")
         }
-        if (System.getenv("KAKAO_CLIENT_ID") == null) {
+        if (System.getenv("KAKAO_CLI_ID") == null) {
             println("KAKAO_CLIENT_ID is not set")
         } else {
             println("KAKAO_CLIENT_ID is set")
