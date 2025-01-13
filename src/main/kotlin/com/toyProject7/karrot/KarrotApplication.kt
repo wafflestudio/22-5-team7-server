@@ -1,13 +1,13 @@
 package com.toyProject7.karrot
 
+import jakarta.annotation.PostConstruct
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import jakarta.annotation.PostConstruct
 
 @SpringBootApplication
 @EnableWebSecurity
-class KarrotApplication{
+class KarrotApplication {
     @PostConstruct
     fun verifyEnvVariables() {
         if (System.getenv("GOOGLE_CLIENT_ID") == null) {
