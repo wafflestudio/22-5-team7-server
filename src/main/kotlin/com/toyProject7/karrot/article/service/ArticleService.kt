@@ -48,18 +48,27 @@ class ArticleService(
                 viewCount = 1,
             )
         articleRepository.save(articleEntity)
+
+        val imagePutPresingedUrls: MutableList<String> = mutableListOf()
         if (request.imageCount > 0) {
             for (number in 1..request.imageCount) {
                 val imageS3Url: ImageUrlEntity = imageService.postImageUrl("article", articleEntity.id!!, number)
                 articleEntity.imageS3Urls += imageS3Url
 
-                val imagePresignedUrl: ImageUrlEntity = imageService.generatePresignedUrl(imageS3Url.url, articleEntity.id!!, number)
+                val imagePutPresignedUrl: String = imageService.generatePutPresignedUrl(imageS3Url.url, articleEntity.id!!, number)
+                imagePutPresingedUrls += imagePutPresignedUrl
+
+                val imagePresignedUrl: ImageUrlEntity = imageService.generateGetPresignedUrl(imageS3Url.url, articleEntity.id!!, number)
                 articleEntity.imagePresignedUrls += imagePresignedUrl
             }
             articleEntity.updatedAt = Instant.now()
         }
         articleRepository.save(articleEntity)
-        return Article.fromEntity(articleEntity)
+
+        val article = Article.fromEntity(articleEntity)
+        article.imagePresignedUrl = imagePutPresingedUrls
+
+        return article
     }
 
     @Transactional
@@ -83,19 +92,28 @@ class ArticleService(
             articleEntity.imageS3Urls = mutableListOf()
             articleEntity.imagePresignedUrls = mutableListOf()
         }
+
+        val imagePutPresingedUrls: MutableList<String> = mutableListOf()
         if (request.imageCount > 0) {
             for (number in 1..request.imageCount) {
                 val imageS3Url: ImageUrlEntity = imageService.postImageUrl("article", articleEntity.id!!, number)
                 articleEntity.imageS3Urls += imageS3Url
 
-                val imagePresignedUrl: ImageUrlEntity = imageService.generatePresignedUrl(imageS3Url.url, articleEntity.id!!, number)
+                val imagePutPresignedUrl: String = imageService.generatePutPresignedUrl(imageS3Url.url, articleEntity.id!!, number)
+                imagePutPresingedUrls += imagePutPresignedUrl
+
+                val imagePresignedUrl: ImageUrlEntity = imageService.generateGetPresignedUrl(imageS3Url.url, articleEntity.id!!, number)
                 articleEntity.imagePresignedUrls += imagePresignedUrl
             }
             articleEntity.updatedAt = Instant.now()
         }
         articleEntity.viewCount += 1
         articleRepository.save(articleEntity)
-        return Article.fromEntity(articleEntity)
+
+        val article = Article.fromEntity(articleEntity)
+        article.imagePresignedUrl = imagePutPresingedUrls
+
+        return article
     }
 
     @Transactional
@@ -161,7 +179,7 @@ class ArticleService(
         articles.forEach { article ->
             if (article.imageS3Urls.isNotEmpty() && ChronoUnit.MINUTES.between(article.updatedAt, Instant.now()) >= 10) {
                 for (number in 1..article.imageS3Urls.size) {
-                    imageService.updatePresignedUrl(article.imagePresignedUrls[number - 1], article.imageS3Urls[number - 1].url)
+                    imageService.updateGetPresignedUrl(article.imagePresignedUrls[number - 1], article.imageS3Urls[number - 1].url)
                 }
                 article.updatedAt = Instant.now()
                 articleRepository.save(article)

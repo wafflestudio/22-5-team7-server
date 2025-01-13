@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest
+import software.amazon.awssdk.services.s3.model.GetObjectRequest
 import software.amazon.awssdk.services.s3.model.ObjectIdentifier
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import software.amazon.awssdk.services.s3.presigner.S3Presigner
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest
 import java.time.Duration.ofMinutes
 
@@ -96,7 +98,77 @@ class ImageService(
     }
 
     @Transactional
-    fun generatePresignedUrl(
+    fun generatePutPresignedUrl(
+        imageS3Url: String,
+        articleId: Long,
+        imageIndex: Int,
+    ): String {
+        val bucketName: String = System.getenv("AWS_S3_BUCKET") ?: "Something went wrong"
+        if (bucketName == "Something went wrong") {
+            throw IllegalStateException(
+                "AWS_S3_BUCKET environment variable is missing. Please configure it.",
+            )
+        }
+        try {
+            val objectKey = imageS3Url.removePrefix("s3://$bucketName/")
+
+            // Presigned URL을 생성하기 위한 요청 객체 생성
+            val putObjectRequest =
+                PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(objectKey)
+                    .build()
+
+            // Presigned URL 요청 객체 생성
+            val presignedRequest =
+                PutObjectPresignRequest.builder()
+                    .signatureDuration(ofMinutes(15))
+                    .putObjectRequest(putObjectRequest)
+                    .build()
+
+            return s3Presigner.presignPutObject(presignedRequest).url().toString()
+        } catch (e: Exception) {
+            throw ImagePresignedUrlCreateException()
+        }
+    }
+
+    @Transactional
+    fun updateGetPresignedUrl(
+        imageUrlEntity: ImageUrlEntity,
+        imageS3Url: String,
+    ) {
+        val bucketName: String = System.getenv("AWS_S3_BUCKET") ?: "Something went wrong"
+        if (bucketName == "Something went wrong") {
+            throw IllegalStateException(
+                "AWS_S3_BUCKET environment variable is missing. Please configure it.",
+            )
+        }
+        try {
+            val objectKey = imageS3Url.removePrefix("s3://$bucketName/")
+
+            // Presigned URL을 생성하기 위한 요청 객체 생성
+            val getObjectRequest =
+                GetObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(objectKey)
+                    .build()
+
+            // Presigned URL 요청 객체 생성
+            val presignedRequest =
+                GetObjectPresignRequest.builder()
+                    .signatureDuration(ofMinutes(15))
+                    .getObjectRequest(getObjectRequest)
+                    .build()
+
+            imageUrlEntity.url = s3Presigner.presignGetObject(presignedRequest).url().toString()
+            imageUrlRepository.save(imageUrlEntity)
+        } catch (e: Exception) {
+            throw ImagePresignedUrlCreateException()
+        }
+    }
+
+    @Transactional
+    fun generateGetPresignedUrl(
         imageS3Url: String,
         articleId: Long,
         imageIndex: Int,
@@ -111,62 +183,27 @@ class ImageService(
             val objectKey = imageS3Url.removePrefix("s3://$bucketName/")
 
             // Presigned URL을 생성하기 위한 요청 객체 생성
-            val putObjectRequest =
-                PutObjectRequest.builder()
+            val getObjectRequest =
+                GetObjectRequest.builder()
                     .bucket(bucketName)
                     .key(objectKey)
                     .build()
 
             // Presigned URL 요청 객체 생성
             val presignedRequest =
-                PutObjectPresignRequest.builder()
+                GetObjectPresignRequest.builder()
                     .signatureDuration(ofMinutes(15))
-                    .putObjectRequest(putObjectRequest)
+                    .getObjectRequest(getObjectRequest)
                     .build()
 
             val imageUrlEntity =
                 ImageUrlEntity(
                     article = articleRepository.findById(articleId).orElseThrow { ArticleNotFoundException() },
-                    url = s3Presigner.presignPutObject(presignedRequest).url().toString(),
+                    url = s3Presigner.presignGetObject(presignedRequest).url().toString(),
                 )
 
             imageUrlRepository.save(imageUrlEntity)
             return imageUrlEntity
-        } catch (e: Exception) {
-            throw ImagePresignedUrlCreateException()
-        }
-    }
-
-    @Transactional
-    fun updatePresignedUrl(
-        imageUrlEntity: ImageUrlEntity,
-        imageS3Url: String,
-    ) {
-        val bucketName: String = System.getenv("AWS_S3_BUCKET") ?: "Something went wrong"
-        if (bucketName == "Something went wrong") {
-            throw IllegalStateException(
-                "AWS_S3_BUCKET environment variable is missing. Please configure it.",
-            )
-        }
-        try {
-            val objectKey = imageS3Url.removePrefix("s3://$bucketName/")
-
-            // Presigned URL을 생성하기 위한 요청 객체 생성
-            val putObjectRequest =
-                PutObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(objectKey)
-                    .build()
-
-            // Presigned URL 요청 객체 생성
-            val presignedRequest =
-                PutObjectPresignRequest.builder()
-                    .signatureDuration(ofMinutes(15))
-                    .putObjectRequest(putObjectRequest)
-                    .build()
-
-            imageUrlEntity.url = s3Presigner.presignPutObject(presignedRequest).url().toString()
-            imageUrlRepository.save(imageUrlEntity)
         } catch (e: Exception) {
             throw ImagePresignedUrlCreateException()
         }
