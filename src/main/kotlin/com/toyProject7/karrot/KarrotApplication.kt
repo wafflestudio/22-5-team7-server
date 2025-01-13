@@ -18,7 +18,7 @@ class KarrotApplication {
         if (System.getenv("AWS_ACCESS_KEY_ID") == null) {
             println("AWS_ACCESS_KEY_ID is not set")
         } else {
-            println("AWS_SECRET_ACCESS_KEY is set")
+            println("AWS_ACCESS_KEY_ID is set")
         }
         if (System.getenv("AWS_SECRET_ACCESS_KEY") == null) {
             println("AWS_SECRET_ACCESS_KEY is not set")
