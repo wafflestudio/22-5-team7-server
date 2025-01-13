@@ -9,7 +9,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 
-@Entity(name = "image_url")
+@Entity(name = "image_urls")
 class ImageUrlEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

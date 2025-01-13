@@ -12,16 +12,16 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import java.time.Instant
 
-@Entity(name = "article")
+@Entity(name = "articles")
 class ArticleEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
     @ManyToOne
-    @JoinColumn(name = "seller")
+    @JoinColumn(name = "user_id")
     var seller: UserEntity,
     @ManyToOne
-    @JoinColumn(name = "buyer")
+    @JoinColumn(name = "user_id")
     var buyer: UserEntity?,
     @Column(name = "title", nullable = false)
     var title: String,
