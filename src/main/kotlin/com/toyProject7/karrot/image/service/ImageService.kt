@@ -54,7 +54,7 @@ class ImageService(
             val objectIdentifiers =
                 imageS3Urls.map { s3Url ->
                     val objectKey = s3Url.url.removePrefix("s3://$bucketName/")
-                    ObjectIdentifier.builder().key(objectKey).versionId("2008-10-17").build()
+                    ObjectIdentifier.builder().key(objectKey).versionId("2012-10-17").build()
                 }
 
             // 삭제 요청 생성
@@ -115,7 +115,7 @@ class ImageService(
                 GetObjectRequest.builder()
                     .bucket(bucketName)
                     .key(objectKey)
-                    .versionId("2008-10-17")
+                    .versionId("2012-10-17")
                     .build()
 
             // Presigned URL 요청 객체 생성
@@ -157,7 +157,7 @@ class ImageService(
                 GetObjectRequest.builder()
                     .bucket(bucketName)
                     .key(objectKey)
-                    .versionId("2008-10-17")
+                    .versionId("2012-10-17")
                     .build()
 
             // Presigned URL 요청 객체 생성
