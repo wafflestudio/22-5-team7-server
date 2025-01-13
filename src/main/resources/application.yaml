@@ -18,7 +18,7 @@ spring:
           google:
             clientId: '${GOOGLE_CLI_ID}'
             clientSecret: '${GOOGLE_CLI_SECRET}'
-            redirect-uri: "https://toykarrot.shop/{action}/oauth2/code/{registrationId}"
+            redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
             scope:
               - email
               - profile
@@ -27,7 +27,7 @@ spring:
             clientSecret: '${NAVER_CLI_SECRET}'
             clientAuthenticationMethod: client_secret_post
             authorizationGrantType: authorization_code
-            redirectUri: "https://toykarrot.shop/{action}/oauth2/code/{registrationId}"
+            redirectUri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
             scope:
               - nickname
               - email
@@ -38,7 +38,7 @@ spring:
             clientSecret: '${KAKAO_CLI_SECRET}'
             clientAuthenticationMethod: client_secret_post
             authorizationGrantType: authorization_code
-            redirectUri: "https://toykarrot.shop/{action}/oauth2/code/{registrationId}"
+            redirectUri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
             scope:
               - profile_nickname
               - profile_image
