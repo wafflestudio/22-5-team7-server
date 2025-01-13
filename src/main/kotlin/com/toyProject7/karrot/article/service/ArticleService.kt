@@ -120,7 +120,7 @@ class ArticleService(
         articleId: Long,
         id: String,
     ) {
-        val articleEntity = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
+        val articleEntity = articleRepository.findByIdWithWriteLock(articleId) ?: throw ArticleNotFoundException()
         val userEntity = userService.getUserEntityById(id)
         if (articleEntity.articleLikes.any { it.user.id == userEntity.id }) {
             return
@@ -138,7 +138,7 @@ class ArticleService(
         articleId: Long,
         id: String,
     ) {
-        val articleEntity = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
+        val articleEntity = articleRepository.findByIdWithWriteLock(articleId) ?: throw ArticleNotFoundException()
         val userEntity = userService.getUserEntityById(id)
         val toBeRemoved: ArticleLikesEntity = articleEntity.articleLikes.find { it.user.id == userEntity.id } ?: return
         articleEntity.articleLikes -= toBeRemoved
@@ -148,7 +148,7 @@ class ArticleService(
 
     @Transactional
     fun getArticle(articleId: Long): Article {
-        val articleEntity = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
+        val articleEntity = articleRepository.findByIdWithWriteLock(articleId) ?: throw ArticleNotFoundException()
         val article: List<ArticleEntity> = listOf(articleEntity)
         refreshPresignedUrlIfExpired(article)
         articleEntity.viewCount += 1
