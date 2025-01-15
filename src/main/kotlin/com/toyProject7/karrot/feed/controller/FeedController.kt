@@ -44,7 +44,7 @@ class FeedController(
         @PathVariable feedId: Long,
         @AuthUser user: User,
     ): ResponseEntity<String> {
-        feedService.deleteFeed(feedId, user.id
+        feedService.deleteFeed(feedId, user.id)
         return ResponseEntity.ok("Deleted Successfully")
     }
 
@@ -62,7 +62,7 @@ class FeedController(
         @PathVariable feedId: Long,
         @AuthUser user: User,
     ): ResponseEntity<String> {
-        feedService.unlikeArticle(feedId, user.id)
+        feedService.unlikeFeed(feedId, user.id)
         return ResponseEntity.ok("Unliked Successfully")
     }
 
@@ -84,8 +84,6 @@ class FeedController(
             }
         return ResponseEntity.ok(response)
     }
-
-
 }
 
 data class PostFeedRequest(

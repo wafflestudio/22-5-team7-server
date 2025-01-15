@@ -39,4 +39,4 @@ class FeedEntity(
     var updatedAt: Instant,
     @Column(name = "view_count")
     var viewCount: Int,
-    )
+)

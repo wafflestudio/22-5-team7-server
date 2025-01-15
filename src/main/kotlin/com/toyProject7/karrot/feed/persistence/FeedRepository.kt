@@ -11,7 +11,10 @@ interface FeedRepository : JpaRepository<FeedEntity, Long> {
     @Query("SELECT r FROM feeds r WHERE r.id = :id")
     fun findByIdWithWriteLock(id: Long): FeedEntity?
 
-    fun findTop10ByIdBeforeOrderByCreatedAtDesc(id: Long): List<FeedEntity>
+    fun findTop10ByIdBeforeOrderByIdDesc(id: Long): List<FeedEntity>
 
-    fun findTop10ByAuthorAndIdLessThanOrderByIdDesc(author: UserEntity, id: Long): List<FeedEntity>
+    fun findTop10ByAuthorAndIdLessThanOrderByIdDesc(
+        author: UserEntity,
+        id: Long,
+    ): List<FeedEntity>
 }

@@ -31,4 +31,4 @@ class CommentEntity(
     var createdAt: Instant,
     @Column(name = "updated_at", nullable = false)
     var updatedAt: Instant,
-    )
+)

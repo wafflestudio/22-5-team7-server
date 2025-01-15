@@ -8,6 +8,4 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api")
 class CommentController(
     private val commentService: CommentService,
-) {
-
-}
+)

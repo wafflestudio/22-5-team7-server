@@ -1,7 +1,5 @@
 package com.toyProject7.karrot.article.persistence
 
-import com.toyProject7.karrot.article.controller.Article
-import com.toyProject7.karrot.feed.persistence.FeedEntity
 import com.toyProject7.karrot.user.persistence.UserEntity
 import jakarta.persistence.LockModeType
 import org.springframework.data.jpa.repository.JpaRepository

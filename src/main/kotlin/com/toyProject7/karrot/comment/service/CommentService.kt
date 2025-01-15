@@ -8,5 +8,4 @@ import org.springframework.stereotype.Service
 class CommentService(
     val commentRepository: CommentRepository,
     val commentLikesRepository: CommentLikesRepository,
-) {
-}
+)
