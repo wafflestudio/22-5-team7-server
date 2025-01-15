@@ -12,8 +12,6 @@ interface UserRepository : JpaRepository<UserEntity, String> {
 
     fun findByNickname(nickname: String): UserEntity?
 
-    fun existsByUserId(userId: String): Boolean
-
     @Query("SELECT s FROM NormalUser s WHERE s.id = :id")
     fun findNormalUserById(
         @Param("id") id: String,
