@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Lock
 import org.springframework.data.jpa.repository.Query
 
 interface ArticleRepository : JpaRepository<ArticleEntity, Long> {
-    fun findTop10ByIdBeforeOrderByCreatedAtDesc(id: Long): List<ArticleEntity>
+    fun findTop10ByIdBeforeOrderByIdDesc(id: Long): List<ArticleEntity>
 
     fun findTop10BySellerAndIdLessThanOrderByIdDesc(
         seller: UserEntity,

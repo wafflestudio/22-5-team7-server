@@ -12,7 +12,7 @@ data class Article(
     val price: Int,
     val status: String,
     val location: String,
-    val imagePresignedUrl: List<String>,
+    var imagePresignedUrl: List<String>,
     val createdAt: Instant,
     val likeCount: Int,
     val viewCount: Int,
