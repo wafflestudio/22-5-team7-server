@@ -28,7 +28,7 @@ class ProfileEntity(
     @JoinTable(
         name = "profile_review",
         joinColumns = [JoinColumn(name = "profile_id")],
-        inverseJoinColumns = [JoinColumn(name = "review_id")]
+        inverseJoinColumns = [JoinColumn(name = "review_id")],
     )
     var reviews: MutableList<ReviewEntity> = mutableListOf(),
 )
