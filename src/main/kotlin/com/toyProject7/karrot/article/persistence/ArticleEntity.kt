@@ -1,8 +1,8 @@
 package com.toyProject7.karrot.article.persistence
 
+import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.user.persistence.UserEntity
 import jakarta.persistence.Column
-import jakarta.persistence.ElementCollection
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -33,12 +33,10 @@ class ArticleEntity(
     var status: String,
     @Column(name = "location", nullable = false)
     var location: String,
-    @ElementCollection
-    @Column(name = "image_s3_url", nullable = false)
-    var imageS3Url: List<String> = emptyList(),
-    @ElementCollection
-    @Column(name = "image_presigned_url", nullable = false)
-    var imagePresignedUrl: List<String> = emptyList(),
+    @OneToMany(mappedBy = "article")
+    var imageS3Urls: MutableList<ImageUrlEntity> = mutableListOf(),
+    @OneToMany(mappedBy = "article")
+    var imagePresignedUrls: MutableList<ImageUrlEntity> = mutableListOf(),
     @OneToMany(mappedBy = "article")
     var articleLikes: MutableList<ArticleLikesEntity> = mutableListOf(),
     @Column(name = "created_at", nullable = false)
