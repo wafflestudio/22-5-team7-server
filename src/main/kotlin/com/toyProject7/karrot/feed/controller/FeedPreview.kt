@@ -21,7 +21,7 @@ data class FeedPreview(
                 authorLocation = entity.author.location,
                 title = entity.title,
                 content = entity.content.take(40),
-                imagePresignedUrl = if (entity.imagePresignedUrls.isEmpty()) "" else entity.imagePresignedUrls.first().presigned,
+                imagePresignedUrl = if (entity.imageUrls.isEmpty()) "" else entity.imageUrls.first().presigned,
                 likeCount = entity.feedLikes.size,
                 commentCount = entity.feedComments.size,
                 createdAt = entity.createdAt,

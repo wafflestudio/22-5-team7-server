@@ -2,7 +2,7 @@ package com.toyProject7.karrot.feed
 
 import com.toyProject7.karrot.DomainException
 import org.springframework.http.HttpStatus
-import software.amazon.awssdk.http.HttpStatusCode
+import org.springframework.http.HttpStatusCode
 
 sealed class FeedException(
     errorCode: Int,
