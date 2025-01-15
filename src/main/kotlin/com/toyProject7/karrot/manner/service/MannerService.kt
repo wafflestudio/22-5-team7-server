@@ -10,6 +10,7 @@ import com.toyProject7.karrot.user.UserNotFoundException
 import com.toyProject7.karrot.user.controller.User
 import com.toyProject7.karrot.user.persistence.UserRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class MannerService(
@@ -17,6 +18,7 @@ class MannerService(
     private val userRepository: UserRepository,
     private val profileRepository: ProfileRepository,
 ) {
+    @Transactional
     fun increaseMannerCount(
         nickname: String,
         mannerType: MannerType,
@@ -24,7 +26,7 @@ class MannerService(
         val userEntity = userRepository.findByNickname(nickname) ?: throw UserNotFoundException()
         val user = User.fromEntity(userEntity)
         val profileEntity = profileRepository.findByUserId(user.id) ?: throw ProfileNotFoundException()
-        val profile = Profile.fromEntity(profileEntity)
+        val profile = Profile.fromEntity(profileEntity, 0)
 
         val mannerEntity = mannerRepository.findByProfileIdAndMannerType(profile.id, mannerType)
         if (mannerEntity != null) {
@@ -40,6 +42,9 @@ class MannerService(
             mannerRepository.save(newMannerEntity)
             profileEntity.manners += newMannerEntity
         }
+
+        userEntity.temperature++
+        userRepository.save(userEntity)
 
         profileRepository.save(profileEntity)
     }
