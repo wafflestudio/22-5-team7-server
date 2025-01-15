@@ -26,9 +26,7 @@ class FeedEntity(
     @Column(name = "content", nullable = false)
     var content: String,
     @OneToMany(mappedBy = "feed")
-    var imageS3Urls: MutableList<ImageUrlEntity> = mutableListOf(),
-    @OneToMany(mappedBy = "feed")
-    var imagePresignedUrls: MutableList<ImageUrlEntity> = mutableListOf(),
+    var imageUrls: MutableList<ImageUrlEntity> = mutableListOf(),
     @OneToMany(mappedBy = "feed")
     var feedLikes: MutableList<FeedLikesEntity> = mutableListOf(),
     @OneToMany(mappedBy = "feed")

@@ -24,7 +24,7 @@ data class Feed(
                 author = User.fromEntity(entity.author),
                 title = entity.title,
                 content = entity.content,
-                imagePresignedUrl = entity.imagePresignedUrls.map { imageUrlEntity -> imageUrlEntity.url }.ifEmpty { emptyList() },
+                imagePresignedUrl = entity.imagePresignedUrls.map { imageUrlEntity -> imageUrlEntity.presigned }.ifEmpty { emptyList() },
                 likeCount = entity.feedLikes.size,
                 commentList = entity.feedComments.map { feedCommentEntity -> Comment.fromEntity(feedCommentEntity) },
                 createdAt = entity.createdAt,

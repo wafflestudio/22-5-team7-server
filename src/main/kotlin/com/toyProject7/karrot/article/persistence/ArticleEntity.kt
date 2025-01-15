@@ -34,9 +34,7 @@ class ArticleEntity(
     @Column(name = "location", nullable = false)
     var location: String,
     @OneToMany(mappedBy = "article")
-    var imageS3Urls: MutableList<ImageUrlEntity> = mutableListOf(),
-    @OneToMany(mappedBy = "article")
-    var imagePresignedUrls: MutableList<ImageUrlEntity> = mutableListOf(),
+    var imageUrls: MutableList<ImageUrlEntity> = mutableListOf(),
     @OneToMany(mappedBy = "article")
     var articleLikes: MutableList<ArticleLikesEntity> = mutableListOf(),
     @Column(name = "created_at", nullable = false)

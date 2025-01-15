@@ -9,7 +9,6 @@ import com.toyProject7.karrot.article.persistence.ArticleLikesEntity
 import com.toyProject7.karrot.article.persistence.ArticleLikesRepository
 import com.toyProject7.karrot.article.persistence.ArticleRepository
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
-import com.toyProject7.karrot.image.persistence.ImageUrlRepository
 import com.toyProject7.karrot.image.service.ImageService
 import com.toyProject7.karrot.user.service.UserService
 import org.springframework.data.repository.findByIdOrNull
@@ -22,7 +21,6 @@ import java.time.temporal.ChronoUnit
 class ArticleService(
     private val articleRepository: ArticleRepository,
     private val articleLikesRepository: ArticleLikesRepository,
-    private val imageUrlRepository: ImageUrlRepository,
     private val userService: UserService,
     private val imageService: ImageService,
 ) {
@@ -41,8 +39,7 @@ class ArticleService(
                 price = request.price,
                 status = "판매 중",
                 location = request.location,
-                imageS3Urls = mutableListOf(),
-                imagePresignedUrls = mutableListOf(),
+                imageUrls = mutableListOf(),
                 createdAt = Instant.now(),
                 updatedAt = Instant.now(),
                 viewCount = 1,
@@ -52,14 +49,13 @@ class ArticleService(
         val imagePutPresingedUrls: MutableList<String> = mutableListOf()
         if (request.imageCount > 0) {
             for (number in 1..request.imageCount) {
-                val imageS3Url: ImageUrlEntity = imageService.postImageUrl("article", articleEntity.id!!, number)
-                articleEntity.imageS3Urls += imageS3Url
+                val imageUrlEntity: ImageUrlEntity = imageService.postImageUrl("article", articleEntity.id!!, number)
 
-                val imagePutPresignedUrl: String = imageService.generatePutPresignedUrl(imageS3Url.url, articleEntity.id!!, number)
+                val imagePutPresignedUrl: String = imageService.generatePutPresignedUrl(imageUrlEntity.s3)
                 imagePutPresingedUrls += imagePutPresignedUrl
 
-                val imagePresignedUrl: ImageUrlEntity = imageService.generateGetPresignedUrl(imageS3Url.url, articleEntity.id!!, number)
-                articleEntity.imagePresignedUrls += imagePresignedUrl
+                imageService.generateGetPresignedUrl(imageUrlEntity)
+                articleEntity.imageUrls += imageUrlEntity
             }
             articleEntity.updatedAt = Instant.now()
         }
@@ -86,24 +82,21 @@ class ArticleService(
         articleEntity.content = request.content
         articleEntity.price = request.price
         articleEntity.location = request.location
-        if (articleEntity.imageS3Urls.isNotEmpty()) {
-            imageService.deleteImageUrl(articleEntity.imageS3Urls)
-            articleEntity.imagePresignedUrls.map { imageUrlEntity -> imageUrlRepository.delete(imageUrlEntity) }
-            articleEntity.imageS3Urls = mutableListOf()
-            articleEntity.imagePresignedUrls = mutableListOf()
+        if (articleEntity.imageUrls.isNotEmpty()) {
+            imageService.deleteImageUrl(articleEntity.imageUrls)
+            articleEntity.imageUrls = mutableListOf()
         }
 
         val imagePutPresignedUrls: MutableList<String> = mutableListOf()
         if (request.imageCount > 0) {
             for (number in 1..request.imageCount) {
-                val imageS3Url: ImageUrlEntity = imageService.postImageUrl("article", articleEntity.id!!, number)
-                articleEntity.imageS3Urls += imageS3Url
+                val imageUrlEntity: ImageUrlEntity = imageService.postImageUrl("article", articleEntity.id!!, number)
 
-                val imagePutPresignedUrl: String = imageService.generatePutPresignedUrl(imageS3Url.url, articleEntity.id!!, number)
+                val imagePutPresignedUrl: String = imageService.generatePutPresignedUrl(imageUrlEntity.s3)
                 imagePutPresignedUrls += imagePutPresignedUrl
 
-                val imagePresignedUrl: ImageUrlEntity = imageService.generateGetPresignedUrl(imageS3Url.url, articleEntity.id!!, number)
-                articleEntity.imagePresignedUrls += imagePresignedUrl
+                imageService.generateGetPresignedUrl(imageUrlEntity)
+                articleEntity.imageUrls += imageUrlEntity
             }
             articleEntity.updatedAt = Instant.now()
         }
@@ -125,9 +118,8 @@ class ArticleService(
         if (articleEntity.seller.id != user.id) {
             throw ArticlePermissionDeniedException()
         }
-        if (articleEntity.imageS3Urls.isNotEmpty()) {
-            imageService.deleteImageUrl(articleEntity.imageS3Urls)
-            articleEntity.imagePresignedUrls.map { imageUrlEntity -> imageUrlRepository.delete(imageUrlEntity) }
+        if (articleEntity.imageUrls.isNotEmpty()) {
+            imageService.deleteImageUrl(articleEntity.imageUrls)
         }
         articleRepository.delete(articleEntity)
     }
@@ -176,9 +168,9 @@ class ArticleService(
     @Transactional
     fun refreshPresignedUrlIfExpired(articles: List<ArticleEntity>) {
         articles.forEach { article ->
-            if (article.imageS3Urls.isNotEmpty() && ChronoUnit.MINUTES.between(article.updatedAt, Instant.now()) >= 10) {
-                for (number in 1..article.imageS3Urls.size) {
-                    imageService.updateGetPresignedUrl(article.imagePresignedUrls[number - 1], article.imageS3Urls[number - 1].url)
+            if (article.imageUrls.isNotEmpty() && ChronoUnit.MINUTES.between(article.updatedAt, Instant.now()) >= 10) {
+                for (number in 1..article.imageUrls.size) {
+                    imageService.generateGetPresignedUrl(article.imageUrls[number - 1])
                 }
                 article.updatedAt = Instant.now()
                 articleRepository.save(article)
@@ -228,5 +220,10 @@ class ArticleService(
         val articles = articleRepository.findTop10ByBuyerAndIdLessThanOrderByIdDesc(buyer, articleId)
         refreshPresignedUrlIfExpired(articles)
         return articles
+    }
+
+    @Transactional
+    fun getArticleEntityById(articleId: Long): ArticleEntity {
+        return articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
     }
 }

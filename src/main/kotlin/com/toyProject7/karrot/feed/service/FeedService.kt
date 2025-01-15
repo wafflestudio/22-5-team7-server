@@ -37,8 +37,7 @@ class FeedService(
                 author = user,
                 title = request.title,
                 content = request.content,
-                imageS3Urls = mutableListOf(),
-                imagePresignedUrls = mutableListOf(),
+                imageUrls = mutableListOf(),
                 feedLikes = mutableListOf(),
                 feedComments = mutableListOf(),
                 createdAt = Instant.now(),
@@ -49,14 +48,13 @@ class FeedService(
         val imagePutPresignedUrls: MutableList<String> = mutableListOf()
         if (request.imageCount > 0) {
             for (number in 1..request.imageCount) {
-                val imageS3Url: ImageUrlEntity = imageService.postImageUrl("feed", feedEntity.id!!, number)
-                feedEntity.imageS3Urls += imageS3Url
+                val imageUrlEntity: ImageUrlEntity = imageService.postImageUrl("feed", feedEntity.id!!, number)
 
-                val imagePutPresignedUrl: String = imageService.generatePutPresignedUrl(imageS3Url.url, feedEntity.id!!, number)
+                val imagePutPresignedUrl: String = imageService.generatePutPresignedUrl(imageUrlEntity.s3)
                 imagePutPresignedUrls += imagePutPresignedUrl
 
-                val imagePresignedUrl: ImageUrlEntity = imageService.generateGetPresignedUrl(imageS3Url.url, feedEntity.id!!, number)
-                feedEntity.imagePresignedUrls += imagePresignedUrl
+                imageService.generateGetPresignedUrl(imageUrlEntity)
+                feedEntity.imageUrls += imageUrlEntity
             }
             feedEntity.updatedAt = Instant.now()
         }
@@ -79,23 +77,20 @@ class FeedService(
         }
         feedEntity.title = request.title
         feedEntity.content = request.content
-        if (feedEntity.imageS3Urls.isNotEmpty()) {
-            imageService.deleteImageUrl(feedEntity.imageS3Urls)
-            feedEntity.imagePresignedUrls.map { imageUrlEntity -> imageUrlRepository.delete(imageUrlEntity) }
-            feedEntity.imageS3Urls = mutableListOf()
-            feedEntity.imagePresignedUrls = mutableListOf()
+        if (feedEntity.imageUrls.isNotEmpty()) {
+            imageService.deleteImageUrl(feedEntity.imageUrls)
+            feedEntity.imageUrls = mutableListOf()
         }
         val imagePutPresignedUrls: MutableList<String> = mutableListOf()
         if (request.imageCount > 0) {
             for (number in 1..request.imageCount) {
-                val imageS3Url: ImageUrlEntity = imageService.postImageUrl("feed", feedEntity.id!!, number)
-                feedEntity.imageS3Urls += imageS3Url
+                val imageUrlEntity: ImageUrlEntity = imageService.postImageUrl("feed", feedEntity.id!!, number)
 
-                val imagePutPresignedUrl: String = imageService.generatePutPresignedUrl(imageS3Url.url, feedEntity.id!!, number)
+                val imagePutPresignedUrl: String = imageService.generatePutPresignedUrl(imageUrlEntity.s3)
                 imagePutPresignedUrls += imagePutPresignedUrl
 
-                val imagePresignedUrl: ImageUrlEntity = imageService.generateGetPresignedUrl(imageS3Url.url, feedEntity.id!!, number)
-                feedEntity.imagePresignedUrls += imagePresignedUrl
+                imageService.generateGetPresignedUrl(imageUrlEntity)
+                feedEntity.imageUrls += imageUrlEntity
             }
             feedEntity.updatedAt = Instant.now()
         }
@@ -116,9 +111,8 @@ class FeedService(
         if (feedEntity.author.id != user.id) {
             throw FeedPermissionDeniedException()
         }
-        if (feedEntity.imageS3Urls.isNotEmpty()) {
-            imageService.deleteImageUrl(feedEntity.imageS3Urls)
-            feedEntity.imagePresignedUrls.map { imageUrlEntity -> imageUrlRepository.delete(imageUrlEntity) }
+        if (feedEntity.imageUrls.isNotEmpty()) {
+            imageService.deleteImageUrl(feedEntity.imageUrls)
         }
         feedRepository.delete(feedEntity)
     }
@@ -174,13 +168,18 @@ class FeedService(
     @Transactional
     fun refreshPresignedUrlIfExpired(feeds: List<FeedEntity>) {
         feeds.forEach { feed ->
-            if (feed.imageS3Urls.isNotEmpty() && ChronoUnit.MINUTES.between(feed.updatedAt, Instant.now()) >= 10) {
-                for (number in 1..feed.imageS3Urls.size) {
-                    imageService.updateGetPresignedUrl(feed.imagePresignedUrls[number - 1], feed.imageS3Urls[number - 1].url)
+            if (feed.imageUrls.isNotEmpty() && ChronoUnit.MINUTES.between(feed.updatedAt, Instant.now()) >= 10) {
+                for (number in 1..feed.imageUrls.size) {
+                    imageService.generateGetPresignedUrl(feed.imageUrls[number - 1])
                 }
                 feed.updatedAt = Instant.now()
                 feedRepository.save(feed)
             }
         }
+    }
+
+    @Transactional
+    fun getFeedEntityById(feedId: Long): FeedEntity {
+        return feedRepository.findByIdOrNull(feedId) ?: throw FeedNotFoundException()
     }
 }

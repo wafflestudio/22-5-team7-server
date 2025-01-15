@@ -1,6 +1,7 @@
 package com.toyProject7.karrot.image.persistence
 
 import com.toyProject7.karrot.article.persistence.ArticleEntity
+import com.toyProject7.karrot.feed.persistence.FeedEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -16,7 +17,15 @@ class ImageUrlEntity(
     val id: Long? = null,
     @ManyToOne
     @JoinColumn(name = "article_id")
-    var article: ArticleEntity,
-    @Column(name = "url", nullable = false, length = 512)
-    var url: String,
+    var article: ArticleEntity? = null,
+    @ManyToOne
+    @JoinColumn(name = "feed_id")
+    var feed: FeedEntity? = null,
+//    @ManyToOne
+//    @JoinColumn(name = "auction_id")
+//    var auction: AuctionEntity? = null,
+    @Column(name = "s3", nullable = false, length = 512)
+    var s3: String,
+    @Column(name = "presigned", nullable = false, length = 512)
+    var presigned: String = "",
 )
