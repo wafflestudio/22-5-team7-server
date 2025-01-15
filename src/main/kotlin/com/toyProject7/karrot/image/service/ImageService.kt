@@ -7,6 +7,7 @@ import com.toyProject7.karrot.image.ImagePresignedUrlCreateException
 import com.toyProject7.karrot.image.ImageS3UrlCreateException
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.image.persistence.ImageUrlRepository
+import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import software.amazon.awssdk.services.s3.S3Client
@@ -23,8 +24,8 @@ import java.time.Duration.ofMinutes
 class ImageService(
     private val s3Client: S3Client,
     private val s3Presigner: S3Presigner,
-    private val articleService: ArticleService,
-    private val feedService: FeedService,
+    @Lazy private val articleService: ArticleService,
+    @Lazy private val feedService: FeedService,
     private val imageUrlRepository: ImageUrlRepository,
 ) {
     @Transactional
