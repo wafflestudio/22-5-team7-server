@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
+import jakarta.persistence.JoinTable
 import jakarta.persistence.ManyToMany
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
@@ -24,6 +25,10 @@ class ProfileEntity(
     @OneToMany(mappedBy = "profile", cascade = [CascadeType.ALL])
     var manners: MutableList<MannerEntity> = mutableListOf(),
     @ManyToMany
-    @JoinColumn(name = "reviews")
+    @JoinTable(
+        name = "profile_review",
+        joinColumns = [JoinColumn(name = "profile_id")],
+        inverseJoinColumns = [JoinColumn(name = "review_id")]
+    )
     var reviews: MutableList<ReviewEntity> = mutableListOf(),
 )
