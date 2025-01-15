@@ -31,7 +31,7 @@ class FeedEntity(
     var feedLikes: MutableList<FeedLikesEntity> = mutableListOf(),
     @OneToMany(mappedBy = "feed")
     var feedComments: MutableList<CommentEntity> = mutableListOf(),
-    @Column(name = "crated_at", nullable = false)
+    @Column(name = "created_at", nullable = false)
     var createdAt: Instant,
     @Column(name = "updated_at", nullable = false)
     var updatedAt: Instant,

@@ -18,10 +18,10 @@ class ArticleEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "seller_id")
     var seller: UserEntity,
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "buyer_id")
     var buyer: UserEntity?,
     @Column(name = "title", nullable = false)
     var title: String,

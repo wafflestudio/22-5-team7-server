@@ -16,13 +16,13 @@ class ImageUrlEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
     @ManyToOne
-    @JoinColumn(name = "article_id")
+    @JoinColumn(name = "article_id", nullable = true)
     var article: ArticleEntity? = null,
     @ManyToOne
-    @JoinColumn(name = "feed_id")
+    @JoinColumn(name = "feed_id", nullable = true)
     var feed: FeedEntity? = null,
 //    @ManyToOne
-//    @JoinColumn(name = "auction_id")
+//    @JoinColumn(name = "auction_id", nullable = true)
 //    var auction: AuctionEntity? = null,
     @Column(name = "s3", nullable = false, length = 512)
     var s3: String,
