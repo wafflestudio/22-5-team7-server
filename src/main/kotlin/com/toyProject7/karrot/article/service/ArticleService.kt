@@ -87,7 +87,7 @@ class ArticleService(
             articleEntity.imageUrls = mutableListOf()
         }
 
-        val imagePutPresignedUrls: MutableList<String> = mutableListOf()
+        val imagePutPresingedUrls: MutableList<String> = mutableListOf()
         if (request.imageCount > 0) {
             for (number in 1..request.imageCount) {
                 val imageUrlEntity: ImageUrlEntity = imageService.postImageUrl("article", articleEntity.id!!, number)
