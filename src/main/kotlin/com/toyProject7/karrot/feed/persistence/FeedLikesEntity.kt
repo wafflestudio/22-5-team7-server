@@ -1,4 +1,4 @@
-package com.toyProject7.karrot.article.persistence
+package com.toyProject7.karrot.feed.persistence
 
 import com.toyProject7.karrot.user.persistence.UserEntity
 import jakarta.persistence.Column
@@ -10,14 +10,14 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import java.time.Instant
 
-@Entity(name = "article_likes")
-class ArticleLikesEntity(
+@Entity(name = "feed_likes")
+class FeedLikesEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: String? = null,
     @ManyToOne
-    @JoinColumn(name = "article_id")
-    var article: ArticleEntity,
+    @JoinColumn(name = "feed_id")
+    var feed: FeedEntity,
     @ManyToOne
     @JoinColumn(name = "user_id")
     var user: UserEntity,

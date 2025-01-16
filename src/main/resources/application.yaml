@@ -16,15 +16,15 @@ spring:
       client:
         registration:
           google:
-            clientId: '${GOOGLE_CLI_ID}'
-            clientSecret: '${GOOGLE_CLI_SECRET}'
+            clientId: '${GOOGLE_CLIENT_ID}'
+            clientSecret: '${GOOGLE_CLIENT_SECRET}'
             redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
             scope:
               - email
               - profile
           naver:
-            clientId: '${NAVER_CLI_ID}'
-            clientSecret: '${NAVER_CLI_SECRET}'
+            clientId: '${NAVER_CLIENT_ID}'
+            clientSecret: '${NAVER_CLIENT_SECRET}'
             clientAuthenticationMethod: client_secret_post
             authorizationGrantType: authorization_code
             redirectUri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
@@ -34,8 +34,8 @@ spring:
               - profile_image
             clientName: Naver
           kakao:
-            clientId: '${KAKAO_CLI_ID}'
-            clientSecret: '${KAKAO_CLI_SECRET}'
+            clientId: '${KAKAO_CLIENT_ID}'
+            clientSecret: '${KAKAO_CLIENT_SECRET}'
             clientAuthenticationMethod: client_secret_post
             authorizationGrantType: authorization_code
             redirectUri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
@@ -59,7 +59,3 @@ spring:
             userNameAttribute: id
   profiles:
     active: dev
-logging:
-  level:
-    org.springframework.security: DEBUG
-    org.springframework.web: DEBUG
