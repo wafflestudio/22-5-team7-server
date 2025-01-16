@@ -20,6 +20,6 @@ interface ArticleRepository : JpaRepository<ArticleEntity, Long> {
     ): List<ArticleEntity>
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT r FROM feeds r WHERE r.id = :id")
+    @Query("SELECT r FROM articles r WHERE r.id = :id")
     fun findByIdWithWriteLock(id: Long): ArticleEntity?
 }

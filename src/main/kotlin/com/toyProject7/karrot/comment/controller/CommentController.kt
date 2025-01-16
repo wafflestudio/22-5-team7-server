@@ -6,6 +6,7 @@ import com.toyProject7.karrot.user.controller.User
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -22,6 +23,16 @@ class CommentController(
         @AuthUser user: User,
     ): ResponseEntity<Comment> {
         val comment = commentService.postComment(request, feedId, user.id)
+        return ResponseEntity.ok(comment)
+    }
+
+    @PutMapping("/comment/edit/{commentId}")
+    fun editComment(
+        @RequestBody request: CommentRequest,
+        @PathVariable("commentId") commentId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<Comment> {
+        val comment = commentService.editComment(request, commentId, user.id)
         return ResponseEntity.ok(comment)
     }
 }
