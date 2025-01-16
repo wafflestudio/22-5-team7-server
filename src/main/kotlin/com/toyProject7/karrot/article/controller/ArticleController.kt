@@ -57,7 +57,7 @@ class ArticleController(
         return ResponseEntity.ok("Liked Successfully")
     }
 
-    @PostMapping("/item/unlike/{articleId}")
+    @DeleteMapping("/item/unlike/{articleId}")
     fun unlikeArticle(
         @PathVariable articleId: Long,
         @AuthUser user: User,
@@ -69,8 +69,10 @@ class ArticleController(
     @GetMapping("/item/get/{articleId}")
     fun getArticle(
         @PathVariable articleId: Long,
+        @AuthUser user: User,
     ): ResponseEntity<Article> {
-        return ResponseEntity.ok(articleService.getArticle(articleId))
+        val article = articleService.getArticle(articleId, user.id)
+        return ResponseEntity.ok(article)
     }
 
     @GetMapping("/home")

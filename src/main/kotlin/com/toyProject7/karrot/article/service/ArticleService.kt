@@ -156,13 +156,18 @@ class ArticleService(
     }
 
     @Transactional
-    fun getArticle(articleId: Long): Article {
+    fun getArticle(
+        articleId: Long,
+        id: String,
+    ): Article {
         val articleEntity = articleRepository.findByIdWithWriteLock(articleId) ?: throw ArticleNotFoundException()
-        val article: List<ArticleEntity> = listOf(articleEntity)
-        refreshPresignedUrlIfExpired(article)
+        val articleList: List<ArticleEntity> = listOf(articleEntity)
+        refreshPresignedUrlIfExpired(articleList)
         articleEntity.viewCount += 1
         articleRepository.save(articleEntity)
-        return Article.fromEntity(articleEntity)
+        val article = Article.fromEntity(articleEntity)
+        article.isLiked = articleLikesRepository.existsByUserIdAndArticleId(id, article.id)
+        return article
     }
 
     @Transactional
