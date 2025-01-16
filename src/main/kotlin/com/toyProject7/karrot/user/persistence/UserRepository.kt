@@ -10,6 +10,8 @@ interface UserRepository : JpaRepository<UserEntity, String> {
         @Param("userId") userId: String,
     ): NormalUser?
 
+    fun findByNickname(nickname: String): UserEntity?
+
     @Query("SELECT s FROM NormalUser s WHERE s.id = :id")
     fun findNormalUserById(
         @Param("id") id: String,

@@ -21,4 +21,6 @@ interface ArticleRepository : JpaRepository<ArticleEntity, Long> {
     @Modifying
     @Query("UPDATE articles a SET a.viewCount = a.viewCount + 1 WHERE a.id = :id")
     fun incrementViewCount(id: Long): Long
+
+    fun countBySellerId(id: String): Int
 }
