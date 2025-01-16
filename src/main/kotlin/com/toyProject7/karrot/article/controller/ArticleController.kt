@@ -69,8 +69,10 @@ class ArticleController(
     @GetMapping("/item/get/{articleId}")
     fun getArticle(
         @PathVariable articleId: Long,
+        @AuthUser user: User,
     ): ResponseEntity<Article> {
-        return ResponseEntity.ok(articleService.getArticle(articleId))
+        val article = articleService.getArticle(articleId, user.id)
+        return ResponseEntity.ok(article)
     }
 
     @GetMapping("/home")

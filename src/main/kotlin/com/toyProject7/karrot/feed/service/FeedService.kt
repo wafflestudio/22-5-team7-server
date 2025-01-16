@@ -1,5 +1,6 @@
 package com.toyProject7.karrot.feed.service
 
+import com.toyProject7.karrot.comment.persistence.CommentEntity
 import com.toyProject7.karrot.feed.FeedNotFoundException
 import com.toyProject7.karrot.feed.FeedPermissionDeniedException
 import com.toyProject7.karrot.feed.controller.Feed
@@ -179,5 +180,14 @@ class FeedService(
     @Transactional
     fun getFeedEntityById(feedId: Long): FeedEntity {
         return feedRepository.findByIdOrNull(feedId) ?: throw FeedNotFoundException()
+    }
+
+    @Transactional
+    fun saveCommentInFeed(
+        feed: FeedEntity,
+        comment: CommentEntity,
+    ) {
+        feed.feedComments += comment
+        feedRepository.save(feed)
     }
 }

@@ -16,6 +16,7 @@ data class Article(
     val createdAt: Instant,
     val likeCount: Int,
     val viewCount: Int,
+    var isLiked: Boolean,
 ) {
     companion object {
         fun fromEntity(entity: ArticleEntity): Article {
@@ -31,6 +32,7 @@ data class Article(
                 createdAt = entity.createdAt,
                 likeCount = entity.articleLikes.size,
                 viewCount = entity.viewCount,
+                isLiked = false,
             )
         }
     }
