@@ -43,7 +43,7 @@ class ArticleService(
                 imageUrls = mutableListOf(),
                 createdAt = Instant.now(),
                 updatedAt = Instant.now(),
-                viewCount = 1,
+                viewCount = 0,
             )
         articleRepository.save(articleEntity)
 
@@ -101,7 +101,6 @@ class ArticleService(
             }
             articleEntity.updatedAt = Instant.now()
         }
-        articleEntity.viewCount += 1
         articleRepository.save(articleEntity)
 
         val article = Article.fromEntity(articleEntity)
