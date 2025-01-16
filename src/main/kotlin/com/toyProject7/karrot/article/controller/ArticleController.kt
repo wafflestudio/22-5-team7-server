@@ -57,7 +57,7 @@ class ArticleController(
         return ResponseEntity.ok("Liked Successfully")
     }
 
-    @DeleteMapping("/item/unlike/{articleId}")
+    @PostMapping("/item/unlike/{articleId}")
     fun unlikeArticle(
         @PathVariable articleId: Long,
         @AuthUser user: User,

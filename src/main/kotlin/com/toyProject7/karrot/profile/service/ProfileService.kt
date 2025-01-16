@@ -28,7 +28,7 @@ class ProfileService(
     @Transactional
     fun getProfileImage(user: User): String {
         val profileEntity = profileRepository.findByUserId(user.id) ?: throw ProfileNotFoundException()
-        return profileEntity.imageUrl?.url ?: ""
+        return profileEntity.imageUrl?.presigned ?: ""
     }
 
     @Transactional
