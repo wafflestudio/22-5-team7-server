@@ -48,12 +48,12 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLI_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLI_SECRET }}
-          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLI_ID }}
-          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLI_SECRET }}
-          KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLI_ID }}
-          KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLI_SECRET }}
+          GOOGLE_CLI_ID: ${{ secrets.GOOGLE_CLI_ID }}
+          GOOGLE_CLI_SECRET: ${{ secrets.GOOGLE_CLI_SECRET }}
+          NAVER_CLI_ID: ${{ secrets.NAVER_CLI_ID }}
+          NAVER_CLI_SECRET: ${{ secrets.NAVER_CLI_SECRET }}
+          KAKAO_CLI_ID: ${{ secrets.KAKAO_CLI_ID }}
+          KAKAO_CLI_SECRET: ${{ secrets.KAKAO_CLI_SECRET }}
         run: |
           ./gradlew build
           ./gradlew test
