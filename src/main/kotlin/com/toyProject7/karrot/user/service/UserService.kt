@@ -1,5 +1,7 @@
 package com.toyProject7.karrot.user.service
 
+import com.toyProject7.karrot.profile.persistence.ProfileEntity
+import com.toyProject7.karrot.profile.persistence.ProfileRepository
 import com.toyProject7.karrot.user.AuthenticateException
 import com.toyProject7.karrot.user.SignInInvalidPasswordException
 import com.toyProject7.karrot.user.SignInUserNotFoundException
@@ -22,10 +24,12 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 
 @Service
 class UserService(
     private val userRepository: UserRepository,
+    private val profileRepository: ProfileRepository,
     private val normalUserRepository: NormalUserRepository,
 ) {
     @Transactional
@@ -65,8 +69,17 @@ class UserService(
                     location = "void",
                     temperature = 36.5,
                     email = email,
+                    imageUrl = null,
+                    updatedAt = Instant.now(),
                 ),
             )
+
+        val profileEntity =
+            ProfileEntity(
+                user = user,
+            )
+        profileRepository.save(profileEntity)
+
         return User.fromEntity(user)
     }
 
@@ -113,6 +126,8 @@ class UserService(
                     providerId = providerId,
                     location = "void",
                     temperature = 36.5,
+                    imageUrl = null,
+                    updatedAt = Instant.now(),
                 )
             val savedUser = userRepository.save(newUser) // This should save as SocialUser
             User.fromEntity(savedUser) // Convert and return as User DTO

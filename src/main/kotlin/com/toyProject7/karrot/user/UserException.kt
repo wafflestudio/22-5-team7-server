@@ -64,3 +64,9 @@ class AuthenticateException : UserException(
     httpStatusCode = HttpStatus.UNAUTHORIZED,
     msg = "Authenticate failed",
 )
+
+class UserNotFoundException : UserException(
+    errorCode = 0,
+    httpStatusCode = HttpStatus.NOT_FOUND,
+    msg = "User not found",
+)

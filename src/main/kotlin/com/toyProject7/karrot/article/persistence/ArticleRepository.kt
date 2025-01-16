@@ -19,6 +19,8 @@ interface ArticleRepository : JpaRepository<ArticleEntity, Long> {
         id: Long,
     ): List<ArticleEntity>
 
+    fun countBySellerId(id: String): Int
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT r FROM articles r WHERE r.id = :id")
     fun findByIdWithWriteLock(id: Long): ArticleEntity?
