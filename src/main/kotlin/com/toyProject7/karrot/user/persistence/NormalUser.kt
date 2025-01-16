@@ -1,5 +1,6 @@
 package com.toyProject7.karrot.user.persistence
 
+import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import jakarta.persistence.Column
 import jakarta.persistence.DiscriminatorValue
 import jakarta.persistence.Entity
@@ -12,6 +13,7 @@ class NormalUser(
     location: String,
     temperature: Double,
     email: String,
+    imageUrl: ImageUrlEntity,
     updatedAt: Instant,
     @Column(name = "user_id")
     var userId: String,
