@@ -154,7 +154,9 @@ class ArticleService(
         articleId: Long,
         id: String,
     ) {
+        val article = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
         val toBeRemoved: ArticleLikesEntity = articleLikesRepository.findByUserIdAndArticleId(id, articleId) ?: return
+        article.articleLikes.remove(toBeRemoved)
         articleLikesRepository.delete(toBeRemoved)
     }
 
