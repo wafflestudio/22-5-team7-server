@@ -9,7 +9,6 @@ import com.toyProject7.karrot.feed.persistence.FeedLikesEntity
 import com.toyProject7.karrot.feed.persistence.FeedLikesRepository
 import com.toyProject7.karrot.feed.persistence.FeedRepository
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
-import com.toyProject7.karrot.image.persistence.ImageUrlRepository
 import com.toyProject7.karrot.image.service.ImageService
 import com.toyProject7.karrot.user.service.UserService
 import org.springframework.data.repository.findByIdOrNull
@@ -24,7 +23,6 @@ class FeedService(
     private val feedLikesRepository: FeedLikesRepository,
     private val userService: UserService,
     private val imageService: ImageService,
-    private val imageUrlRepository: ImageUrlRepository,
 ) {
     @Transactional
     fun postFeed(

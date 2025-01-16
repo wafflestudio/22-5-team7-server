@@ -1,13 +1,10 @@
 package com.toyProject7.karrot.image.service
 
-import com.toyProject7.karrot.article.service.ArticleService
-import com.toyProject7.karrot.feed.service.FeedService
 import com.toyProject7.karrot.image.ImageDeleteException
 import com.toyProject7.karrot.image.ImagePresignedUrlCreateException
 import com.toyProject7.karrot.image.ImageS3UrlCreateException
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.image.persistence.ImageUrlRepository
-import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import software.amazon.awssdk.services.s3.S3Client
@@ -24,8 +21,6 @@ import java.time.Duration.ofMinutes
 class ImageService(
     private val s3Client: S3Client,
     private val s3Presigner: S3Presigner,
-    @Lazy private val articleService: ArticleService,
-    @Lazy private val feedService: FeedService,
     private val imageUrlRepository: ImageUrlRepository,
 ) {
     @Transactional
@@ -38,17 +33,6 @@ class ImageService(
             ImageUrlEntity(
                 s3 = generateS3Path(type, typeId, imageIndex),
             )
-        when (type) {
-            "article" -> {
-                imageUrlEntity.article = articleService.getArticleEntityById(typeId)
-            }
-            "feed" -> {
-                imageUrlEntity.feed = feedService.getFeedEntityById(typeId)
-            }
-            "auction" -> {
-                // TODO: add when we start making auction.
-            }
-        }
         imageUrlRepository.save(imageUrlEntity)
 
         return imageUrlEntity
