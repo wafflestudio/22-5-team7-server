@@ -37,6 +37,7 @@ dependencies {
     implementation(platform("software.amazon.awssdk:bom:2.20.15"))
     implementation("software.amazon.awssdk:s3")
     implementation("software.amazon.awssdk:auth")
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
