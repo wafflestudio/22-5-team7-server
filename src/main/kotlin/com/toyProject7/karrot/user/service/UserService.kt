@@ -24,6 +24,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 
 @Service
 class UserService(
@@ -74,6 +75,8 @@ class UserService(
         val profileEntity =
             ProfileEntity(
                 user = user,
+                createdAt = Instant.now(),
+                updatedAt = Instant.now(),
             )
         profileRepository.save(profileEntity)
 

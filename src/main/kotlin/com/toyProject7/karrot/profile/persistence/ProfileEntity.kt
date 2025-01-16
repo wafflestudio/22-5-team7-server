@@ -5,6 +5,7 @@ import com.toyProject7.karrot.manner.persistence.MannerEntity
 import com.toyProject7.karrot.review.persistence.ReviewEntity
 import com.toyProject7.karrot.user.persistence.UserEntity
 import jakarta.persistence.CascadeType
+import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -14,6 +15,7 @@ import jakarta.persistence.JoinTable
 import jakarta.persistence.ManyToMany
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
+import java.time.Instant
 
 @Entity(name = "profile")
 class ProfileEntity(
@@ -35,4 +37,8 @@ class ProfileEntity(
     @OneToOne
     @JoinColumn(name = "image_url_id")
     var imageUrl: ImageUrlEntity? = null,
+    @Column(name = "created_at", nullable = false)
+    var createdAt: Instant,
+    @Column(name = "updated_at", nullable = false)
+    var updatedAt: Instant,
 )
