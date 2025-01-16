@@ -1,9 +1,8 @@
 package com.toyProject7.karrot.article.persistence
 
 import com.toyProject7.karrot.user.persistence.UserEntity
-import jakarta.persistence.LockModeType
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.Lock
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 
 interface ArticleRepository : JpaRepository<ArticleEntity, Long> {
@@ -19,7 +18,7 @@ interface ArticleRepository : JpaRepository<ArticleEntity, Long> {
         id: Long,
     ): List<ArticleEntity>
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT r FROM articles r WHERE r.id = :id")
-    fun findByIdWithWriteLock(id: Long): ArticleEntity?
+    @Modifying
+    @Query("UPDATE articles a SET a.viewCount = a.viewCount + 1 WHERE a.id = :id")
+    fun incrementViewCount(id: Long): Long
 }
