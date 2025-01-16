@@ -70,17 +70,22 @@ class ProfileService(
             userEntity.imageUrl = null
         }
 
-        val imageUrlEntity: ImageUrlEntity = imageService.postImageUrl("user", profileEntity.id!!, 1)
-        val imagePutPresignedUrl: String = imageService.generatePutPresignedUrl(imageUrlEntity.s3)
-        imageService.generateGetPresignedUrl(imageUrlEntity)
-        userEntity.imageUrl = imageUrlEntity
-        userRepository.save(userEntity)
-        profileRepository.save(profileEntity)
+        if (request.imageCount > 0) {
+            val imageUrlEntity: ImageUrlEntity = imageService.postImageUrl("user", profileEntity.id!!, 1)
+            val imagePutPresignedUrl: String = imageService.generatePutPresignedUrl(imageUrlEntity.s3)
+            imageService.generateGetPresignedUrl(imageUrlEntity)
+            userEntity.imageUrl = imageUrlEntity
+            userRepository.save(userEntity)
+            profileRepository.save(profileEntity)
 
-        val profile = Profile.fromEntity(profileEntity, itemCount)
-        profile.user.imagePresignedUrl = imagePutPresignedUrl
+            val profile = Profile.fromEntity(profileEntity, itemCount)
+            profile.user.imagePresignedUrl = imagePutPresignedUrl
 
-        return profile
+            return profile
+        } else {
+            profileRepository.save(profileEntity)
+            return Profile.fromEntity(profileEntity, itemCount)
+        }
     }
 
     @Transactional

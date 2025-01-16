@@ -82,4 +82,5 @@ data class MyPageResponse(
 data class EditProfileRequest(
     val nickname: String,
     val location: String,
+    val imageCount: Int,
 )
