@@ -14,8 +14,9 @@ interface ArticleLikesRepository : JpaRepository<ArticleLikesEntity, String> {
         articleId: Long,
     ): Boolean
 
+    @Query("SELECT al FROM article_likes al WHERE al.user.id = :userId AND al.article.id = :articleId")
     fun findByUserIdAndArticleId(
-        userId: String,
-        articleId: Long,
+        @Param("userId") userId: String,
+        @Param("articleId") articleId: Long,
     ): ArticleLikesEntity?
 }
