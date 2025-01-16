@@ -1,8 +1,11 @@
 package com.toyProject7.karrot.socialLogin.service
 
 import com.toyProject7.karrot.user.persistence.UserPrincipal
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.oauth2.client.registration.ClientRegistration
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
@@ -36,5 +39,20 @@ class SocialLoginController {
             )
 
         return ResponseEntity.ok(response)
+    }
+
+    private val logger: Logger = LoggerFactory.getLogger(SocialLoginController::class.java)
+
+    @GetMapping("/oauth2/authorization/google")
+    fun getOAuth2Authorization(clientRegistration: ClientRegistration): String {
+        // Manually construct the redirect URI if necessary
+        val redirectUri = clientRegistration.redirectUri
+        logger.info("Redirect URI: {}", redirectUri)
+        logger.info("Google Client ID: {}", clientRegistration.clientId)
+        logger.info("Google Client SECRET: {}", clientRegistration.clientSecret)
+        // Do not log client secret in a real-world scenario
+        // logger.info("Client Secret: {}", clientRegistration.clientSecret)
+
+        return "Check logs for OAuth details"
     }
 }
