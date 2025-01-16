@@ -31,7 +31,7 @@ class UserEntity(
     @Column(name = "email")
     var email: String,
     @OneToOne
-    @JoinColumn(name = "image_url_id")
+    @JoinColumn(name = "image_url_id", nullable = true)
     var imageUrl: ImageUrlEntity? = null,
     @Column(name = "updated_at", nullable = false)
     var updatedAt: Instant,

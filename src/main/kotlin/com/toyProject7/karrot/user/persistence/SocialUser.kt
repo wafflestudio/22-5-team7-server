@@ -13,7 +13,7 @@ class SocialUser(
     location: String,
     temperature: Double,
     email: String,
-    imageUrl: ImageUrlEntity,
+    imageUrl: ImageUrlEntity?,
     updatedAt: Instant,
     @Column(name = "provider")
     var provider: String,

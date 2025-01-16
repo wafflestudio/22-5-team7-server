@@ -13,7 +13,7 @@ class NormalUser(
     location: String,
     temperature: Double,
     email: String,
-    imageUrl: ImageUrlEntity,
+    imageUrl: ImageUrlEntity?,
     updatedAt: Instant,
     @Column(name = "user_id")
     var userId: String,

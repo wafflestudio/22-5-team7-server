@@ -1,5 +1,6 @@
 package com.toyProject7.karrot.user.service
 
+import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.profile.persistence.ProfileEntity
 import com.toyProject7.karrot.profile.persistence.ProfileRepository
 import com.toyProject7.karrot.user.AuthenticateException
@@ -69,6 +70,7 @@ class UserService(
                     location = "void",
                     temperature = 36.5,
                     email = email,
+                    imageUrl = null,
                     updatedAt = Instant.now(),
                 ),
             )
@@ -125,6 +127,7 @@ class UserService(
                     providerId = providerId,
                     location = "void",
                     temperature = 36.5,
+                    imageUrl = null,
                     updatedAt = Instant.now(),
                 )
             val savedUser = userRepository.save(newUser) // This should save as SocialUser
