@@ -16,6 +16,7 @@ data class Article(
     val createdAt: Instant,
     val likeCount: Int,
     val viewCount: Int,
+    var isLiked: Boolean,
 ) {
     companion object {
         fun fromEntity(entity: ArticleEntity): Article {
@@ -27,10 +28,11 @@ data class Article(
                 price = entity.price,
                 status = entity.status,
                 location = entity.location,
-                imagePresignedUrl = entity.imagePresignedUrls.map { imageUrlEntity -> imageUrlEntity.url }.ifEmpty { emptyList() },
+                imagePresignedUrl = entity.imageUrls.map { imageUrlEntity -> imageUrlEntity.presigned }.ifEmpty { emptyList() },
                 createdAt = entity.createdAt,
                 likeCount = entity.articleLikes.size,
                 viewCount = entity.viewCount,
+                isLiked = false,
             )
         }
     }

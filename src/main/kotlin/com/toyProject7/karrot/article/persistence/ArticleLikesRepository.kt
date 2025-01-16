@@ -8,4 +8,9 @@ interface ArticleLikesRepository : JpaRepository<ArticleLikesEntity, String> {
         user: UserEntity,
         articleId: Long,
     ): List<ArticleLikesEntity>
+
+    fun existsByUserIdAndArticleId(
+        userId: String,
+        articleId: Long,
+    ): Boolean
 }

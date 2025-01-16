@@ -19,7 +19,7 @@ class ArticleLikesEntity(
     @JoinColumn(name = "article_id")
     var article: ArticleEntity,
     @ManyToOne
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "user_id")
     var user: UserEntity,
     @Column(name = "created_at", nullable = false)
     var createdAt: Instant,

@@ -1,3 +1,5 @@
 package com.toyProject7.karrot.comment.persistence
 
-class CommentRepository
+import org.springframework.data.jpa.repository.JpaRepository
+
+interface CommentRepository : JpaRepository<CommentEntity, Long>

@@ -25,12 +25,6 @@ class TestController {
         val response = TestResponse(request.userId, request.id, request.title, request.body)
         return ResponseEntity.ok(response)
     }
-
-    @GetMapping("/test-oauth2-authorization-google")
-    fun testOAuth2Authorization(): ResponseEntity<String> {
-        println("Accessed /test-oauth2-authorization-google")
-        return ResponseEntity.ok("Test OAuth2 Authorization Accessed")
-    }
 }
 
 data class TestResponse(

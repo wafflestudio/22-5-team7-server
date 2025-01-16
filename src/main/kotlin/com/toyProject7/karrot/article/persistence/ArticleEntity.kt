@@ -2,6 +2,7 @@ package com.toyProject7.karrot.article.persistence
 
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.user.persistence.UserEntity
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -12,16 +13,16 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import java.time.Instant
 
-@Entity(name = "article")
+@Entity(name = "articles")
 class ArticleEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
     @ManyToOne
-    @JoinColumn(name = "seller")
+    @JoinColumn(name = "seller_id")
     var seller: UserEntity,
     @ManyToOne
-    @JoinColumn(name = "buyer")
+    @JoinColumn(name = "buyer_id")
     var buyer: UserEntity?,
     @Column(name = "title", nullable = false)
     var title: String,
@@ -33,10 +34,9 @@ class ArticleEntity(
     var status: String,
     @Column(name = "location", nullable = false)
     var location: String,
-    @OneToMany(mappedBy = "article")
-    var imageS3Urls: MutableList<ImageUrlEntity> = mutableListOf(),
-    @OneToMany(mappedBy = "article")
-    var imagePresignedUrls: MutableList<ImageUrlEntity> = mutableListOf(),
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
+    @JoinColumn(name = "article_id")
+    var imageUrls: MutableList<ImageUrlEntity> = mutableListOf(),
     @OneToMany(mappedBy = "article")
     var articleLikes: MutableList<ArticleLikesEntity> = mutableListOf(),
     @Column(name = "created_at", nullable = false)
