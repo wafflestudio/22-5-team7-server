@@ -13,4 +13,9 @@ interface ArticleLikesRepository : JpaRepository<ArticleLikesEntity, String> {
         userId: String,
         articleId: Long,
     ): Boolean
+
+    fun findByUserIdAndArticleId(
+        userId: String,
+        articleId: Long,
+    ): ArticleLikesEntity?
 }

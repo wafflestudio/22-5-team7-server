@@ -129,17 +129,23 @@ class ArticleService(
         articleId: Long,
         id: String,
     ) {
-        val articleEntity = articleRepository.findByIdWithWriteLock(articleId) ?: throw ArticleNotFoundException()
+        val articleEntity = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
         val userEntity = userService.getUserEntityById(id)
-        if (articleEntity.articleLikes.any { it.user.id == userEntity.id }) {
+        if (articleLikesRepository.existsByUserIdAndArticleId(id, articleId)) {
             return
         }
-        val articleLikesEntity =
-            articleLikesRepository.save(
-                ArticleLikesEntity(article = articleEntity, user = userEntity, createdAt = Instant.now(), updatedAt = Instant.now()),
-            )
-        articleEntity.articleLikes += articleLikesEntity
-        articleRepository.save(articleEntity)
+        try {
+            val articleLikesEntity =
+                ArticleLikesEntity(
+                    article = articleEntity,
+                    user = userEntity,
+                    createdAt = Instant.now(),
+                    updatedAt = Instant.now(),
+                )
+            articleLikesRepository.save(articleLikesEntity)
+        } catch (e: Exception) {
+            return
+        }
     }
 
     @Transactional
@@ -147,12 +153,8 @@ class ArticleService(
         articleId: Long,
         id: String,
     ) {
-        val articleEntity = articleRepository.findByIdWithWriteLock(articleId) ?: throw ArticleNotFoundException()
-        val userEntity = userService.getUserEntityById(id)
-        val toBeRemoved: ArticleLikesEntity = articleEntity.articleLikes.find { it.user.id == userEntity.id } ?: return
-        articleEntity.articleLikes -= toBeRemoved
+        val toBeRemoved: ArticleLikesEntity = articleLikesRepository.findByUserIdAndArticleId(id, articleId) ?: return
         articleLikesRepository.delete(toBeRemoved)
-        articleRepository.save(articleEntity)
     }
 
     @Transactional
@@ -160,11 +162,11 @@ class ArticleService(
         articleId: Long,
         id: String,
     ): Article {
-        val articleEntity = articleRepository.findByIdWithWriteLock(articleId) ?: throw ArticleNotFoundException()
-        val articleList: List<ArticleEntity> = listOf(articleEntity)
-        refreshPresignedUrlIfExpired(articleList)
-        articleEntity.viewCount += 1
-        articleRepository.save(articleEntity)
+        val articleEntity = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
+        articleRepository.incrementViewCount(articleId)
+
+        refreshPresignedUrlIfExpired(listOf(articleEntity))
+
         val article = Article.fromEntity(articleEntity)
         article.isLiked = articleLikesRepository.existsByUserIdAndArticleId(id, article.id)
         return article

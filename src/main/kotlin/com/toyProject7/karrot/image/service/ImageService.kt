@@ -151,6 +151,7 @@ class ImageService(
 
             imageUrlEntity.presigned = s3Presigner.presignGetObject(presignedRequest).url().toString()
             imageUrlRepository.save(imageUrlEntity)
+
             return imageUrlEntity
         } catch (e: Exception) {
             throw ImagePresignedUrlCreateException()
