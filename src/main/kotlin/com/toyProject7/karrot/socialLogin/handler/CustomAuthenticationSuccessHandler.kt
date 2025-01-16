@@ -39,7 +39,7 @@ class CustomAuthenticationSuccessHandler(
 
         // Redirect to frontend with JWT included in URL fragment
         val redirectUri =
-            UriComponentsBuilder.fromUriString("https://your-frontend-domain.com/oauth2/redirect")
+            UriComponentsBuilder.fromUriString("https://toykarrot.shop/oauth2/redirect")
                 .fragment("token=$accessToken")
                 .build()
                 .toUriString()
