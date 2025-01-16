@@ -48,6 +48,16 @@ class ArticleController(
         return ResponseEntity.ok("Deleted Successfully")
     }
 
+    @PutMapping("item/status/{articleId}")
+    fun updateStatus(
+        @RequestBody status: Int,
+        @PathVariable articleId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<String> {
+        articleService.updateStatus(status, articleId, user.id)
+        return ResponseEntity.ok("Status Updated Successfully")
+    }
+
     @PostMapping("/item/like/{articleId}")
     fun likeArticle(
         @PathVariable articleId: Long,

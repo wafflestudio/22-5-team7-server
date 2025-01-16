@@ -38,7 +38,7 @@ class ArticleService(
                 title = request.title,
                 content = request.content,
                 price = request.price,
-                status = "판매 중",
+                status = 0,
                 location = request.location,
                 imageUrls = mutableListOf(),
                 createdAt = Instant.now(),
@@ -123,6 +123,17 @@ class ArticleService(
             imageService.deleteImageUrl(articleEntity.imageUrls)
         }
         articleRepository.delete(articleEntity)
+    }
+
+    @Transactional
+    fun updateStatus(
+        status: Int,
+        articleId: Long,
+        id: String,
+    ) {
+        val articleEntity = getArticleEntityById(articleId)
+        if (articleEntity.seller.id != id) throw ArticlePermissionDeniedException()
+        articleEntity.status = status
     }
 
     @Transactional

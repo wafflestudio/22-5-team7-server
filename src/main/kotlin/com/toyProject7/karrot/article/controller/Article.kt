@@ -10,7 +10,7 @@ data class Article(
     val title: String,
     val content: String,
     val price: Int,
-    val status: String,
+    val status: Int,
     val location: String,
     var imagePresignedUrl: List<String>,
     val createdAt: Instant,
