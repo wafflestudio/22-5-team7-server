@@ -19,6 +19,13 @@ class SocialUser(
     var provider: String,
     @Column(name = "provider_id")
     var providerId: String,
-) : UserEntity(nickname = nickname, location = location, temperature = temperature, email = email, updatedAt = updatedAt) {
+) : UserEntity(
+        nickname = nickname,
+        location = location,
+        temperature = temperature,
+        email = email,
+        imageUrl = imageUrl,
+        updatedAt = updatedAt,
+    ) {
     // You can add additional methods specific to social users here
 }

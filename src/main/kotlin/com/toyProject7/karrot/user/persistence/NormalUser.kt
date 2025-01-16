@@ -19,6 +19,13 @@ class NormalUser(
     var userId: String,
     @Column(name = "hashed_password")
     var hashedPassword: String = "",
-) : UserEntity(nickname = nickname, location = location, temperature = temperature, email = email, updatedAt = updatedAt) {
+) : UserEntity(
+        nickname = nickname,
+        location = location,
+        temperature = temperature,
+        email = email,
+        imageUrl = imageUrl,
+        updatedAt = updatedAt,
+    ) {
     // Additional attributes and methods for normal users can go here
 }
