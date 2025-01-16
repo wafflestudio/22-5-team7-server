@@ -2,6 +2,7 @@ package com.toyProject7.karrot.article.persistence
 
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.user.persistence.UserEntity
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -33,7 +34,8 @@ class ArticleEntity(
     var status: String,
     @Column(name = "location", nullable = false)
     var location: String,
-    @OneToMany(mappedBy = "article")
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
+    @JoinColumn(name = "article_id")
     var imageUrls: MutableList<ImageUrlEntity> = mutableListOf(),
     @OneToMany(mappedBy = "article")
     var articleLikes: MutableList<ArticleLikesEntity> = mutableListOf(),
