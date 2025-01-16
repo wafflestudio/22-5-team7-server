@@ -3,7 +3,6 @@ package com.toyProject7.karrot.feed.persistence
 import com.toyProject7.karrot.comment.persistence.CommentEntity
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.user.persistence.UserEntity
-import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -26,8 +25,7 @@ class FeedEntity(
     var title: String,
     @Column(name = "content", nullable = false)
     var content: String,
-    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
-    @JoinColumn(name = "feed_id")
+    @OneToMany(mappedBy = "feed")
     var imageUrls: MutableList<ImageUrlEntity> = mutableListOf(),
     @OneToMany(mappedBy = "feed")
     var feedLikes: MutableList<FeedLikesEntity> = mutableListOf(),
