@@ -46,13 +46,13 @@ class ArticleService(
             )
         articleRepository.save(articleEntity)
 
-        val imagePutPresingedUrls: MutableList<String> = mutableListOf()
+        val imagePutPresignedUrls: MutableList<String> = mutableListOf()
         if (request.imageCount > 0) {
             for (number in 1..request.imageCount) {
                 val imageUrlEntity: ImageUrlEntity = imageService.postImageUrl("article", articleEntity.id!!, number)
 
                 val imagePutPresignedUrl: String = imageService.generatePutPresignedUrl(imageUrlEntity.s3)
-                imagePutPresingedUrls += imagePutPresignedUrl
+                imagePutPresignedUrls += imagePutPresignedUrl
 
                 imageService.generateGetPresignedUrl(imageUrlEntity)
                 articleEntity.imageUrls += imageUrlEntity
@@ -62,7 +62,7 @@ class ArticleService(
         articleRepository.save(articleEntity)
 
         val article = Article.fromEntity(articleEntity)
-        article.imagePresignedUrl = imagePutPresingedUrls
+        article.imagePresignedUrl = imagePutPresignedUrls
 
         return article
     }
@@ -87,7 +87,7 @@ class ArticleService(
             articleEntity.imageUrls = mutableListOf()
         }
 
-        val imagePutPresingedUrls: MutableList<String> = mutableListOf()
+        val imagePutPresignedUrls: MutableList<String> = mutableListOf()
         if (request.imageCount > 0) {
             for (number in 1..request.imageCount) {
                 val imageUrlEntity: ImageUrlEntity = imageService.postImageUrl("article", articleEntity.id!!, number)
