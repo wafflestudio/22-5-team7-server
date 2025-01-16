@@ -7,12 +7,12 @@ import com.toyProject7.karrot.manner.controller.Manner
 import com.toyProject7.karrot.profile.ProfileNotFoundException
 import com.toyProject7.karrot.profile.controller.EditProfileRequest
 import com.toyProject7.karrot.profile.controller.Profile
-import com.toyProject7.karrot.profile.persistence.ProfileEntity
 import com.toyProject7.karrot.profile.persistence.ProfileRepository
 import com.toyProject7.karrot.review.controller.Review
 import com.toyProject7.karrot.review.persistence.ReviewRepository
 import com.toyProject7.karrot.user.UserNotFoundException
 import com.toyProject7.karrot.user.controller.User
+import com.toyProject7.karrot.user.persistence.UserEntity
 import com.toyProject7.karrot.user.persistence.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -28,29 +28,25 @@ class ProfileService(
     private val imageService: ImageService,
 ) {
     @Transactional
-    fun getProfileImage(user: User): String {
-        val profileEntity = profileRepository.findByUserId(user.id) ?: throw ProfileNotFoundException()
-        refreshPresignedUrlIfExpired(profileEntity)
-        profileRepository.save(profileEntity)
-        return profileEntity.imageUrl?.presigned ?: ""
-    }
-
-    @Transactional
     fun getMyProfile(user: User): Profile {
         val profileEntity = profileRepository.findByUserId(user.id) ?: throw ProfileNotFoundException()
-        refreshPresignedUrlIfExpired(profileEntity)
-        profileRepository.save(profileEntity)
         val itemCount = getItemCount(user.id)
+
+        val userEntity = userRepository.findById(user.id).orElseThrow { UserNotFoundException() }
+        refreshPresignedUrlIfExpired(userEntity)
+        userRepository.save(userEntity)
+        profileRepository.save(profileEntity)
+
         return Profile.fromEntity(profileEntity, itemCount)
     }
 
     @Transactional
     fun getProfile(nickname: String): Profile {
         val userEntity = userRepository.findByNickname(nickname) ?: throw UserNotFoundException()
+        refreshPresignedUrlIfExpired(userEntity)
+        userRepository.save(userEntity)
         val user = User.fromEntity(userEntity)
         val profileEntity = profileRepository.findByUserId(user.id) ?: throw ProfileNotFoundException()
-        refreshPresignedUrlIfExpired(profileEntity)
-        profileRepository.save(profileEntity)
         val itemCount = getItemCount(user.id)
         return Profile.fromEntity(profileEntity, itemCount)
     }
@@ -67,32 +63,32 @@ class ProfileService(
         userEntity.nickname = request.nickname
         userEntity.location = request.location
         userRepository.save(userEntity)
-
-        if (profileEntity.imageUrl != null) {
+        if (userEntity.imageUrl != null) {
             val imageUrlListForDel: MutableList<ImageUrlEntity> = mutableListOf()
-            imageUrlListForDel += profileEntity.imageUrl!!
+            imageUrlListForDel += userEntity.imageUrl!!
             imageService.deleteImageUrl(imageUrlListForDel)
-            profileEntity.imageUrl = null
+            userEntity.imageUrl = null
         }
 
-        val imageUrlEntity: ImageUrlEntity = imageService.postImageUrl("profile", profileEntity.id!!, 1)
+        val imageUrlEntity: ImageUrlEntity = imageService.postImageUrl("user", profileEntity.id!!, 1)
         val imagePutPresignedUrl: String = imageService.generatePutPresignedUrl(imageUrlEntity.s3)
         imageService.generateGetPresignedUrl(imageUrlEntity)
-        profileEntity.imageUrl = imageUrlEntity
+        userEntity.imageUrl = imageUrlEntity
+        userRepository.save(userEntity)
         profileRepository.save(profileEntity)
 
         val profile = Profile.fromEntity(profileEntity, itemCount)
-        profile.imagePresignedUrl = imagePutPresignedUrl
+        profile.user.imagePresignedUrl = imagePutPresignedUrl
 
         return profile
     }
 
     @Transactional
-    fun refreshPresignedUrlIfExpired(profileEntity: ProfileEntity) {
-        if (profileEntity.imageUrl != null && ChronoUnit.MINUTES.between(profileEntity.updatedAt, Instant.now()) >= 10) {
-            imageService.generateGetPresignedUrl(profileEntity.imageUrl!!)
-            profileEntity.updatedAt = Instant.now()
-            profileRepository.save(profileEntity)
+    fun refreshPresignedUrlIfExpired(userEntity: UserEntity) {
+        if (userEntity.imageUrl != null && ChronoUnit.MINUTES.between(userEntity.updatedAt, Instant.now()) >= 10) {
+            imageService.generateGetPresignedUrl(userEntity.imageUrl!!)
+            userEntity.updatedAt = Instant.now()
+            userRepository.save(userEntity)
         }
     }
 

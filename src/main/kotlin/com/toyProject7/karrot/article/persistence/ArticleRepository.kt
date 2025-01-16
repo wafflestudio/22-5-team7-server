@@ -22,6 +22,6 @@ interface ArticleRepository : JpaRepository<ArticleEntity, Long> {
     fun countBySellerId(id: String): Int
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT r FROM feeds r WHERE r.id = :id")
+    @Query("SELECT r FROM articles r WHERE r.id = :id")
     fun findByIdWithWriteLock(id: Long): ArticleEntity?
 }

@@ -21,7 +21,7 @@ class ProfileController(
     fun mypage(
         @AuthUser user: User,
     ): ResponseEntity<MyPageResponse> {
-        return ResponseEntity.ok(MyPageResponse(user.nickname, user.temperature, profileService.getProfileImage(user)))
+        return ResponseEntity.ok(MyPageResponse(user.nickname, user.temperature, user.imagePresignedUrl))
     }
 
     @GetMapping("/api/mypage/profile")
