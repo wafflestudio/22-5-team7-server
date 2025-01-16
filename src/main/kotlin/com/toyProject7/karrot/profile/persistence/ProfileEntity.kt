@@ -1,5 +1,6 @@
 package com.toyProject7.karrot.profile.persistence
 
+import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.manner.persistence.MannerEntity
 import com.toyProject7.karrot.review.persistence.ReviewEntity
 import com.toyProject7.karrot.user.persistence.UserEntity
@@ -31,4 +32,7 @@ class ProfileEntity(
         inverseJoinColumns = [JoinColumn(name = "review_id")],
     )
     var reviews: MutableList<ReviewEntity> = mutableListOf(),
+    @OneToOne
+    @JoinColumn(name = "image_url_id")
+    var imageUrl: ImageUrlEntity? = null,
 )

@@ -8,6 +8,8 @@ import com.toyProject7.karrot.user.controller.User
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
@@ -15,6 +17,13 @@ import org.springframework.web.bind.annotation.RestController
 class ProfileController(
     private val profileService: ProfileService,
 ) {
+    @GetMapping("/api/mypage")
+    fun mypage(
+        @AuthUser user: User,
+    ): ResponseEntity<MyPageResponse> {
+        return ResponseEntity.ok(MyPageResponse(user.nickname, user.temperature, profileService.getProfileImage(user)))
+    }
+
     @GetMapping("/api/mypage/profile")
     fun getMyProfile(
         @AuthUser user: User,
@@ -28,6 +37,15 @@ class ProfileController(
         @PathVariable nickname: String,
     ): ResponseEntity<ProfileResponse> {
         val profile = profileService.getProfile(nickname)
+        return ResponseEntity.ok(profile)
+    }
+
+    @PutMapping("/api/mypage/profile/edit")
+    fun editProfile(
+        @AuthUser user: User,
+        @RequestBody request: EditProfileRequest,
+    ): ResponseEntity<ProfileResponse> {
+        val profile = profileService.editProfile(user, request)
         return ResponseEntity.ok(profile)
     }
 
@@ -54,3 +72,14 @@ typealias ProfileResponse = Profile
 typealias MannersResponse = List<Manner>
 
 typealias ReviewsResponse = List<Review>
+
+data class MyPageResponse(
+    val nickname: String,
+    val temperature: Double,
+    val imagePresignedUrl: String,
+)
+
+data class EditProfileRequest(
+    val nickname: String,
+    val location: String,
+)

@@ -12,6 +12,7 @@ data class Profile(
     val manners: List<Manner>,
     val reviews: List<Review>,
     val reviewCount: Int,
+    val imagePresignedUrl: String,
 ) {
     companion object {
         fun fromEntity(
@@ -25,6 +26,7 @@ data class Profile(
                 manners = entity.manners.map { mannerEntity -> Manner.fromEntity(mannerEntity) },
                 reviews = entity.reviews.map { reviewEntity -> Review.fromEntity(reviewEntity) },
                 reviewCount = entity.reviews.size,
+                imagePresignedUrl = entity.imageUrl?.url ?: "",
             )
         }
     }
