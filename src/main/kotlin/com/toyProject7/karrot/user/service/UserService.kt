@@ -1,6 +1,5 @@
 package com.toyProject7.karrot.user.service
 
-import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.profile.persistence.ProfileEntity
 import com.toyProject7.karrot.profile.persistence.ProfileRepository
 import com.toyProject7.karrot.user.AuthenticateException
