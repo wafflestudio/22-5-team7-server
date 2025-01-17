@@ -11,6 +11,7 @@ import com.toyProject7.karrot.article.persistence.ArticleRepository
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.image.service.ImageService
 import com.toyProject7.karrot.user.service.UserService
+import org.springframework.context.annotation.Lazy
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,7 +23,7 @@ class ArticleService(
     private val articleRepository: ArticleRepository,
     private val articleLikesRepository: ArticleLikesRepository,
     private val userService: UserService,
-    private val imageService: ImageService,
+    @Lazy private val imageService: ImageService,
 ) {
     @Transactional
     fun postArticle(
@@ -42,7 +43,7 @@ class ArticleService(
                 imageUrls = mutableListOf(),
                 createdAt = Instant.now(),
                 updatedAt = Instant.now(),
-                viewCount = 1,
+                viewCount = 0,
             )
         articleRepository.save(articleEntity)
 
@@ -100,7 +101,6 @@ class ArticleService(
             }
             articleEntity.updatedAt = Instant.now()
         }
-        articleEntity.viewCount += 1
         articleRepository.save(articleEntity)
 
         val article = Article.fromEntity(articleEntity)
@@ -129,17 +129,23 @@ class ArticleService(
         articleId: Long,
         id: String,
     ) {
-        val articleEntity = articleRepository.findByIdWithWriteLock(articleId) ?: throw ArticleNotFoundException()
+        val articleEntity = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
         val userEntity = userService.getUserEntityById(id)
-        if (articleEntity.articleLikes.any { it.user.id == userEntity.id }) {
+        if (articleLikesRepository.existsByUserIdAndArticleId(id, articleId)) {
             return
         }
-        val articleLikesEntity =
-            articleLikesRepository.save(
-                ArticleLikesEntity(article = articleEntity, user = userEntity, createdAt = Instant.now(), updatedAt = Instant.now()),
-            )
-        articleEntity.articleLikes += articleLikesEntity
-        articleRepository.save(articleEntity)
+        try {
+            val articleLikesEntity =
+                ArticleLikesEntity(
+                    article = articleEntity,
+                    user = userEntity,
+                    createdAt = Instant.now(),
+                    updatedAt = Instant.now(),
+                )
+            articleLikesRepository.save(articleLikesEntity)
+        } catch (e: Exception) {
+            return
+        }
     }
 
     @Transactional
@@ -147,12 +153,10 @@ class ArticleService(
         articleId: Long,
         id: String,
     ) {
-        val articleEntity = articleRepository.findByIdWithWriteLock(articleId) ?: throw ArticleNotFoundException()
-        val userEntity = userService.getUserEntityById(id)
-        val toBeRemoved: ArticleLikesEntity = articleEntity.articleLikes.find { it.user.id == userEntity.id } ?: return
-        articleEntity.articleLikes -= toBeRemoved
+        val article = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
+        val toBeRemoved: ArticleLikesEntity = articleLikesRepository.findByUserIdAndArticleId(id, articleId) ?: return
+        article.articleLikes.remove(toBeRemoved)
         articleLikesRepository.delete(toBeRemoved)
-        articleRepository.save(articleEntity)
     }
 
     @Transactional
@@ -160,11 +164,11 @@ class ArticleService(
         articleId: Long,
         id: String,
     ): Article {
-        val articleEntity = articleRepository.findByIdWithWriteLock(articleId) ?: throw ArticleNotFoundException()
-        val articleList: List<ArticleEntity> = listOf(articleEntity)
-        refreshPresignedUrlIfExpired(articleList)
-        articleEntity.viewCount += 1
-        articleRepository.save(articleEntity)
+        val articleEntity = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
+        articleRepository.incrementViewCount(articleId)
+
+        refreshPresignedUrlIfExpired(listOf(articleEntity))
+
         val article = Article.fromEntity(articleEntity)
         article.isLiked = articleLikesRepository.existsByUserIdAndArticleId(id, article.id)
         return article

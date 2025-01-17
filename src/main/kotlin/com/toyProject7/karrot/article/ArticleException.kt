@@ -22,15 +22,3 @@ class ArticlePermissionDeniedException : ArticleException(
     httpStatusCode = HttpStatus.UNAUTHORIZED,
     msg = "Permission denied",
 )
-
-class S3UrlListIsEmptyException() : ArticleException(
-    errorCode = 0,
-    httpStatusCode = HttpStatus.NOT_MODIFIED,
-    msg = "S3 URL List should not be empty",
-)
-
-class PresignedUrlListIsEmptyException : ArticleException(
-    errorCode = 0,
-    httpStatusCode = HttpStatus.GONE,
-    msg = "Presigned URL List should not be empty",
-)
