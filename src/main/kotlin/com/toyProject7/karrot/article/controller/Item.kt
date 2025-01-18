@@ -7,7 +7,7 @@ data class Item(
     val id: Long,
     val title: String,
     val price: Int,
-    val status: String,
+    val status: Int,
     val location: String,
     val imagePresignedUrl: String,
     val createdAt: Instant,

@@ -30,7 +30,7 @@ class ArticleEntity(
     @Column(name = "price", nullable = false)
     var price: Int,
     @Column(name = "status", nullable = false)
-    var status: String,
+    var status: Int,
     @Column(name = "location", nullable = false)
     var location: String,
     @OneToMany(mappedBy = "article")
