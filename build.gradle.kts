@@ -38,6 +38,8 @@ dependencies {
     implementation("software.amazon.awssdk:s3")
     implementation("software.amazon.awssdk:auth")
     implementation("org.springframework.boot:spring-boot-starter-websocket")
+    implementation("org.webjars:stomp-websocket:2.3.4")
+    implementation("org.webjars:sockjs-client:1.5.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
