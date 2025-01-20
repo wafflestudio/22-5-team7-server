@@ -45,7 +45,7 @@ class FeedService(
                 feedComments = mutableListOf(),
                 createdAt = Instant.now(),
                 updatedAt = Instant.now(),
-                viewCount = 1,
+                viewCount = 0,
             )
         feedRepository.save(feedEntity)
         val imagePutPresignedUrls: MutableList<String> = mutableListOf()
@@ -98,8 +98,6 @@ class FeedService(
             }
             feedEntity.updatedAt = Instant.now()
         }
-        feedEntity.viewCount += 1
-        feedRepository.save(feedEntity)
         val feed = Feed.fromEntity(feedEntity)
         feed.imagePresignedUrl = imagePutPresignedUrls
         return feed
