@@ -31,14 +31,14 @@ class ChatRoomController(
     fun getRoom(
         @PathVariable chatRoomId: Long,
         @AuthUser user: User,
+        @RequestParam("createdAt") createdAt: Instant,
     ): ResponseEntity<List<ChatMessage>> {
-        val chatRoom = chatRoomService.getChatRoom(chatRoomId, user)
+        val chatRoom = chatRoomService.getChatRoom(chatRoomId, user, createdAt)
         return ResponseEntity.ok(chatRoom)
     }
 
     @PostMapping("/chat/create")
     fun createRoom(
-        @AuthUser user: User,
         @RequestBody request: CreateChatRoomRequest,
     ): ResponseEntity<ChatRoom> {
         val chatRoom = chatRoomService.createChatRoom(request.articleId, request.sellerId, request.buyerId)

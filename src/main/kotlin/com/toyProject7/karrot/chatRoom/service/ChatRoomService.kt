@@ -58,12 +58,17 @@ class ChatRoomService(
     fun getChatRoom(
         chatRoomId: Long,
         user: User,
+        createdAt: Instant,
     ): List<ChatMessage> {
         val chatRoomEntity = chatRoomRepository.findById(chatRoomId).orElseThrow { ChatRoomNotFoundException() }
         val chatRoom = ChatRoom.fromEntity(chatRoomEntity)
         if (chatRoom.buyer != user && chatRoom.seller != user) throw ThisRoomIsNotYoursException()
 
-        val chatMessageEntities: List<ChatMessageEntity> = chatMessageRepository.findAllByChatRoomIdOrderByCreatedAtAsc(chatRoomId)
+        val chatMessageEntities: List<ChatMessageEntity> =
+            chatMessageRepository.findTop10ByChatRoomIdAndCreatedAtBeforeOrderByCreatedAtDesc(
+                chatRoomId = chatRoomId,
+                createdAt = createdAt,
+            )
         return chatMessageEntities.map { chatMessageEntity -> ChatMessage.fromEntity(chatMessageEntity) }
     }
 
