@@ -140,6 +140,7 @@ class ArticleController(
 data class PostArticleRequest(
     val title: String,
     val content: String,
+    val tag: String,
     val price: Int,
     val location: String,
     val imageCount: Int,

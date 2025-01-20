@@ -37,6 +37,7 @@ class FeedService(
                 author = user,
                 title = request.title,
                 content = request.content,
+                tag = request.tag,
                 imageUrls = mutableListOf(),
                 feedLikes = mutableListOf(),
                 feedComments = mutableListOf(),
@@ -77,6 +78,7 @@ class FeedService(
         }
         feedEntity.title = request.title
         feedEntity.content = request.content
+        feedEntity.tag = request.tag
         if (feedEntity.imageUrls.isNotEmpty()) {
             imageService.deleteImageUrl(feedEntity.imageUrls)
             feedEntity.imageUrls = mutableListOf()

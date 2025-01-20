@@ -89,5 +89,6 @@ class FeedController(
 data class PostFeedRequest(
     val title: String,
     val content: String,
+    val tag: String,
     val imageCount: Int,
 )

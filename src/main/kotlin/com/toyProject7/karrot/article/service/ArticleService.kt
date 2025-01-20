@@ -37,6 +37,7 @@ class ArticleService(
                 buyer = null,
                 title = request.title,
                 content = request.content,
+                tag = request.tag,
                 price = request.price,
                 status = 0,
                 location = request.location,
@@ -81,6 +82,7 @@ class ArticleService(
         }
         articleEntity.title = request.title
         articleEntity.content = request.content
+        articleEntity.tag = request.tag
         articleEntity.price = request.price
         articleEntity.location = request.location
         if (articleEntity.imageUrls.isNotEmpty()) {

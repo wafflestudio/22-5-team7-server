@@ -27,6 +27,8 @@ class ArticleEntity(
     var title: String,
     @Column(name = "content", nullable = false)
     var content: String,
+    @Column(name = "tag", nullable = false)
+    var tag: String,
     @Column(name = "price", nullable = false)
     var price: Int,
     @Column(name = "status", nullable = false)
