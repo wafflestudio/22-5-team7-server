@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -71,9 +72,10 @@ class CommentController(
 
     @GetMapping("/myfeed/comment")
     fun getFeedsByUserComments(
+        @RequestParam("feedId") feedId: Long,
         @AuthUser user: User,
     ): ResponseEntity<List<FeedPreview>> {
-        val feeds: List<FeedEntity> = commentService.getFeedsByUserComments(user.id)
+        val feeds: List<FeedEntity> = commentService.getFeedsByUserComments(feedId, user.id)
         val response =
             feeds.map { feed ->
                 FeedPreview.fromEntity(feed)

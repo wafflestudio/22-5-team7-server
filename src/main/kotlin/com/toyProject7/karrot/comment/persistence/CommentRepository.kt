@@ -11,11 +11,12 @@ interface CommentRepository : JpaRepository<CommentEntity, Long> {
         """
         SELECT DISTINCT c.feed
         FROM comments c
-        WHERE c.user = :user
+        WHERE c.user = :user AND c.feed.id < :feedId
         ORDER BY c.feed.id DESC
         """,
     )
     fun findFeedsByUserComments(
         @Param("user") user: UserEntity,
+        @Param("feedId") feedId: Long,
     ): List<FeedEntity>
 }
