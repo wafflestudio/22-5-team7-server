@@ -97,6 +97,19 @@ class FeedController(
             }
         return ResponseEntity.ok(response)
     }
+
+    @GetMapping("/myfeed/like")
+    fun getFeedsThatUserLikes(
+        @RequestParam("feedId") feedId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<List<FeedPreview>> {
+        val feeds: List<FeedEntity> = feedService.getFeedsThatUserLikes(user.id, feedId)
+        val response =
+            feeds.map { feed ->
+                FeedPreview.fromEntity(feed)
+            }
+        return ResponseEntity.ok(response)
+    }
 }
 
 data class PostFeedRequest(
