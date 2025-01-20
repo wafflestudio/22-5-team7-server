@@ -48,13 +48,13 @@ class ArticleController(
         return ResponseEntity.ok("Deleted Successfully")
     }
 
-    @PutMapping("/item/status/{articleId}")
+    @PutMapping("item/status/{articleId}")
     fun updateStatus(
-        @RequestBody status: Int,
+        @RequestBody request: UpdateStatusRequest,
         @PathVariable articleId: Long,
         @AuthUser user: User,
     ): ResponseEntity<String> {
-        articleService.updateStatus(status, articleId, user.id)
+        articleService.updateStatus(request, articleId, user.id)
         return ResponseEntity.ok("Status Updated Successfully")
     }
 
@@ -140,7 +140,12 @@ class ArticleController(
 data class PostArticleRequest(
     val title: String,
     val content: String,
+    val tag: String,
     val price: Int,
     val location: String,
     val imageCount: Int,
+)
+
+data class UpdateStatusRequest(
+    val status: Int,
 )

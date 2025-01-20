@@ -84,10 +84,37 @@ class FeedController(
             }
         return ResponseEntity.ok(response)
     }
+
+    @GetMapping("/myfeed/my")
+    fun getFeedsByAuthor(
+        @RequestParam("feedId") feedId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<List<FeedPreview>> {
+        val feeds: List<FeedEntity> = feedService.getFeedsByAuthor(user.id, feedId)
+        val response: List<FeedPreview> =
+            feeds.map { feed ->
+                FeedPreview.fromEntity(feed)
+            }
+        return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("/myfeed/like")
+    fun getFeedsThatUserLikes(
+        @RequestParam("feedId") feedId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<List<FeedPreview>> {
+        val feeds: List<FeedEntity> = feedService.getFeedsThatUserLikes(user.id, feedId)
+        val response =
+            feeds.map { feed ->
+                FeedPreview.fromEntity(feed)
+            }
+        return ResponseEntity.ok(response)
+    }
 }
 
 data class PostFeedRequest(
     val title: String,
     val content: String,
+    val tag: String,
     val imageCount: Int,
 )
