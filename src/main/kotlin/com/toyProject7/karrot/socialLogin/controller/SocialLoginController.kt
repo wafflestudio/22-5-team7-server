@@ -20,38 +20,4 @@ class SocialLoginController {
         val responseBody = mapOf("redirectUrl" to redirectUrl)
         return ResponseEntity.ok(responseBody)
     }
-
-    @GetMapping("/api/social/me")
-    fun getCurrentUser(
-        @AuthenticationPrincipal userPrincipal: UserPrincipal?,
-    ): ResponseEntity<Any> {
-        if (userPrincipal == null) {
-            return ResponseEntity.status(401).body("Unauthorized")
-        }
-
-        // Build a response with user details
-        val response =
-            mapOf(
-                "id" to userPrincipal.id,
-                "email" to userPrincipal.username,
-                "name" to userPrincipal.getNickname(),
-            )
-
-        return ResponseEntity.ok(response)
-    }
-
-    private val logger: Logger = LoggerFactory.getLogger(SocialLoginController::class.java)
-
-    @GetMapping("/oauth2/authorization/google")
-    fun getOAuth2Authorization(clientRegistration: ClientRegistration): String {
-        // Manually construct the redirect URI if necessary
-        val redirectUri = clientRegistration.redirectUri
-        logger.info("Redirect URI: {}", redirectUri)
-        logger.info("Google Client ID: {}", clientRegistration.clientId)
-        logger.info("Google Client SECRET: {}", clientRegistration.clientSecret)
-        // Do not log client secret in a real-world scenario
-        // logger.info("Client Secret: {}", clientRegistration.clientSecret)
-
-        return "Check logs for OAuth details"
-    }
 }
