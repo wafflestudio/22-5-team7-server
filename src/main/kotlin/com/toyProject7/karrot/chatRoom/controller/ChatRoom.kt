@@ -10,7 +10,7 @@ data class ChatRoom(
     val article: Article,
     val seller: User,
     val buyer: User,
-    val createdAt: Instant,
+    val updatedAt: Instant,
 ) {
     companion object {
         fun fromEntity(entity: ChatRoomEntity): ChatRoom {
@@ -19,7 +19,7 @@ data class ChatRoom(
                 article = Article.fromEntity(entity.article),
                 seller = User.fromEntity(entity.seller),
                 buyer = User.fromEntity(entity.buyer),
-                createdAt = entity.createdAt,
+                updatedAt = entity.updatedAt,
             )
         }
     }

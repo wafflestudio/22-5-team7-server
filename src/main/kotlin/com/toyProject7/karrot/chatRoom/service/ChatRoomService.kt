@@ -36,12 +36,13 @@ class ChatRoomService(
                 createdAt = Instant.now(),
             )
         chatMessageRepository.save(chatMessageEntity)
+        chatRoomEntity.updatedAt = Instant.now()
         return ChatMessage.fromEntity(chatMessageEntity)
     }
 
     @Transactional
     fun getChatRooms(user: User): List<ChatRoom> {
-        val chatRoomEntities: List<ChatRoomEntity> = chatRoomRepository.findAllBySellerIdOrBuyerIdOrderByCreatedAtDesc(user.id, user.id)
+        val chatRoomEntities: List<ChatRoomEntity> = chatRoomRepository.findAllBySellerIdOrBuyerIdOrderByUpdatedAtDesc(user.id, user.id)
         return chatRoomEntities.map { chatRoomEntity -> ChatRoom.fromEntity(chatRoomEntity) }
     }
 
@@ -72,7 +73,7 @@ class ChatRoomService(
                 article = articleEntity,
                 seller = sellerEntity,
                 buyer = buyerEntity,
-                createdAt = Instant.now(),
+                updatedAt = Instant.now(),
             )
         chatRoomRepository.save(chatRoomEntity)
         return ChatRoom.fromEntity(chatRoomEntity)
