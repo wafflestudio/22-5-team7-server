@@ -61,6 +61,20 @@ class CommentService(
     }
 
     @Transactional
+    fun deleteComment(
+        commentId: Long,
+        id: String,
+    ) {
+        val comment: CommentEntity = getCommentEntityById(commentId)
+        val user = userService.getUserEntityById(id)
+        if (comment.user.id != user.id) {
+            throw CommentWriterDoesNotMatchException()
+        }
+        feedService.deleteCommentInFeed(comment.feed, comment)
+        commentRepository.delete(comment)
+    }
+
+    @Transactional
     fun getCommentEntityById(commentId: Long): CommentEntity {
         return commentRepository.findByIdOrNull(commentId) ?: throw CommentNotFoundException()
     }

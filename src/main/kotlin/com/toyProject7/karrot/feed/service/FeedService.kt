@@ -219,4 +219,13 @@ class FeedService(
         feed.feedComments += comment
         feedRepository.save(feed)
     }
+
+    @Transactional
+    fun deleteCommentInFeed(
+        feed: FeedEntity,
+        comment: CommentEntity,
+    ) {
+        feed.feedComments -= comment
+        feedRepository.save(feed)
+    }
 }

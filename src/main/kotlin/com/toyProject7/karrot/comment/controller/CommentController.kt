@@ -4,6 +4,7 @@ import com.toyProject7.karrot.comment.service.CommentService
 import com.toyProject7.karrot.user.AuthUser
 import com.toyProject7.karrot.user.controller.User
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -34,6 +35,15 @@ class CommentController(
     ): ResponseEntity<Comment> {
         val comment = commentService.editComment(request, commentId, user.id)
         return ResponseEntity.ok(comment)
+    }
+
+    @DeleteMapping("/comment/delete/{commentId}")
+    fun deleteComment(
+        @PathVariable("commentId") commentId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<String> {
+        commentService.deleteComment(commentId, user.id)
+        return ResponseEntity.ok("Deleted Successfully")
     }
 }
 
