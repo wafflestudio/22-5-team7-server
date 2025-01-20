@@ -55,7 +55,7 @@ class CommentController(
         return ResponseEntity.ok("Liked Successfully")
     }
 
-    @PostMapping("/comment/unlike/{commentId}")
+    @DeleteMapping("/comment/unlike/{commentId}")
     fun unlikeComment(
         @PathVariable("commentId") commentId: Long,
         @AuthUser user: User,
