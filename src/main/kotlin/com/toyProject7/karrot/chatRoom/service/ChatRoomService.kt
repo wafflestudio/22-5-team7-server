@@ -41,8 +41,16 @@ class ChatRoomService(
     }
 
     @Transactional
-    fun getChatRooms(user: User): List<ChatRoom> {
-        val chatRoomEntities: List<ChatRoomEntity> = chatRoomRepository.findAllBySellerIdOrBuyerIdOrderByUpdatedAtDesc(user.id, user.id)
+    fun getChatRooms(
+        user: User,
+        updatedAt: Instant,
+    ): List<ChatRoom> {
+        val chatRoomEntities: List<ChatRoomEntity> =
+            chatRoomRepository.findTop10BySellerIdOrBuyerIdAndUpdatedAtBeforeOrderByUpdatedAtDesc(
+                sellerId = user.id,
+                buyerId = user.id,
+                updatedAt = updatedAt,
+            )
         return chatRoomEntities.map { chatRoomEntity -> ChatRoom.fromEntity(chatRoomEntity) }
     }
 
