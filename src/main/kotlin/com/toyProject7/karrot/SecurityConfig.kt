@@ -34,6 +34,7 @@ class SecurityConfig(
                 registry
                     .requestMatchers(
                         *SecurityConstants.PUBLIC_PATHS,
+                        "/ws/**",
                     ).permitAll()
                     .anyRequest().authenticated()
             }
