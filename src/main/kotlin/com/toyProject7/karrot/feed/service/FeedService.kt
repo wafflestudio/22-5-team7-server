@@ -181,7 +181,7 @@ class FeedService(
     }
 
     @Transactional
-    fun getFeedByAuthor(
+    fun getFeedsByAuthor(
         id: String,
         feedId: Long,
     ): List<FeedEntity> {
