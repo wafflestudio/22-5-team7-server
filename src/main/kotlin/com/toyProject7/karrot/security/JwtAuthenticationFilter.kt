@@ -10,11 +10,13 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
+
 @Component
 class JwtAuthenticationFilter(
     private val userService: UserService,
 ) : OncePerRequestFilter() {
     private val excludedPaths = SecurityConstants.PUBLIC_PATHS.map { AntPathRequestMatcher(it) }
+
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -56,6 +58,7 @@ class JwtAuthenticationFilter(
         }
         filterChain.doFilter(request, response)
     }
+
     private fun isExcluded(request: HttpServletRequest): Boolean {
         return excludedPaths.any { it.matches(request) }
     }
