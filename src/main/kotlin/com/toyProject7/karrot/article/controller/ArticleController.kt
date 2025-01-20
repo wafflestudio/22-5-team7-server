@@ -48,7 +48,7 @@ class ArticleController(
         return ResponseEntity.ok("Deleted Successfully")
     }
 
-    @PutMapping("item/status/{articleId}")
+    @PutMapping("/item/status/{articleId}")
     fun updateStatus(
         @RequestBody status: Int,
         @PathVariable articleId: Long,
