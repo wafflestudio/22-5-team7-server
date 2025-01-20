@@ -8,4 +8,6 @@ interface ChatMessageRepository : JpaRepository<ChatMessageEntity, Long> {
         chatRoomId: Long,
         createdAt: Instant,
     ): List<ChatMessageEntity>
+
+    fun findTop1ByChatRoomIdOrderByCreatedAtDesc(chatRoomId: Long): ChatMessageEntity?
 }

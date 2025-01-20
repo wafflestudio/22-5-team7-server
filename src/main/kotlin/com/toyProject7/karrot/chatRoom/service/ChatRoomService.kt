@@ -51,7 +51,10 @@ class ChatRoomService(
                 buyerId = user.id,
                 updatedAt = updatedAt,
             )
-        return chatRoomEntities.map { chatRoomEntity -> ChatRoom.fromEntity(chatRoomEntity) }
+        return chatRoomEntities.map { chatRoomEntity ->
+            val latestChatMessage = chatMessageRepository.findTop1ByChatRoomIdOrderByCreatedAtDesc(chatRoomEntity.id!!)?.content ?: ""
+            ChatRoom.fromEntity(chatRoomEntity, latestChatMessage)
+        }
     }
 
     @Transactional
@@ -61,7 +64,7 @@ class ChatRoomService(
         createdAt: Instant,
     ): List<ChatMessage> {
         val chatRoomEntity = chatRoomRepository.findById(chatRoomId).orElseThrow { ChatRoomNotFoundException() }
-        val chatRoom = ChatRoom.fromEntity(chatRoomEntity)
+        val chatRoom = ChatRoom.fromEntity(chatRoomEntity, "")
         if (chatRoom.buyer != user && chatRoom.seller != user) throw ThisRoomIsNotYoursException()
 
         val chatMessageEntities: List<ChatMessageEntity> =
@@ -89,6 +92,6 @@ class ChatRoomService(
                 updatedAt = Instant.now(),
             )
         chatRoomRepository.save(chatRoomEntity)
-        return ChatRoom.fromEntity(chatRoomEntity)
+        return ChatRoom.fromEntity(chatRoomEntity, "")
     }
 }
