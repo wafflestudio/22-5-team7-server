@@ -106,9 +106,12 @@ class CommentService(
     }
 
     @Transactional
-    fun getFeedsByUserComments(id: String): List<FeedEntity> {
+    fun getFeedsByUserComments(
+        feedId: Long,
+        id: String,
+    ): List<FeedEntity> {
         val user = userService.getUserEntityById(id)
-        val feeds = commentRepository.findFeedsByUserComments(user)
+        val feeds = commentRepository.findFeedsByUserComments(user, feedId)
         return feeds
     }
 
