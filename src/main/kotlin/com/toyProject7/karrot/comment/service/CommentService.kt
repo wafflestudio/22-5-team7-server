@@ -5,6 +5,7 @@ import com.toyProject7.karrot.comment.CommentWriterDoesNotMatchException
 import com.toyProject7.karrot.comment.controller.Comment
 import com.toyProject7.karrot.comment.controller.CommentRequest
 import com.toyProject7.karrot.comment.persistence.CommentEntity
+import com.toyProject7.karrot.comment.persistence.CommentLikesEntity
 import com.toyProject7.karrot.comment.persistence.CommentLikesRepository
 import com.toyProject7.karrot.comment.persistence.CommentRepository
 import com.toyProject7.karrot.feed.service.FeedService
@@ -58,6 +59,49 @@ class CommentService(
         commentRepository.save(comment)
         feedService.saveCommentInFeed(comment.feed, comment)
         return Comment.fromEntity(comment)
+    }
+
+    @Transactional
+    fun deleteComment(
+        commentId: Long,
+        id: String,
+    ) {
+        val comment: CommentEntity = getCommentEntityById(commentId)
+        val user = userService.getUserEntityById(id)
+        if (comment.user.id != user.id) {
+            throw CommentWriterDoesNotMatchException()
+        }
+        feedService.deleteCommentInFeed(comment.feed, comment)
+        commentRepository.delete(comment)
+    }
+
+    @Transactional
+    fun likeComment(
+        commentId: Long,
+        id: String,
+    ) {
+        val commentEntity = commentRepository.findByIdOrNull(commentId) ?: throw CommentNotFoundException()
+        val userEntity = userService.getUserEntityById(id)
+        if (commentEntity.commentLikes.any { it.user.id == userEntity.id }) {
+            return
+        }
+        val commentLikesEntity =
+            commentLikesRepository.save(
+                CommentLikesEntity(user = userEntity, comment = commentEntity, createdAt = Instant.now(), updatedAt = Instant.now()),
+            )
+        commentEntity.commentLikes += commentLikesEntity
+    }
+
+    @Transactional
+    fun unlikeComment(
+        commentId: Long,
+        id: String,
+    ) {
+        val commentEntity = commentRepository.findByIdOrNull(commentId) ?: throw CommentNotFoundException()
+        val userEntity = userService.getUserEntityById(id)
+        val toBeRemoved: CommentLikesEntity = commentEntity.commentLikes.find { it.user.id == userEntity.id } ?: return
+        commentEntity.commentLikes.remove(toBeRemoved)
+        commentLikesRepository.delete(toBeRemoved)
     }
 
     @Transactional
