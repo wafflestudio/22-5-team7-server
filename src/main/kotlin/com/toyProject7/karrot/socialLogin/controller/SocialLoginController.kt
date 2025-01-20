@@ -1,6 +1,5 @@
 package com.toyProject7.karrot.socialLogin.service
 
-import com.toyProject7.karrot.user.persistence.UserPrincipal
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
