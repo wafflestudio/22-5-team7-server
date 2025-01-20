@@ -45,6 +45,24 @@ class CommentController(
         commentService.deleteComment(commentId, user.id)
         return ResponseEntity.ok("Deleted Successfully")
     }
+
+    @PostMapping("/comment/like/{commentId}")
+    fun likeComment(
+        @PathVariable("commentId") commentId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<String> {
+        commentService.likeComment(commentId, user.id)
+        return ResponseEntity.ok("Liked Successfully")
+    }
+
+    @PostMapping("/comment/unlike/{commentId}")
+    fun unlikeComment(
+        @PathVariable("commentId") commentId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<String> {
+        commentService.unlikeComment(commentId, user.id)
+        return ResponseEntity.ok("Unliked Successfully")
+    }
 }
 
 data class CommentRequest(
