@@ -1,10 +1,14 @@
 package com.toyProject7.karrot.comment.controller
 
+import com.toyProject7.karrot.comment.persistence.CommentRepository
 import com.toyProject7.karrot.comment.service.CommentService
+import com.toyProject7.karrot.feed.controller.FeedPreview
+import com.toyProject7.karrot.feed.persistence.FeedEntity
 import com.toyProject7.karrot.user.AuthUser
 import com.toyProject7.karrot.user.controller.User
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api")
 class CommentController(
     private val commentService: CommentService,
+    private val commentRepository: CommentRepository,
 ) {
     @PostMapping("/comment/post/{feedId}")
     fun postComment(
@@ -62,6 +67,18 @@ class CommentController(
     ): ResponseEntity<String> {
         commentService.unlikeComment(commentId, user.id)
         return ResponseEntity.ok("Unliked Successfully")
+    }
+
+    @GetMapping("/myfeed/comment")
+    fun getFeedsByUserComments(
+        @AuthUser user: User,
+    ): ResponseEntity<List<FeedPreview>> {
+        val feeds: List<FeedEntity> = commentService.getFeedsByUserComments(user.id)
+        val response =
+            feeds.map { feed ->
+                FeedPreview.fromEntity(feed)
+            }
+        return ResponseEntity.ok(response)
     }
 }
 

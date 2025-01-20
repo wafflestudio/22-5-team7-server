@@ -8,6 +8,7 @@ import com.toyProject7.karrot.comment.persistence.CommentEntity
 import com.toyProject7.karrot.comment.persistence.CommentLikesEntity
 import com.toyProject7.karrot.comment.persistence.CommentLikesRepository
 import com.toyProject7.karrot.comment.persistence.CommentRepository
+import com.toyProject7.karrot.feed.persistence.FeedEntity
 import com.toyProject7.karrot.feed.service.FeedService
 import com.toyProject7.karrot.user.service.UserService
 import org.springframework.data.repository.findByIdOrNull
@@ -102,6 +103,13 @@ class CommentService(
         val toBeRemoved: CommentLikesEntity = commentEntity.commentLikes.find { it.user.id == userEntity.id } ?: return
         commentEntity.commentLikes.remove(toBeRemoved)
         commentLikesRepository.delete(toBeRemoved)
+    }
+
+    @Transactional
+    fun getFeedsByUserComments(id: String): List<FeedEntity> {
+        val user = userService.getUserEntityById(id)
+        val feeds = commentRepository.findFeedsByUserComments(user)
+        return feeds
     }
 
     @Transactional
