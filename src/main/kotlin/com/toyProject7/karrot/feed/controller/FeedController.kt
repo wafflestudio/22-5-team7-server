@@ -84,6 +84,19 @@ class FeedController(
             }
         return ResponseEntity.ok(response)
     }
+
+    @GetMapping("/myfeed/my")
+    fun getFeedByAuthor(
+        @RequestParam("feedId") feedId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<List<FeedPreview>> {
+        val feeds: List<FeedEntity> = feedService.getFeedByAuthor(user.id, feedId)
+        val response: List<FeedPreview> =
+            feeds.map { feed ->
+                FeedPreview.fromEntity(feed)
+            }
+        return ResponseEntity.ok(response)
+    }
 }
 
 data class PostFeedRequest(

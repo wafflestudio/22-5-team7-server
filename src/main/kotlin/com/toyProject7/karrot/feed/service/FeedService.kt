@@ -181,6 +181,17 @@ class FeedService(
     }
 
     @Transactional
+    fun getFeedByAuthor(
+        id: String,
+        feedId: Long,
+    ): List<FeedEntity> {
+        val author = userService.getUserEntityById(id)
+        val feeds = feedRepository.findTop10ByAuthorAndIdLessThanOrderByIdDesc(author, feedId)
+        refreshPresignedUrlIfExpired(feeds)
+        return feeds
+    }
+
+    @Transactional
     fun getFeedEntityById(feedId: Long): FeedEntity {
         return feedRepository.findByIdOrNull(feedId) ?: throw FeedNotFoundException()
     }
