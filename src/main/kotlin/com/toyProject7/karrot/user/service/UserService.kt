@@ -130,6 +130,14 @@ class UserService(
                     updatedAt = Instant.now(),
                 )
             val savedUser = userRepository.save(newUser) // This should save as SocialUser
+
+            val profileEntity =
+                ProfileEntity(
+                    user = newUser,
+                )
+
+            profileRepository.save(profileEntity)
+
             User.fromEntity(savedUser) // Convert and return as User DTO
         }
     }
