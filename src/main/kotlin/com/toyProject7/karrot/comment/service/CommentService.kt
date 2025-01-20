@@ -119,4 +119,12 @@ class CommentService(
     fun getCommentEntityById(commentId: Long): CommentEntity {
         return commentRepository.findByIdOrNull(commentId) ?: throw CommentNotFoundException()
     }
+
+    @Transactional
+    fun userLikesComment(
+        id: String,
+        commentId: Long,
+    ): Boolean {
+        return commentLikesRepository.existsByUserIdAndCommentId(id, commentId)
+    }
 }

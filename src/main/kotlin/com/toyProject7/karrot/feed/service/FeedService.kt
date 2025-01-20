@@ -1,6 +1,7 @@
 package com.toyProject7.karrot.feed.service
 
 import com.toyProject7.karrot.comment.persistence.CommentEntity
+import com.toyProject7.karrot.comment.service.CommentService
 import com.toyProject7.karrot.feed.FeedNotFoundException
 import com.toyProject7.karrot.feed.FeedPermissionDeniedException
 import com.toyProject7.karrot.feed.controller.Feed
@@ -24,6 +25,7 @@ class FeedService(
     private val feedRepository: FeedRepository,
     private val feedLikesRepository: FeedLikesRepository,
     private val userService: UserService,
+    private val commentService: CommentService,
     @Lazy private val imageService: ImageService,
 ) {
     @Transactional
@@ -124,7 +126,7 @@ class FeedService(
         feedId: Long,
         id: String,
     ) {
-        val feedEntity = feedRepository.findByIdWithWriteLock(feedId) ?: throw FeedNotFoundException()
+        val feedEntity = feedRepository.findByIdOrNull(feedId) ?: throw FeedNotFoundException()
         val userEntity = userService.getUserEntityById(id)
         if (feedEntity.feedLikes.any { it.user.id == userEntity.id }) {
             return
@@ -134,7 +136,6 @@ class FeedService(
                 FeedLikesEntity(feed = feedEntity, user = userEntity, createdAt = Instant.now(), updatedAt = Instant.now()),
             )
         feedEntity.feedLikes += feedLikesEntity
-        feedRepository.save(feedEntity)
     }
 
     @Transactional
@@ -142,22 +143,30 @@ class FeedService(
         feedId: Long,
         id: String,
     ) {
-        val feedEntity = feedRepository.findByIdWithWriteLock(feedId) ?: throw FeedNotFoundException()
-        val userEntity = userService.getUserEntityById(id)
-        val toBeRemoved: FeedLikesEntity = feedEntity.feedLikes.find { it.user.id == userEntity.id } ?: return
-        feedEntity.feedLikes -= toBeRemoved
+        val feedEntity = feedRepository.findByIdOrNull(feedId) ?: throw FeedNotFoundException()
+        val toBeRemoved: FeedLikesEntity = feedLikesRepository.findByUserIdAndFeedId(id, feedId) ?: return
+        feedEntity.feedLikes.remove(toBeRemoved)
         feedLikesRepository.delete(toBeRemoved)
-        feedRepository.save(feedEntity)
     }
 
     @Transactional
-    fun getFeed(feedId: Long): Feed {
-        val feedEntity = feedRepository.findByIdWithWriteLock(feedId) ?: throw FeedNotFoundException()
-        val feed: List<FeedEntity> = listOf(feedEntity)
-        refreshPresignedUrlIfExpired(feed)
-        feedEntity.viewCount += 1
-        feedRepository.save(feedEntity)
-        return Feed.fromEntity(feedEntity)
+    fun getFeed(
+        feedId: Long,
+        id: String,
+    ): Feed {
+        val feedEntity = feedRepository.findByIdOrNull(feedId) ?: throw FeedNotFoundException()
+        feedRepository.incrementViewCount(feedId)
+
+        refreshPresignedUrlIfExpired(listOf(feedEntity))
+
+        val feed = Feed.fromEntity(feedEntity)
+        feed.isLiked = feedLikesRepository.existsByUserIdAndFeedId(id, feed.id)
+
+        feed.commentList.forEach { comment ->
+            comment.isLiked = commentService.userLikesComment(id, comment.id)
+        }
+
+        return feed
     }
 
     @Transactional
