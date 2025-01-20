@@ -50,11 +50,11 @@ class ArticleController(
 
     @PutMapping("item/status/{articleId}")
     fun updateStatus(
-        @RequestBody status: Int,
+        @RequestBody request: UpdateStatusRequest,
         @PathVariable articleId: Long,
         @AuthUser user: User,
     ): ResponseEntity<String> {
-        articleService.updateStatus(status, articleId, user.id)
+        articleService.updateStatus(request, articleId, user.id)
         return ResponseEntity.ok("Status Updated Successfully")
     }
 
@@ -144,4 +144,8 @@ data class PostArticleRequest(
     val price: Int,
     val location: String,
     val imageCount: Int,
+)
+
+data class UpdateStatusRequest(
+    val status: Int,
 )

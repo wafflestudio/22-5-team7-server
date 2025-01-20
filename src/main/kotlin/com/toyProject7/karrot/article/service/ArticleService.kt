@@ -4,6 +4,7 @@ import com.toyProject7.karrot.article.ArticleNotFoundException
 import com.toyProject7.karrot.article.ArticlePermissionDeniedException
 import com.toyProject7.karrot.article.controller.Article
 import com.toyProject7.karrot.article.controller.PostArticleRequest
+import com.toyProject7.karrot.article.controller.UpdateStatusRequest
 import com.toyProject7.karrot.article.persistence.ArticleEntity
 import com.toyProject7.karrot.article.persistence.ArticleLikesEntity
 import com.toyProject7.karrot.article.persistence.ArticleLikesRepository
@@ -128,13 +129,13 @@ class ArticleService(
 
     @Transactional
     fun updateStatus(
-        status: Int,
+        request: UpdateStatusRequest,
         articleId: Long,
         id: String,
     ) {
         val articleEntity = getArticleEntityById(articleId)
         if (articleEntity.seller.id != id) throw ArticlePermissionDeniedException()
-        articleEntity.status = status
+        articleEntity.status = request.status
     }
 
     @Transactional
