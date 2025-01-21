@@ -6,6 +6,7 @@ import com.toyProject7.karrot.chatRoom.ChatRoomNotFoundException
 import com.toyProject7.karrot.chatRoom.ThisRoomIsNotYoursException
 import com.toyProject7.karrot.chatRoom.controller.ChatMessage
 import com.toyProject7.karrot.chatRoom.controller.ChatRoom
+import com.toyProject7.karrot.chatRoom.controller.ChatRoomResponse
 import com.toyProject7.karrot.chatRoom.persistence.ChatMessageEntity
 import com.toyProject7.karrot.chatRoom.persistence.ChatMessageRepository
 import com.toyProject7.karrot.chatRoom.persistence.ChatRoomEntity
@@ -62,7 +63,7 @@ class ChatRoomService(
         chatRoomId: Long,
         user: User,
         createdAt: Instant,
-    ): List<ChatMessage> {
+    ): ChatRoomResponse {
         val chatRoomEntity = chatRoomRepository.findById(chatRoomId).orElseThrow { ChatRoomNotFoundException() }
         val chatRoom = ChatRoom.fromEntity(chatRoomEntity, "")
         if (chatRoom.buyer != user && chatRoom.seller != user) throw ThisRoomIsNotYoursException()
@@ -72,7 +73,11 @@ class ChatRoomService(
                 chatRoomId = chatRoomId,
                 createdAt = createdAt,
             )
-        return chatMessageEntities.map { chatMessageEntity -> ChatMessage.fromEntity(chatMessageEntity) }
+        val messages = chatMessageEntities.map { chatMessageEntity -> ChatMessage.fromEntity(chatMessageEntity) }
+        return ChatRoomResponse(
+            article = chatRoom.article,
+            messages = messages,
+        )
     }
 
     @Transactional
