@@ -1,5 +1,4 @@
 package com.toyProject7.karrot.security
-
 import com.toyProject7.karrot.user.UserAccessTokenUtil
 import com.toyProject7.karrot.user.service.UserService
 import jakarta.servlet.FilterChain
@@ -28,12 +27,9 @@ class JwtAuthenticationFilter(
             filterChain.doFilter(request, response)
             return
         }
-
         val authHeader = request.getHeader("Authorization")
-
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             val token = authHeader.substring(7)
-
             try {
                 // Validate the token
                 if (UserAccessTokenUtil.validateToken(token)) {
@@ -60,7 +56,6 @@ class JwtAuthenticationFilter(
                 println("Failed to authenticate user: ${e.message}")
             }
         }
-
         filterChain.doFilter(request, response)
     }
 

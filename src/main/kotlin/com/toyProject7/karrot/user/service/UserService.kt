@@ -130,16 +130,21 @@ class UserService(
                     updatedAt = Instant.now(),
                 )
             val savedUser = userRepository.save(newUser) // This should save as SocialUser
+
+            val profileEntity =
+                ProfileEntity(
+                    user = newUser,
+                )
+
+            profileRepository.save(profileEntity)
+
             User.fromEntity(savedUser) // Convert and return as User DTO
         }
     }
 
     @Transactional
-    fun loadSocialUserByUsername(email: String): UserPrincipal {
-        val user =
-            userRepository.findSocialUserByEmail(email)
-                ?: throw UsernameNotFoundException("User not found with email: $email")
-        return UserPrincipal.create(user)
+    fun getUserEntityById(id: String): UserEntity {
+        return userRepository.findByIdOrNull(id) ?: throw AuthenticateException()
     }
 
     @Transactional
@@ -148,10 +153,5 @@ class UserService(
             userRepository.findById(id)
                 .orElseThrow { UsernameNotFoundException("User not found with id: $id") }
         return UserPrincipal.create(user)
-    }
-
-    @Transactional
-    fun getUserEntityById(id: String): UserEntity {
-        return userRepository.findByIdOrNull(id) ?: throw AuthenticateException()
     }
 }

@@ -37,6 +37,7 @@ class FeedService(
                 author = user,
                 title = request.title,
                 content = request.content,
+                tag = request.tag,
                 imageUrls = mutableListOf(),
                 feedLikes = mutableListOf(),
                 feedComments = mutableListOf(),
@@ -77,6 +78,7 @@ class FeedService(
         }
         feedEntity.title = request.title
         feedEntity.content = request.content
+        feedEntity.tag = request.tag
         if (feedEntity.imageUrls.isNotEmpty()) {
             imageService.deleteImageUrl(feedEntity.imageUrls)
             feedEntity.imageUrls = mutableListOf()
@@ -179,6 +181,32 @@ class FeedService(
     }
 
     @Transactional
+    fun getFeedsByAuthor(
+        id: String,
+        feedId: Long,
+    ): List<FeedEntity> {
+        val author = userService.getUserEntityById(id)
+        val feeds = feedRepository.findTop10ByAuthorAndIdLessThanOrderByIdDesc(author, feedId)
+        refreshPresignedUrlIfExpired(feeds)
+        return feeds
+    }
+
+    @Transactional
+    fun getFeedsThatUserLikes(
+        id: String,
+        feedId: Long,
+    ): List<FeedEntity> {
+        val userEntity = userService.getUserEntityById(id)
+        val feeds =
+            feedLikesRepository.findTop10ByUserAndFeedIdLessThanOrderByFeedIdDesc(
+                userEntity,
+                feedId,
+            ).map { it.feed }
+        refreshPresignedUrlIfExpired(feeds)
+        return feeds
+    }
+
+    @Transactional
     fun getFeedEntityById(feedId: Long): FeedEntity {
         return feedRepository.findByIdOrNull(feedId) ?: throw FeedNotFoundException()
     }
@@ -189,6 +217,15 @@ class FeedService(
         comment: CommentEntity,
     ) {
         feed.feedComments += comment
+        feedRepository.save(feed)
+    }
+
+    @Transactional
+    fun deleteCommentInFeed(
+        feed: FeedEntity,
+        comment: CommentEntity,
+    ) {
+        feed.feedComments -= comment
         feedRepository.save(feed)
     }
 }
