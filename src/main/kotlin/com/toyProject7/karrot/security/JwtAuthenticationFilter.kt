@@ -5,6 +5,7 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.stereotype.Component
@@ -40,7 +41,7 @@ class JwtAuthenticationFilter(
 
                     // Create authentication token without authorities
                     val authentication =
-                        UsernamePasswordAuthenticationToken(userDetails.nickname, null)
+                        UsernamePasswordAuthenticationToken(userDetails.nickname, null, listOf(SimpleGrantedAuthority("ROLE_USER")))
 
                     // Set the authentication in the context
                     SecurityContextHolder.getContext().authentication = authentication
