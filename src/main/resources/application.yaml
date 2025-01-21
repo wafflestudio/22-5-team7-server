@@ -68,3 +68,4 @@ logging:
     org.springframework.web.socket.client: DEBUG
     org.springframework.web.socket.server: DEBUG
     org.springframework.web.socket.config: DEBUG
+    org.springframework.security: DEBUG

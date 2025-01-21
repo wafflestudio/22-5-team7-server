@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.stereotype.Component
@@ -25,8 +24,10 @@ class JwtAuthenticationFilter(
         response: HttpServletResponse,
         filterChain: FilterChain,
     ) {
+        logger.debug("Processing request: ${request.requestURI}")
         // Skip filtering for excluded endpoints
         if (isExcluded(request)) {
+            logger.debug("Request is excluded from authentication: ${request.requestURI}")
             filterChain.doFilter(request, response)
             return
         }
@@ -44,27 +45,18 @@ class JwtAuthenticationFilter(
                     logger.debug("User ID extracted from token: $userId")
 
                     // Load user details
-                    val userDetails = userService.getUserEntityById(userId)
+                    val userDetails = userService.loadUserPrincipal(userId)
 
-                    if (userDetails != null) {
-                        // Create authentication token with a default authority
-                        val authentication =
-                            UsernamePasswordAuthenticationToken(
-                                userDetails.nickname,
-                                null,
-                                listOf(SimpleGrantedAuthority("ROLE_USER")),
-                            )
+                    // Create authentication token with a default authority
+                    val authentication =
+                        UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.authorities,
+                        )
 
-                        // Set the authentication in the context
-                        SecurityContextHolder.getContext().authentication = authentication
-                        logger.info("Authenticated user: ${userDetails.nickname}")
-                    } else {
-                        // User not found scenario
-                        logger.warn("User not found for ID: $userId")
-                        response.status = HttpServletResponse.SC_UNAUTHORIZED
-                        response.writer.write("User not found")
-                        return
-                    }
+                    // Set the authentication in the context
+                    SecurityContextHolder.getContext().authentication = authentication
                 } else {
                     // Invalid token scenario
                     logger.warn("Invalid JWT token: $token")
