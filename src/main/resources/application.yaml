@@ -62,6 +62,10 @@ spring:
 
 logging:
   level:
-    org:
-      springframework:
-        security=DEBUG
+    org.springframework.web.socket: DEBUG
+    org.springframework.messaging: DEBUG
+    org.springframework.web.socket.sockjs: DEBUG
+    org.springframework.web.socket.client: DEBUG
+    org.springframework.web.socket.server: DEBUG
+    org.springframework.web.socket.config: DEBUG
+    org.springframework.security: DEBUG

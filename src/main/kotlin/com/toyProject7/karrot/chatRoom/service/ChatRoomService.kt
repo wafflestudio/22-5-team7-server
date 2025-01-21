@@ -36,25 +36,42 @@ class ChatRoomService(
                 createdAt = Instant.now(),
             )
         chatMessageRepository.save(chatMessageEntity)
+        chatRoomEntity.updatedAt = Instant.now()
         return ChatMessage.fromEntity(chatMessageEntity)
     }
 
     @Transactional
-    fun getChatRooms(user: User): List<ChatRoom> {
-        val chatRoomEntities: List<ChatRoomEntity> = chatRoomRepository.findAllBySellerIdOrBuyerIdOrderByCreatedAtDesc(user.id, user.id)
-        return chatRoomEntities.map { chatRoomEntity -> ChatRoom.fromEntity(chatRoomEntity) }
+    fun getChatRooms(
+        user: User,
+        updatedAt: Instant,
+    ): List<ChatRoom> {
+        val chatRoomEntities: List<ChatRoomEntity> =
+            chatRoomRepository.findTop10BySellerIdOrBuyerIdAndUpdatedAtBeforeOrderByUpdatedAtDesc(
+                sellerId = user.id,
+                buyerId = user.id,
+                updatedAt = updatedAt,
+            )
+        return chatRoomEntities.map { chatRoomEntity ->
+            val latestChatMessage = chatMessageRepository.findTop1ByChatRoomIdOrderByCreatedAtDesc(chatRoomEntity.id!!)?.content ?: ""
+            ChatRoom.fromEntity(chatRoomEntity, latestChatMessage)
+        }
     }
 
     @Transactional
     fun getChatRoom(
         chatRoomId: Long,
         user: User,
+        createdAt: Instant,
     ): List<ChatMessage> {
         val chatRoomEntity = chatRoomRepository.findById(chatRoomId).orElseThrow { ChatRoomNotFoundException() }
-        val chatRoom = ChatRoom.fromEntity(chatRoomEntity)
+        val chatRoom = ChatRoom.fromEntity(chatRoomEntity, "")
         if (chatRoom.buyer != user && chatRoom.seller != user) throw ThisRoomIsNotYoursException()
 
-        val chatMessageEntities: List<ChatMessageEntity> = chatMessageRepository.findAllByChatRoomIdOrderByCreatedAtAsc(chatRoomId)
+        val chatMessageEntities: List<ChatMessageEntity> =
+            chatMessageRepository.findTop10ByChatRoomIdAndCreatedAtBeforeOrderByCreatedAtDesc(
+                chatRoomId = chatRoomId,
+                createdAt = createdAt,
+            )
         return chatMessageEntities.map { chatMessageEntity -> ChatMessage.fromEntity(chatMessageEntity) }
     }
 
@@ -72,9 +89,9 @@ class ChatRoomService(
                 article = articleEntity,
                 seller = sellerEntity,
                 buyer = buyerEntity,
-                createdAt = Instant.now(),
+                updatedAt = Instant.now(),
             )
         chatRoomRepository.save(chatRoomEntity)
-        return ChatRoom.fromEntity(chatRoomEntity)
+        return ChatRoom.fromEntity(chatRoomEntity, "")
     }
 }

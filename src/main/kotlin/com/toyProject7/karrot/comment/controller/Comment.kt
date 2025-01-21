@@ -11,6 +11,7 @@ data class Comment(
     val commentLikesCount: Int,
     val createdAt: Instant,
     val updatedAt: Instant,
+    var isLiked: Boolean = false,
 ) {
     companion object {
         fun fromEntity(entity: CommentEntity): Comment {
