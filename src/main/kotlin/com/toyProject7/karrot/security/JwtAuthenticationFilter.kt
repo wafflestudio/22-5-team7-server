@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
@@ -17,17 +18,14 @@ class JwtAuthenticationFilter(
     private val userService: UserService,
 ) : OncePerRequestFilter() {
     private val excludedPaths = SecurityConstants.PUBLIC_PATHS.map { AntPathRequestMatcher(it) }
-    private val logger = LoggerFactory.getLogger(JwtAuthenticationFilter::class.java)
 
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
         filterChain: FilterChain,
     ) {
-        logger.debug("Processing request: ${request.requestURI}")
         // Skip filtering for excluded endpoints
         if (isExcluded(request)) {
-            logger.debug("Request is excluded from authentication: ${request.requestURI}")
             filterChain.doFilter(request, response)
             return
         }
@@ -35,7 +33,6 @@ class JwtAuthenticationFilter(
         val authHeader = request.getHeader("Authorization")
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             val token = authHeader.substring(7)
-            logger.debug("Received token for authentication: $token")
 
             try {
                 // Validate the token
@@ -45,7 +42,7 @@ class JwtAuthenticationFilter(
                     logger.debug("User ID extracted from token: $userId")
 
                     // Load user details
-                    val userDetails = userService.loadUserPrincipal(userId)
+                    val userDetails = userService.loadUserPrincipalById(userId)
 
                     // Create authentication token with a default authority
                     val authentication =
@@ -54,6 +51,7 @@ class JwtAuthenticationFilter(
                             null,
                             userDetails.authorities,
                         )
+                    authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
 
                     // Set the authentication in the context
                     SecurityContextHolder.getContext().authentication = authentication
