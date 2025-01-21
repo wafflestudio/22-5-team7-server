@@ -68,7 +68,7 @@ class ChatRoomService(
         if (chatRoom.buyer != user && chatRoom.seller != user) throw ThisRoomIsNotYoursException()
 
         val chatMessageEntities: List<ChatMessageEntity> =
-            chatMessageRepository.findTop10ByChatRoomIdAndCreatedAtBeforeOrderByCreatedAtDesc(
+            chatMessageRepository.findTop30ByChatRoomIdAndCreatedAtBeforeOrderByCreatedAtDesc(
                 chatRoomId = chatRoomId,
                 createdAt = createdAt,
             )
