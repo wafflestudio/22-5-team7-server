@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
@@ -39,13 +38,9 @@ class JwtAuthenticationFilter(
                     // Load user details
                     val userDetails = userService.getUserEntityById(userId)
 
-                    // Create authentication token
+                    // Create authentication token without authorities
                     val authentication =
-                        UsernamePasswordAuthenticationToken(
-                            userDetails.nickname,
-                            null,
-                        )
-                    authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
+                        UsernamePasswordAuthenticationToken(userDetails.nickname, null)
 
                     // Set the authentication in the context
                     SecurityContextHolder.getContext().authentication = authentication
@@ -53,6 +48,8 @@ class JwtAuthenticationFilter(
             } catch (e: Exception) {
                 // Handle exceptions (e.g., log them)
                 println("Failed to authenticate user: ${e.message}")
+                response.status = HttpServletResponse.SC_UNAUTHORIZED // Set 401 status
+                return
             }
         }
         filterChain.doFilter(request, response)
