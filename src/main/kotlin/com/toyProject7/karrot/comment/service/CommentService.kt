@@ -106,14 +106,25 @@ class CommentService(
     }
 
     @Transactional
-    fun getFeedsByUserComments(id: String): List<FeedEntity> {
+    fun getFeedsByUserComments(
+        feedId: Long,
+        id: String,
+    ): List<FeedEntity> {
         val user = userService.getUserEntityById(id)
-        val feeds = commentRepository.findFeedsByUserComments(user)
+        val feeds = commentRepository.findFeedsByUserComments(user, feedId)
         return feeds
     }
 
     @Transactional
     fun getCommentEntityById(commentId: Long): CommentEntity {
         return commentRepository.findByIdOrNull(commentId) ?: throw CommentNotFoundException()
+    }
+
+    @Transactional
+    fun userLikesComment(
+        id: String,
+        commentId: Long,
+    ): Boolean {
+        return commentLikesRepository.existsByUserIdAndCommentId(id, commentId)
     }
 }
