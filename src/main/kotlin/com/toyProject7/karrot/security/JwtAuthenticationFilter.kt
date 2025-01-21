@@ -37,14 +37,13 @@ class JwtAuthenticationFilter(
                     val userId = UserAccessTokenUtil.getUserIdFromToken(token)
 
                     // Load user details
-                    val userDetails = userService.loadSocialUserById(userId)
+                    val userDetails = userService.getUserEntityById(userId)
 
                     // Create authentication token
                     val authentication =
                         UsernamePasswordAuthenticationToken(
-                            userDetails,
+                            userDetails.nickname,
                             null,
-                            userDetails.authorities,
                         )
                     authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
 
