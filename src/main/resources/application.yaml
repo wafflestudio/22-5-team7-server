@@ -59,9 +59,3 @@ spring:
             userNameAttribute: id
   profiles:
     active: dev
-
-logging:
-  level:
-    org:
-      springframework:
-        security=DEBUG
