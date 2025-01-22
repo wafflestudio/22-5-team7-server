@@ -148,7 +148,7 @@ class UserService(
     }
 
     @Transactional
-    fun loadUserPrincipal(id: String): UserPrincipal {
+    fun loadUserPrincipalById(id: String): UserPrincipal {
         val user =
             userRepository.findById(id)
                 .orElseThrow { UsernameNotFoundException("User not found with id: $id") }
