@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.web.cors.CorsConfiguration
@@ -22,6 +23,7 @@ class SecurityConfig(
     private val socialLoginUserService: SocialLoginUserService,
     private val customAuthenticationSuccessHandler: CustomAuthenticationSuccessHandler,
     private val jwtAuthenticationFilter: JwtAuthenticationFilter,
+    private val oAuth2AuthenticationClearingFilter: OAuth2AuthenticationClearingFilter,
 ) {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -38,9 +40,7 @@ class SecurityConfig(
                     ).permitAll()
                     .anyRequest().authenticated()
             }
-            // Disable form login
             .formLogin { formLogin -> formLogin.disable() }
-            // Configure exception handling
             .exceptionHandling { exceptionHandling ->
                 exceptionHandling.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
             }
@@ -51,7 +51,9 @@ class SecurityConfig(
                     }
                     .successHandler(customAuthenticationSuccessHandler)
             }
-            .addFilterBefore(OAuth2AuthenticationClearingFilter(), JwtAuthenticationFilter::class.java)
+            // Add filters in correct order
+            .addFilterBefore(oAuth2AuthenticationClearingFilter, JwtAuthenticationFilter::class.java)
+            .addFilterBefore(jwtAuthenticationFilter, OAuth2LoginAuthenticationFilter::class.java)
             .build()
     }
 

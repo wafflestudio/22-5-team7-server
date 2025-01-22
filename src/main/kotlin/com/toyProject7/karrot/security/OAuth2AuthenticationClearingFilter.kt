@@ -4,9 +4,10 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
+import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
+@Component
 class OAuth2AuthenticationClearingFilter : OncePerRequestFilter() {
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -14,7 +15,7 @@ class OAuth2AuthenticationClearingFilter : OncePerRequestFilter() {
         filterChain: FilterChain,
     ) {
         val existingAuth = SecurityContextHolder.getContext().authentication
-        if (existingAuth is OAuth2AuthenticationToken) {
+        if (existingAuth != null && existingAuth is org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken) {
             logger.debug("Clearing OAuth2AuthenticationToken for request: ${request.requestURI}")
             SecurityContextHolder.clearContext()
         }
