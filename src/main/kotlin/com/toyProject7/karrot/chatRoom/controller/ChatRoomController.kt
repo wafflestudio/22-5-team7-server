@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.time.Instant
 
 @RestController
 @RequestMapping("/api")
@@ -19,8 +21,9 @@ class ChatRoomController(
     @GetMapping("/chat")
     fun getRooms(
         @AuthUser user: User,
+        @RequestParam("updatedAt") updatedAt: Instant,
     ): ResponseEntity<List<ChatRoom>> {
-        val chatRooms = chatRoomService.getChatRooms(user)
+        val chatRooms: List<ChatRoom> = chatRoomService.getChatRooms(user, updatedAt)
         return ResponseEntity.ok(chatRooms)
     }
 
@@ -28,14 +31,14 @@ class ChatRoomController(
     fun getRoom(
         @PathVariable chatRoomId: Long,
         @AuthUser user: User,
+        @RequestParam("createdAt") createdAt: Instant,
     ): ResponseEntity<List<ChatMessage>> {
-        val chatRoom = chatRoomService.getChatRoom(chatRoomId, user)
+        val chatRoom = chatRoomService.getChatRoom(chatRoomId, user, createdAt)
         return ResponseEntity.ok(chatRoom)
     }
 
     @PostMapping("/chat/create")
     fun createRoom(
-        @AuthUser user: User,
         @RequestBody request: CreateChatRoomRequest,
     ): ResponseEntity<ChatRoom> {
         val chatRoom = chatRoomService.createChatRoom(request.articleId, request.sellerId, request.buyerId)

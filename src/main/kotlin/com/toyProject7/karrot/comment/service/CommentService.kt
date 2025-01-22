@@ -8,6 +8,7 @@ import com.toyProject7.karrot.comment.persistence.CommentEntity
 import com.toyProject7.karrot.comment.persistence.CommentLikesEntity
 import com.toyProject7.karrot.comment.persistence.CommentLikesRepository
 import com.toyProject7.karrot.comment.persistence.CommentRepository
+import com.toyProject7.karrot.feed.persistence.FeedEntity
 import com.toyProject7.karrot.feed.service.FeedService
 import com.toyProject7.karrot.user.service.UserService
 import org.springframework.data.repository.findByIdOrNull
@@ -105,7 +106,25 @@ class CommentService(
     }
 
     @Transactional
+    fun getFeedsByUserComments(
+        feedId: Long,
+        id: String,
+    ): List<FeedEntity> {
+        val user = userService.getUserEntityById(id)
+        val feeds = commentRepository.findFeedsByUserComments(user, feedId)
+        return feeds
+    }
+
+    @Transactional
     fun getCommentEntityById(commentId: Long): CommentEntity {
         return commentRepository.findByIdOrNull(commentId) ?: throw CommentNotFoundException()
+    }
+
+    @Transactional
+    fun userLikesComment(
+        id: String,
+        commentId: Long,
+    ): Boolean {
+        return commentLikesRepository.existsByUserIdAndCommentId(id, commentId)
     }
 }
