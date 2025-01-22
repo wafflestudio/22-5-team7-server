@@ -9,8 +9,12 @@ import com.toyProject7.karrot.article.persistence.ArticleEntity
 import com.toyProject7.karrot.article.persistence.ArticleLikesEntity
 import com.toyProject7.karrot.article.persistence.ArticleLikesRepository
 import com.toyProject7.karrot.article.persistence.ArticleRepository
+import com.toyProject7.karrot.chatRoom.controller.ChatRoom
+import com.toyProject7.karrot.chatRoom.persistence.ChatRoomEntity
+import com.toyProject7.karrot.chatRoom.persistence.ChatRoomRepository
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.image.service.ImageService
+import com.toyProject7.karrot.user.controller.User
 import com.toyProject7.karrot.user.service.UserService
 import org.springframework.context.annotation.Lazy
 import org.springframework.data.repository.findByIdOrNull
@@ -25,6 +29,7 @@ class ArticleService(
     private val articleLikesRepository: ArticleLikesRepository,
     private val userService: UserService,
     @Lazy private val imageService: ImageService,
+    private val chatRoomRepository: ChatRoomRepository,
 ) {
     @Transactional
     fun postArticle(
@@ -248,5 +253,13 @@ class ArticleService(
     @Transactional
     fun getArticleEntityById(articleId: Long): ArticleEntity {
         return articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
+    }
+
+    @Transactional
+    fun getChattingUsersByArticle(article: Article): List<User> {
+        val chatRoomEntities: List<ChatRoomEntity> = chatRoomRepository.findAllByArticleId(article.id)
+        return chatRoomEntities
+            .map { chatRoomEntity -> ChatRoom.fromEntity(chatRoomEntity, "") }
+            .map { chatRoom -> chatRoom.buyer }
     }
 }

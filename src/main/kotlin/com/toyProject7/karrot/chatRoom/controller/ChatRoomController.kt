@@ -1,5 +1,6 @@
 package com.toyProject7.karrot.chatRoom.controller
 
+import com.toyProject7.karrot.article.controller.Article
 import com.toyProject7.karrot.chatRoom.service.ChatRoomService
 import com.toyProject7.karrot.user.AuthUser
 import com.toyProject7.karrot.user.controller.User
@@ -32,9 +33,9 @@ class ChatRoomController(
         @PathVariable chatRoomId: Long,
         @AuthUser user: User,
         @RequestParam("createdAt") createdAt: Instant,
-    ): ResponseEntity<List<ChatMessage>> {
-        val chatRoom = chatRoomService.getChatRoom(chatRoomId, user, createdAt)
-        return ResponseEntity.ok(chatRoom)
+    ): ResponseEntity<ChatRoomResponse> {
+        val chatRoomResponse = chatRoomService.getChatRoom(chatRoomId, user, createdAt)
+        return ResponseEntity.ok(chatRoomResponse)
     }
 
     @PostMapping("/chat/create")
@@ -50,4 +51,9 @@ data class CreateChatRoomRequest(
     val articleId: Long,
     val sellerId: String,
     val buyerId: String,
+)
+
+data class ChatRoomResponse(
+    val article: Article,
+    val messages: List<ChatMessage>,
 )
