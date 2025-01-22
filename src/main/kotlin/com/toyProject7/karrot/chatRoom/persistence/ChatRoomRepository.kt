@@ -9,4 +9,6 @@ interface ChatRoomRepository : JpaRepository<ChatRoomEntity, Long> {
         buyerId: String,
         updatedAt: Instant,
     ): List<ChatRoomEntity>
+
+    fun findAllByArticleId(articleId: Long): List<ChatRoomEntity>
 }

@@ -24,9 +24,10 @@ class ArticleController(
     fun postArticle(
         @RequestBody request: PostArticleRequest,
         @AuthUser user: User,
-    ): ResponseEntity<Article> {
+    ): ResponseEntity<ArticleResponse> {
         val article = articleService.postArticle(request, user.id)
-        return ResponseEntity.ok(article)
+        val chattingUsers = articleService.getChattingUsersByArticle(article)
+        return ResponseEntity.ok(ArticleResponse(article, chattingUsers))
     }
 
     @PutMapping("/item/edit/{articleId}")
@@ -34,9 +35,10 @@ class ArticleController(
         @RequestBody request: PostArticleRequest,
         @PathVariable articleId: Long,
         @AuthUser user: User,
-    ): ResponseEntity<Article> {
+    ): ResponseEntity<ArticleResponse> {
         val article = articleService.editArticle(articleId, request, user.id)
-        return ResponseEntity.ok(article)
+        val chattingUsers = articleService.getChattingUsersByArticle(article)
+        return ResponseEntity.ok(ArticleResponse(article, chattingUsers))
     }
 
     @DeleteMapping("/item/delete/{articleId}")
@@ -80,9 +82,10 @@ class ArticleController(
     fun getArticle(
         @PathVariable articleId: Long,
         @AuthUser user: User,
-    ): ResponseEntity<Article> {
+    ): ResponseEntity<ArticleResponse> {
         val article = articleService.getArticle(articleId, user.id)
-        return ResponseEntity.ok(article)
+        val chattingUsers = articleService.getChattingUsersByArticle(article)
+        return ResponseEntity.ok(ArticleResponse(article, chattingUsers))
     }
 
     @GetMapping("/home")
@@ -148,4 +151,9 @@ data class PostArticleRequest(
 
 data class UpdateStatusRequest(
     val status: Int,
+)
+
+data class ArticleResponse(
+    val article: Article,
+    val chattingUsers: List<User>,
 )
