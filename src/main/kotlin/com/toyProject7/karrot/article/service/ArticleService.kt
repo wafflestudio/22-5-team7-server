@@ -249,4 +249,9 @@ class ArticleService(
     fun getArticleEntityById(articleId: Long): ArticleEntity {
         return articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
     }
+
+    @Transactional
+    fun getItemCount(id: String): Int {
+        return articleRepository.countBySellerId(id)
+    }
 }
