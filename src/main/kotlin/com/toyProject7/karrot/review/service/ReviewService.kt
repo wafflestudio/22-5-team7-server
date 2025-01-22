@@ -1,14 +1,12 @@
 package com.toyProject7.karrot.review.service
 
-import com.toyProject7.karrot.profile.ProfileNotFoundException
-import com.toyProject7.karrot.profile.persistence.ProfileRepository
+import com.toyProject7.karrot.profile.service.ProfileService
 import com.toyProject7.karrot.review.ReviewContentLengthOutOfRangeException
 import com.toyProject7.karrot.review.controller.Review
 import com.toyProject7.karrot.review.persistence.ReviewEntity
 import com.toyProject7.karrot.review.persistence.ReviewRepository
-import com.toyProject7.karrot.user.UserNotFoundException
 import com.toyProject7.karrot.user.controller.User
-import com.toyProject7.karrot.user.persistence.UserRepository
+import com.toyProject7.karrot.user.service.UserService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -16,8 +14,8 @@ import java.time.Instant
 @Service
 class ReviewService(
     private val reviewRepository: ReviewRepository,
-    private val userRepository: UserRepository,
-    private val profileRepository: ProfileRepository,
+    private val userService: UserService,
+    private val profileService: ProfileService,
 ) {
     @Transactional
     fun createReview(
@@ -28,13 +26,13 @@ class ReviewService(
     ): Review {
         validateContent(content)
 
-        val sellerEntity = userRepository.findByNickname(sellerNickname) ?: throw UserNotFoundException()
+        val sellerEntity = userService.getUserEntityByNickname(sellerNickname)
         val seller = User.fromEntity(sellerEntity)
-        val sellerProfileEntity = profileRepository.findByUserId(seller.id) ?: throw ProfileNotFoundException()
+        val sellerProfileEntity = profileService.getProfileEntityByUserId(seller.id)
 
-        val buyerEntity = userRepository.findByNickname(buyerNickname) ?: throw UserNotFoundException()
+        val buyerEntity = userService.getUserEntityByNickname(buyerNickname)
         val buyer = User.fromEntity(buyerEntity)
-        val buyerProfileEntity = profileRepository.findByUserId(buyer.id) ?: throw ProfileNotFoundException()
+        val buyerProfileEntity = profileService.getProfileEntityByUserId(buyer.id)
 
         val reviewEntity =
             ReviewEntity(
@@ -51,9 +49,6 @@ class ReviewService(
         sellerProfileEntity.reviews += reviewEntity
         buyerProfileEntity.reviews += reviewEntity
 
-        profileRepository.save(sellerProfileEntity)
-        profileRepository.save(buyerProfileEntity)
-
         return Review.fromEntity(reviewEntity)
     }
 
@@ -61,7 +56,7 @@ class ReviewService(
     fun getPreviousReviews(
         nickname: String,
         reviewId: Long,
-    ): List<Review>  {
+    ): List<Review> {
         return reviewRepository.findTop10BySellerNicknameOrBuyerNicknameAndIdBeforeOrderByCreatedAtDesc(nickname, nickname, reviewId).map {
                 reviewEntity ->
             Review.fromEntity(reviewEntity)

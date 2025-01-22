@@ -9,6 +9,7 @@ import com.toyProject7.karrot.manner.controller.Manner
 import com.toyProject7.karrot.profile.ProfileNotFoundException
 import com.toyProject7.karrot.profile.controller.EditProfileRequest
 import com.toyProject7.karrot.profile.controller.Profile
+import com.toyProject7.karrot.profile.persistence.ProfileEntity
 import com.toyProject7.karrot.profile.persistence.ProfileRepository
 import com.toyProject7.karrot.review.controller.Review
 import com.toyProject7.karrot.review.service.ReviewService
@@ -125,5 +126,10 @@ class ProfileService(
 
     fun getItemCount(id: String): Int {
         return articleService.getItemCount(id)
+    }
+
+    @Transactional
+    fun getProfileEntityByUserId(userId: String): ProfileEntity {
+        return profileRepository.findByUserId(userId) ?: throw ProfileNotFoundException()
     }
 }
