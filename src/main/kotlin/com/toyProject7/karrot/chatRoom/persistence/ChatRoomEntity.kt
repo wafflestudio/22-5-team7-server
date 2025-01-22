@@ -25,6 +25,6 @@ class ChatRoomEntity(
     @ManyToOne
     @JoinColumn(name = "buyer_id", nullable = false)
     var buyer: UserEntity,
-    @Column(name = "created_at", nullable = false)
-    var createdAt: Instant = Instant.now(),
+    @Column(name = "updated_at", nullable = false)
+    var updatedAt: Instant = Instant.now(),
 )

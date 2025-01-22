@@ -17,6 +17,7 @@ data class Feed(
     val createdAt: Instant,
     val updatedAt: Instant,
     val viewCount: Int,
+    var isLiked: Boolean = false,
 ) {
     companion object {
         fun fromEntity(entity: FeedEntity): Feed {

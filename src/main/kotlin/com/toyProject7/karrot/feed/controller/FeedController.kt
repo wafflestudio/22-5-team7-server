@@ -69,8 +69,9 @@ class FeedController(
     @GetMapping("/feed/get/{feedId}")
     fun getFeed(
         @PathVariable feedId: Long,
+        @AuthUser user: User,
     ): ResponseEntity<Feed> {
-        return ResponseEntity.ok(feedService.getFeed(feedId))
+        return ResponseEntity.ok(feedService.getFeed(feedId, user.id))
     }
 
     @GetMapping("/feed")
