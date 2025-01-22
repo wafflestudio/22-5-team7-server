@@ -1,6 +1,9 @@
 package com.toyProject7.karrot.profile.service
 
+import com.toyProject7.karrot.article.controller.Article
+import com.toyProject7.karrot.article.controller.Item
 import com.toyProject7.karrot.article.persistence.ArticleRepository
+import com.toyProject7.karrot.article.service.ArticleService
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.image.service.ImageService
 import com.toyProject7.karrot.manner.controller.Manner
@@ -14,6 +17,7 @@ import com.toyProject7.karrot.user.UserNotFoundException
 import com.toyProject7.karrot.user.controller.User
 import com.toyProject7.karrot.user.persistence.UserEntity
 import com.toyProject7.karrot.user.persistence.UserRepository
+import com.toyProject7.karrot.user.service.UserService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -23,8 +27,10 @@ import java.time.temporal.ChronoUnit
 class ProfileService(
     private val profileRepository: ProfileRepository,
     private val userRepository: UserRepository,
+    private val userService: UserService,
     private val reviewRepository: ReviewRepository,
     private val articleRepository: ArticleRepository,
+    private val articleService: ArticleService,
     private val imageService: ImageService,
 ) {
     @Transactional
@@ -49,6 +55,20 @@ class ProfileService(
         val profileEntity = profileRepository.findByUserId(user.id) ?: throw ProfileNotFoundException()
         val itemCount = getItemCount(user.id)
         return Profile.fromEntity(profileEntity, itemCount)
+    }
+
+    @Transactional
+    fun getProfileSells(
+        nickname: String,
+        articleId: Long,
+    ): List<Item> {
+        val user = userService.getUserEntityByNickname(nickname)
+        val articles = articleService.getArticlesBySeller(user.id!!, articleId)
+        val itemList =
+            articles.map { article ->
+                Item.fromArticle(Article.fromEntity(article))
+            }
+        return itemList
     }
 
     @Transactional

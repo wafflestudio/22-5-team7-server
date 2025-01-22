@@ -148,6 +148,11 @@ class UserService(
     }
 
     @Transactional
+    fun getUserEntityByNickname(nickname: String): UserEntity {
+        return userRepository.findByNickname(nickname) ?: throw AuthenticateException()
+    }
+
+    @Transactional
     fun loadUserPrincipal(id: String): UserPrincipal {
         val user =
             userRepository.findById(id)

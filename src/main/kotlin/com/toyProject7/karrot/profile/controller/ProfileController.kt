@@ -1,5 +1,6 @@
 package com.toyProject7.karrot.profile.controller
 
+import com.toyProject7.karrot.article.controller.Item
 import com.toyProject7.karrot.manner.controller.Manner
 import com.toyProject7.karrot.profile.service.ProfileService
 import com.toyProject7.karrot.review.controller.Review
@@ -38,6 +39,15 @@ class ProfileController(
     ): ResponseEntity<ProfileResponse> {
         val profile = profileService.getProfile(nickname)
         return ResponseEntity.ok(profile)
+    }
+
+    @GetMapping("/api/profile/{nickname}/sells")
+    fun getProfileSells(
+        @PathVariable nickname: String,
+        @RequestParam articleId: Long,
+    ): ResponseEntity<List<Item>> {
+        val itemList: List<Item> = profileService.getProfileSells(nickname, articleId)
+        return ResponseEntity.ok(itemList)
     }
 
     @PutMapping("/api/mypage/profile/edit")
