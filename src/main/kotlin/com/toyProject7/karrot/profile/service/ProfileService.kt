@@ -132,4 +132,9 @@ class ProfileService(
     fun getProfileEntityByUserId(userId: String): ProfileEntity {
         return profileRepository.findByUserId(userId) ?: throw ProfileNotFoundException()
     }
+
+    @Transactional
+    fun saveProfileEntity(profileEntity: ProfileEntity) {
+        profileRepository.save(profileEntity)
+    }
 }

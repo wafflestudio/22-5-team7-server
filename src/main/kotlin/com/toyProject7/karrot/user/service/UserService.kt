@@ -1,7 +1,7 @@
 package com.toyProject7.karrot.user.service
 
 import com.toyProject7.karrot.profile.persistence.ProfileEntity
-import com.toyProject7.karrot.profile.persistence.ProfileRepository
+import com.toyProject7.karrot.profile.service.ProfileService
 import com.toyProject7.karrot.user.AuthenticateException
 import com.toyProject7.karrot.user.SignInInvalidPasswordException
 import com.toyProject7.karrot.user.SignInUserNotFoundException
@@ -29,8 +29,8 @@ import java.time.Instant
 @Service
 class UserService(
     private val userRepository: UserRepository,
-    private val profileRepository: ProfileRepository,
     private val normalUserRepository: NormalUserRepository,
+    private val profileService: ProfileService,
 ) {
     @Transactional
     fun signUp(
@@ -78,7 +78,7 @@ class UserService(
             ProfileEntity(
                 user = user,
             )
-        profileRepository.save(profileEntity)
+        profileService.saveProfileEntity(profileEntity)
 
         return User.fromEntity(user)
     }
@@ -135,8 +135,7 @@ class UserService(
                 ProfileEntity(
                     user = newUser,
                 )
-
-            profileRepository.save(profileEntity)
+            profileService.saveProfileEntity(profileEntity)
 
             User.fromEntity(savedUser) // Convert and return as User DTO
         }
