@@ -16,6 +16,7 @@ import com.toyProject7.karrot.review.service.ReviewService
 import com.toyProject7.karrot.user.controller.User
 import com.toyProject7.karrot.user.persistence.UserEntity
 import com.toyProject7.karrot.user.service.UserService
+import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -25,9 +26,9 @@ import java.time.temporal.ChronoUnit
 class ProfileService(
     private val profileRepository: ProfileRepository,
     private val userService: UserService,
-    private val reviewService: ReviewService,
     private val articleService: ArticleService,
     private val imageService: ImageService,
+    @Lazy private val reviewService: ReviewService,
 ) {
     @Transactional
     fun getMyProfile(user: User): Profile {

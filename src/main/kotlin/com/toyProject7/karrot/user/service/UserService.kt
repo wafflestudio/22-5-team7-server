@@ -20,6 +20,7 @@ import com.toyProject7.karrot.user.persistence.UserEntity
 import com.toyProject7.karrot.user.persistence.UserPrincipal
 import com.toyProject7.karrot.user.persistence.UserRepository
 import org.mindrot.jbcrypt.BCrypt
+import org.springframework.context.annotation.Lazy
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
@@ -30,7 +31,7 @@ import java.time.Instant
 class UserService(
     private val userRepository: UserRepository,
     private val normalUserRepository: NormalUserRepository,
-    private val profileService: ProfileService,
+    @Lazy private val profileService: ProfileService,
 ) {
     @Transactional
     fun signUp(
