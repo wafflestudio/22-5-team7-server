@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.stereotype.Component
@@ -66,6 +67,28 @@ class JwtAuthenticationFilter(
                 logger.error("Failed to authenticate user: ${e.message}", e)
                 response.status = HttpServletResponse.SC_UNAUTHORIZED // Set 401 status
                 return
+            }
+        } else if (SecurityContextHolder.getContext().authentication is OAuth2AuthenticationToken) {
+            // Fallback: Handle cases where OAuth2AuthenticationToken is still present
+            logger.debug("OAuth2AuthenticationToken detected; forcing JWT authentication fallback")
+
+            // Force re-authentication based on the token in the Authorization header
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                val token = authHeader.substring(7)
+                if (UserAccessTokenUtil.validateToken(token)) {
+                    val userId = UserAccessTokenUtil.getUserIdFromToken(token)
+                    val userDetails = userService.loadUserPrincipalById(userId)
+
+                    val authentication =
+                        UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.authorities,
+                        )
+                    authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
+                    SecurityContextHolder.getContext().authentication = authentication
+                    logger.debug("Re-authentication completed for user: $userId")
+                }
             }
         }
 
