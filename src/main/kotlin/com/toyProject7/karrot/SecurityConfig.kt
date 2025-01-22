@@ -1,6 +1,7 @@
 package com.toyProject7.karrot
 
 import com.toyProject7.karrot.security.JwtAuthenticationFilter
+import com.toyProject7.karrot.security.OAuth2AuthenticationClearingFilter
 import com.toyProject7.karrot.security.SecurityConstants
 import com.toyProject7.karrot.socialLogin.handler.CustomAuthenticationSuccessHandler
 import com.toyProject7.karrot.socialLogin.service.SocialLoginUserService
@@ -9,7 +10,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.web.cors.CorsConfiguration
@@ -51,7 +51,7 @@ class SecurityConfig(
                     }
                     .successHandler(customAuthenticationSuccessHandler)
             }
-            .addFilterBefore(jwtAuthenticationFilter, OAuth2LoginAuthenticationFilter::class.java)
+            .addFilterBefore(OAuth2AuthenticationClearingFilter(), JwtAuthenticationFilter::class.java)
             .build()
     }
 
