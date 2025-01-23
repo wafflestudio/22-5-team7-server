@@ -12,6 +12,7 @@ import com.toyProject7.karrot.user.SignUpInvalidEmailException
 import com.toyProject7.karrot.user.SignUpNicknameConflictException
 import com.toyProject7.karrot.user.SignUpUserIdConflictException
 import com.toyProject7.karrot.user.UserAccessTokenUtil
+import com.toyProject7.karrot.user.UserNotFoundException
 import com.toyProject7.karrot.user.controller.User
 import com.toyProject7.karrot.user.persistence.NormalUser
 import com.toyProject7.karrot.user.persistence.NormalUserRepository
@@ -144,7 +145,7 @@ class UserService(
 
     @Transactional
     fun getUserEntityById(id: String): UserEntity {
-        return userRepository.findByIdOrNull(id) ?: throw AuthenticateException()
+        return userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
     }
 
     @Transactional
@@ -153,5 +154,10 @@ class UserService(
             userRepository.findById(id)
                 .orElseThrow { UsernameNotFoundException("User not found with id: $id") }
         return UserPrincipal.create(user)
+    }
+
+    @Transactional
+    fun getUserEntityByNickname(nickname: String): UserEntity {
+        return userRepository.findByNickname(nickname) ?: throw UserNotFoundException()
     }
 }

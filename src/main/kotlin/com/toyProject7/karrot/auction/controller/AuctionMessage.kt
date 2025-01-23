@@ -5,6 +5,6 @@ import java.time.Instant
 data class AuctionMessage(
     val auctionId: Long,
     val senderNickname: String,
-    val price: Long,
+    val price: Int,
     val createdAt: Instant,
 )

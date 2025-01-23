@@ -22,3 +22,9 @@ class AuctionPermissionDeniedException : AuctionException(
     httpStatusCode = HttpStatus.UNAUTHORIZED,
     msg = "Permission denied",
 )
+
+class AuctionBadPriceException : AuctionException(
+    errorCode = 0,
+    httpStatusCode = HttpStatus.BAD_REQUEST,
+    msg = "Your price is lower than current price",
+)

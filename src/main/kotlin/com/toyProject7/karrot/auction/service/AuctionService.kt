@@ -2,6 +2,7 @@ package com.toyProject7.karrot.auction.service
 
 import com.toyProject7.karrot.article.ArticlePermissionDeniedException
 import com.toyProject7.karrot.article.controller.UpdateStatusRequest
+import com.toyProject7.karrot.auction.AuctionBadPriceException
 import com.toyProject7.karrot.auction.AuctionNotFoundException
 import com.toyProject7.karrot.auction.AuctionPermissionDeniedException
 import com.toyProject7.karrot.auction.controller.Auction
@@ -29,6 +30,18 @@ class AuctionService(
 ) {
     @Transactional
     fun updatePrice(auctionMessage: AuctionMessage): AuctionMessage {
+        val auctionEntity = auctionRepository.findByIdOrNull(auctionMessage.auctionId) ?: throw AuctionNotFoundException()
+        if (auctionEntity.currentPrice >= auctionMessage.price) {
+            throw AuctionBadPriceException()
+        }
+        val bidder = userService.getUserEntityByNickname(auctionMessage.senderNickname)
+
+        auctionEntity.currentPrice = auctionMessage.price
+        auctionEntity.bidder = bidder
+        if (ChronoUnit.MINUTES.between(auctionEntity.endTime, Instant.now()) <= 1) {
+            auctionEntity.endTime.plus(1, ChronoUnit.MINUTES)
+        }
+
         return auctionMessage
     }
 
