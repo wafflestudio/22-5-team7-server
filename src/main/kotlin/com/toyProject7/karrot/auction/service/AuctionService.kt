@@ -1,5 +1,6 @@
 package com.toyProject7.karrot.auction.service
 
+import com.toyProject7.karrot.auction.AuctionNotFoundException
 import com.toyProject7.karrot.auction.controller.Auction
 import com.toyProject7.karrot.auction.controller.AuctionMessage
 import com.toyProject7.karrot.auction.controller.PostAuctionRequest
@@ -10,6 +11,7 @@ import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.image.service.ImageService
 import com.toyProject7.karrot.user.controller.User
 import com.toyProject7.karrot.user.service.UserService
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -69,5 +71,10 @@ class AuctionService(
         auction.imagePresignedUrl = imagePutPresingedUrls
 
         return auction
+    }
+
+    @Transactional
+    fun getAuctionEntityById(auctionId: Long): AuctionEntity {
+        return auctionRepository.findByIdOrNull(auctionId) ?: throw AuctionNotFoundException()
     }
 }
