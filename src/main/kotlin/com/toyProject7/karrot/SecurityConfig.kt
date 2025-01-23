@@ -1,7 +1,6 @@
 package com.toyProject7.karrot
 
 import com.toyProject7.karrot.security.JwtAuthenticationFilter
-import com.toyProject7.karrot.security.OAuth2AuthenticationClearingFilter
 import com.toyProject7.karrot.security.SecurityConstants
 import com.toyProject7.karrot.socialLogin.handler.CustomAuthenticationSuccessHandler
 import com.toyProject7.karrot.socialLogin.service.SocialLoginUserService
@@ -23,7 +22,6 @@ class SecurityConfig(
     private val socialLoginUserService: SocialLoginUserService,
     private val customAuthenticationSuccessHandler: CustomAuthenticationSuccessHandler,
     private val jwtAuthenticationFilter: JwtAuthenticationFilter,
-    private val oAuth2AuthenticationClearingFilter: OAuth2AuthenticationClearingFilter,
 ) {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -40,7 +38,9 @@ class SecurityConfig(
                     ).permitAll()
                     .anyRequest().authenticated()
             }
+            // Disable form login
             .formLogin { formLogin -> formLogin.disable() }
+            // Configure exception handling
             .exceptionHandling { exceptionHandling ->
                 exceptionHandling.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
             }
@@ -51,8 +51,6 @@ class SecurityConfig(
                     }
                     .successHandler(customAuthenticationSuccessHandler)
             }
-            // Add filters in correct order
-            .addFilterBefore(oAuth2AuthenticationClearingFilter, JwtAuthenticationFilter::class.java)
             .addFilterBefore(jwtAuthenticationFilter, OAuth2LoginAuthenticationFilter::class.java)
             .build()
     }
