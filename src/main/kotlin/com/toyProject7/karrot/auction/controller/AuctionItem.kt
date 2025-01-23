@@ -1,5 +1,7 @@
 package com.toyProject7.karrot.auction.controller
 
+import java.time.Instant
+
 data class AuctionItem(
     val id: Long,
     val title: String,
@@ -9,6 +11,7 @@ data class AuctionItem(
     val location: String,
     val imagePresignedUrl: String,
     val likeCount: Int,
+    val endTime: Instant,
 ) {
     companion object {
         fun fromAuction(auction: Auction): AuctionItem {
@@ -21,6 +24,7 @@ data class AuctionItem(
                 location = auction.seller.location,
                 imagePresignedUrl = if (auction.imagePresignedUrl.isEmpty()) "" else auction.imagePresignedUrl.first(),
                 likeCount = auction.likeCount,
+                endTime = auction.endTime,
             )
         }
     }
