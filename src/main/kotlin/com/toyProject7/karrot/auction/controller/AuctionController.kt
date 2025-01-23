@@ -1,5 +1,6 @@
 package com.toyProject7.karrot.auction.controller
 
+import com.toyProject7.karrot.article.controller.UpdateStatusRequest
 import com.toyProject7.karrot.auction.service.AuctionService
 import com.toyProject7.karrot.user.AuthUser
 import com.toyProject7.karrot.user.controller.User
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -32,6 +34,16 @@ class AuctionController(
     ): ResponseEntity<String> {
         auctionService.deleteAuction(auctionId, user.id)
         return ResponseEntity.ok("Deleted Successfully")
+    }
+
+    @PutMapping("auction/status/{auctionId}")
+    fun updateStatus(
+        @RequestBody request: UpdateStatusRequest,
+        @PathVariable auctionId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<String> {
+        auctionService.updateStatus(request, auctionId, user.id)
+        return ResponseEntity.ok("Status Updated Successfully")
     }
 }
 

@@ -1,5 +1,7 @@
 package com.toyProject7.karrot.auction.service
 
+import com.toyProject7.karrot.article.ArticlePermissionDeniedException
+import com.toyProject7.karrot.article.controller.UpdateStatusRequest
 import com.toyProject7.karrot.auction.AuctionNotFoundException
 import com.toyProject7.karrot.auction.AuctionPermissionDeniedException
 import com.toyProject7.karrot.auction.controller.Auction
@@ -87,6 +89,17 @@ class AuctionService(
             imageService.deleteImageUrl(auctionEntity.imageUrls)
         }
         auctionRepository.delete(auctionEntity)
+    }
+
+    @Transactional
+    fun updateStatus(
+        request: UpdateStatusRequest,
+        auctionId: Long,
+        id: String,
+    ) {
+        val auctionEntity = getAuctionEntityById(auctionId)
+        if (auctionEntity.seller.id != id) throw ArticlePermissionDeniedException()
+        auctionEntity.status = request.status
     }
 
     @Transactional
