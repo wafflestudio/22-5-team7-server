@@ -100,7 +100,7 @@ class UserService(
     @Transactional
     fun authenticate(accessToken: String): User {
         val id = UserAccessTokenUtil.validateAccessTokenGetUserId(accessToken) ?: throw AuthenticateException()
-        val user = userRepository.findNormalUserById(id) ?: throw AuthenticateException()
+        val user = userRepository.findByIdOrNull(id) ?: throw AuthenticateException()
         return User.fromEntity(user)
     }
 
