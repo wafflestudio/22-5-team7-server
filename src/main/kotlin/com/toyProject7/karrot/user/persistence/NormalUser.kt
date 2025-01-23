@@ -26,6 +26,4 @@ class NormalUser(
         email = email,
         imageUrl = imageUrl,
         updatedAt = updatedAt,
-    ) {
-    // Additional attributes and methods for normal users can go here
-}
+    )

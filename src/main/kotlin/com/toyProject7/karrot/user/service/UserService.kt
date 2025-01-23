@@ -14,7 +14,6 @@ import com.toyProject7.karrot.user.SignUpUserIdConflictException
 import com.toyProject7.karrot.user.UserAccessTokenUtil
 import com.toyProject7.karrot.user.controller.User
 import com.toyProject7.karrot.user.persistence.NormalUser
-import com.toyProject7.karrot.user.persistence.NormalUserRepository
 import com.toyProject7.karrot.user.persistence.SocialUser
 import com.toyProject7.karrot.user.persistence.UserEntity
 import com.toyProject7.karrot.user.persistence.UserPrincipal
@@ -30,7 +29,6 @@ import java.time.Instant
 @Service
 class UserService(
     private val userRepository: UserRepository,
-    private val normalUserRepository: NormalUserRepository,
     @Lazy private val profileService: ProfileService,
 ) {
     @Transactional
@@ -54,7 +52,7 @@ class UserService(
             throw SignUpInvalidEmailException()
         }
 
-        if (normalUserRepository.existsByUserId(userId)) {
+        if (userRepository.existsByUserId(userId)) {
             throw SignUpUserIdConflictException()
         }
         if (userRepository.existsByNickname(nickname)) {

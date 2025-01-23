@@ -12,15 +12,13 @@ interface UserRepository : JpaRepository<UserEntity, String> {
 
     fun findByNickname(nickname: String): UserEntity?
 
-    @Query("SELECT s FROM NormalUser s WHERE s.id = :id")
-    fun findNormalUserById(
-        @Param("id") id: String,
-    ): NormalUser?
-
     @Query("SELECT s FROM SocialUser s WHERE s.email = :email")
     fun findSocialUserByEmail(
         @Param("email") email: String,
     ): SocialUser?
 
     fun existsByNickname(nickname: String): Boolean
+
+    @Query("SELECT n FROM NormalUser n WHERE n.userId = :userId")
+    fun existsByUserId(userId: String): Boolean
 }

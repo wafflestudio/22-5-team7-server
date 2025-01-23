@@ -26,6 +26,4 @@ class SocialUser(
         email = email,
         imageUrl = imageUrl,
         updatedAt = updatedAt,
-    ) {
-    // You can add additional methods specific to social users here
-}
+    )
