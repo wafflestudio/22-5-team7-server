@@ -1,7 +1,7 @@
 package com.toyProject7.karrot.user.service
 
 import com.toyProject7.karrot.profile.persistence.ProfileEntity
-import com.toyProject7.karrot.profile.persistence.ProfileRepository
+import com.toyProject7.karrot.profile.service.ProfileService
 import com.toyProject7.karrot.user.AuthenticateException
 import com.toyProject7.karrot.user.SignInInvalidPasswordException
 import com.toyProject7.karrot.user.SignInUserNotFoundException
@@ -20,6 +20,7 @@ import com.toyProject7.karrot.user.persistence.UserEntity
 import com.toyProject7.karrot.user.persistence.UserPrincipal
 import com.toyProject7.karrot.user.persistence.UserRepository
 import org.mindrot.jbcrypt.BCrypt
+import org.springframework.context.annotation.Lazy
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
@@ -29,8 +30,8 @@ import java.time.Instant
 @Service
 class UserService(
     private val userRepository: UserRepository,
-    private val profileRepository: ProfileRepository,
     private val normalUserRepository: NormalUserRepository,
+    @Lazy private val profileService: ProfileService,
 ) {
     @Transactional
     fun signUp(
@@ -78,7 +79,7 @@ class UserService(
             ProfileEntity(
                 user = user,
             )
-        profileRepository.save(profileEntity)
+        profileService.saveProfileEntity(profileEntity)
 
         return User.fromEntity(user)
     }
@@ -135,8 +136,7 @@ class UserService(
                 ProfileEntity(
                     user = newUser,
                 )
-
-            profileRepository.save(profileEntity)
+            profileService.saveProfileEntity(profileEntity)
 
             User.fromEntity(savedUser) // Convert and return as User DTO
         }
@@ -145,6 +145,11 @@ class UserService(
     @Transactional
     fun getUserEntityById(id: String): UserEntity {
         return userRepository.findByIdOrNull(id) ?: throw AuthenticateException()
+    }
+
+    @Transactional
+    fun getUserEntityByNickname(nickname: String): UserEntity {
+        return userRepository.findByNickname(nickname) ?: throw AuthenticateException()
     }
 
     @Transactional

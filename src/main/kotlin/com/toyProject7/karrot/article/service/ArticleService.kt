@@ -256,6 +256,10 @@ class ArticleService(
     }
 
     @Transactional
+    fun getItemCount(id: String): Int {
+        return articleRepository.countBySellerId(id)
+    }
+
     fun getChattingUsersByArticle(article: Article): List<User> {
         val chatRoomEntities: List<ChatRoomEntity> = chatRoomRepository.findAllByArticleId(article.id)
         return chatRoomEntities
