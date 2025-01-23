@@ -16,3 +16,9 @@ class AuctionNotFoundException : AuctionException(
     httpStatusCode = HttpStatus.NOT_FOUND,
     msg = "Auction not found",
 )
+
+class AuctionPermissionDeniedException : AuctionException(
+    errorCode = 0,
+    httpStatusCode = HttpStatus.UNAUTHORIZED,
+    msg = "Permission denied",
+)

@@ -1,6 +1,7 @@
 package com.toyProject7.karrot.auction.service
 
 import com.toyProject7.karrot.auction.AuctionNotFoundException
+import com.toyProject7.karrot.auction.AuctionPermissionDeniedException
 import com.toyProject7.karrot.auction.controller.Auction
 import com.toyProject7.karrot.auction.controller.AuctionMessage
 import com.toyProject7.karrot.auction.controller.PostAuctionRequest
@@ -9,7 +10,6 @@ import com.toyProject7.karrot.auction.persistence.AuctionLikesRepository
 import com.toyProject7.karrot.auction.persistence.AuctionRepository
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.image.service.ImageService
-import com.toyProject7.karrot.user.controller.User
 import com.toyProject7.karrot.user.service.UserService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -32,9 +32,9 @@ class AuctionService(
     @Transactional
     fun postAuction(
         request: PostAuctionRequest,
-        user: User,
+        id: String,
     ): Auction {
-        val userEntity = userService.getUserEntityById(user.id)
+        val userEntity = userService.getUserEntityById(id)
         val auctionEntity =
             AuctionEntity(
                 seller = userEntity,
@@ -71,6 +71,22 @@ class AuctionService(
         auction.imagePresignedUrl = imagePutPresingedUrls
 
         return auction
+    }
+
+    @Transactional
+    fun deleteAuction(
+        auctionId: Long,
+        id: String,
+    ) {
+        val user = userService.getUserEntityById(id)
+        val auctionEntity = auctionRepository.findByIdOrNull(auctionId) ?: throw AuctionNotFoundException()
+        if (auctionEntity.seller.id != user.id) {
+            throw AuctionPermissionDeniedException()
+        }
+        if (auctionEntity.imageUrls.isNotEmpty()) {
+            imageService.deleteImageUrl(auctionEntity.imageUrls)
+        }
+        auctionRepository.delete(auctionEntity)
     }
 
     @Transactional
