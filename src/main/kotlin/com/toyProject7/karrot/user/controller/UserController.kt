@@ -36,6 +36,11 @@ class UserController(
     ): ResponseEntity<UserMeResponse> {
         return ResponseEntity.ok(UserMeResponse(user.id, user.nickname))
     }
+
+    @GetMapping("/auth/tokenInfo")
+    fun tokenInfo(
+
+    )
 }
 
 data class SignUpRequest(
