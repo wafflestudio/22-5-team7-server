@@ -19,7 +19,7 @@ interface UserRepository : JpaRepository<UserEntity, String> {
 
     fun existsByNickname(nickname: String): Boolean
 
-    @Query("SELECT COUNT (n) > FROM NormalUser n WHERE n.userId = :userId")
+    @Query("SELECT COUNT (n) > 0 FROM NormalUser n WHERE n.userId = :userId")
     fun existsByUserId(
         @Param("userId") userId: String,
     ): Boolean
