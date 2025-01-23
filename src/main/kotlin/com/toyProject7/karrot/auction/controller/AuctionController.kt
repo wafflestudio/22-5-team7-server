@@ -45,6 +45,24 @@ class AuctionController(
         auctionService.updateStatus(request, auctionId, user.id)
         return ResponseEntity.ok("Status Updated Successfully")
     }
+
+    @PostMapping("/auction/like/{auctionId}")
+    fun likeAuction(
+        @PathVariable auctionId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<String> {
+        auctionService.likeAuction(auctionId, user.id)
+        return ResponseEntity.ok("Liked Successfully")
+    }
+
+    @DeleteMapping("/auction/unlike/{auctionId}")
+    fun unlikeArticle(
+        @PathVariable auctionId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<String> {
+        auctionService.unlikeAuction(auctionId, user.id)
+        return ResponseEntity.ok("Unliked Successfully")
+    }
 }
 
 data class PostAuctionRequest(

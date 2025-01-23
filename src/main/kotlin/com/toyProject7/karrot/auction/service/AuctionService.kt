@@ -8,6 +8,7 @@ import com.toyProject7.karrot.auction.controller.Auction
 import com.toyProject7.karrot.auction.controller.AuctionMessage
 import com.toyProject7.karrot.auction.controller.PostAuctionRequest
 import com.toyProject7.karrot.auction.persistence.AuctionEntity
+import com.toyProject7.karrot.auction.persistence.AuctionLikesEntity
 import com.toyProject7.karrot.auction.persistence.AuctionLikesRepository
 import com.toyProject7.karrot.auction.persistence.AuctionRepository
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
@@ -100,6 +101,41 @@ class AuctionService(
         val auctionEntity = getAuctionEntityById(auctionId)
         if (auctionEntity.seller.id != id) throw ArticlePermissionDeniedException()
         auctionEntity.status = request.status
+    }
+
+    @Transactional
+    fun likeAuction(
+        auctionId: Long,
+        id: String,
+    ) {
+        val auctionEntity = auctionRepository.findByIdOrNull(auctionId) ?: throw AuctionNotFoundException()
+        val userEntity = userService.getUserEntityById(id)
+        if (auctionLikesRepository.existsByUserIdAndAuctionId(id, auctionId)) {
+            return
+        }
+        try {
+            val auctionLikesEntity =
+                AuctionLikesEntity(
+                    auction = auctionEntity,
+                    user = userEntity,
+                    createdAt = Instant.now(),
+                    updatedAt = Instant.now(),
+                )
+            auctionLikesRepository.save(auctionLikesEntity)
+        } catch (e: Exception) {
+            return
+        }
+    }
+
+    @Transactional
+    fun unlikeAuction(
+        auctionId: Long,
+        id: String,
+    ) {
+        val auctionEntity = auctionRepository.findByIdOrNull(auctionId) ?: throw AuctionNotFoundException()
+        val toBeRemoved: AuctionLikesEntity = auctionLikesRepository.findByUserIdAndArticleId(id, auctionId) ?: return
+        auctionEntity.auctionLikes.remove(toBeRemoved)
+        auctionLikesRepository.delete(toBeRemoved)
     }
 
     @Transactional
