@@ -15,6 +15,7 @@ import com.toyProject7.karrot.auction.persistence.AuctionRepository
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.image.service.ImageService
 import com.toyProject7.karrot.user.service.UserService
+import org.springframework.context.annotation.Lazy
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -26,7 +27,7 @@ class AuctionService(
     private val auctionRepository: AuctionRepository,
     private val auctionLikesRepository: AuctionLikesRepository,
     private val userService: UserService,
-    private val imageService: ImageService,
+    @Lazy private val imageService: ImageService,
 ) {
     @Transactional
     fun updatePrice(auctionMessage: AuctionMessage): AuctionMessage {
