@@ -52,6 +52,7 @@ class AuctionService(
                 imageUrls = mutableListOf(),
                 startingTime = Instant.now(),
                 endTime = Instant.now().plus(request.duration, ChronoUnit.MINUTES),
+                updatedAt = Instant.now(),
                 viewCount = 0,
             )
         auctionRepository.save(auctionEntity)
@@ -67,6 +68,7 @@ class AuctionService(
                 imageService.generateGetPresignedUrl(imageUrlEntity)
                 auctionEntity.imageUrls += imageUrlEntity
             }
+            auctionEntity.updatedAt = Instant.now()
         }
         auctionRepository.save(auctionEntity)
 
@@ -136,6 +138,34 @@ class AuctionService(
         val toBeRemoved: AuctionLikesEntity = auctionLikesRepository.findByUserIdAndArticleId(id, auctionId) ?: return
         auctionEntity.auctionLikes.remove(toBeRemoved)
         auctionLikesRepository.delete(toBeRemoved)
+    }
+
+    @Transactional
+    fun getAuction(
+        auctionId: Long,
+        id: String,
+    ): Auction {
+        val auctionEntity = auctionRepository.findByIdOrNull(auctionId) ?: throw AuctionNotFoundException()
+        auctionRepository.incrementViewCount(auctionId)
+
+        refreshPresignedUrlIfExpired(listOf(auctionEntity))
+
+        val auction = Auction.fromEntity(auctionEntity)
+        auction.isLiked = auctionLikesRepository.existsByUserIdAndAuctionId(id, auction.id)
+        return auction
+    }
+
+    @Transactional
+    fun refreshPresignedUrlIfExpired(auctions: List<AuctionEntity>) {
+        auctions.forEach { auction ->
+            if (auction.imageUrls.isNotEmpty() && ChronoUnit.MINUTES.between(auction.updatedAt, Instant.now()) >= 10) {
+                for (number in 1..auction.imageUrls.size) {
+                    imageService.generateGetPresignedUrl(auction.imageUrls[number - 1])
+                }
+                auction.updatedAt = Instant.now()
+                auctionRepository.save(auction)
+            }
+        }
     }
 
     @Transactional

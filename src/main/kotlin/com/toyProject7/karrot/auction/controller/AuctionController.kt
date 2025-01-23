@@ -6,6 +6,7 @@ import com.toyProject7.karrot.user.AuthUser
 import com.toyProject7.karrot.user.controller.User
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -56,12 +57,21 @@ class AuctionController(
     }
 
     @DeleteMapping("/auction/unlike/{auctionId}")
-    fun unlikeArticle(
+    fun unlikeAuction(
         @PathVariable auctionId: Long,
         @AuthUser user: User,
     ): ResponseEntity<String> {
         auctionService.unlikeAuction(auctionId, user.id)
         return ResponseEntity.ok("Unliked Successfully")
+    }
+
+    @GetMapping("/auction/get/{auctionId}")
+    fun getAuction(
+        @PathVariable auctionId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<Auction> {
+        val auction = auctionService.getAuction(auctionId, user.id)
+        return ResponseEntity.ok(auction)
     }
 }
 

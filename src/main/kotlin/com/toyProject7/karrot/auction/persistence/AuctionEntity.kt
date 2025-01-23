@@ -45,6 +45,8 @@ class AuctionEntity(
     var startingTime: Instant,
     @Column(name = "end_time", nullable = false)
     var endTime: Instant,
+    @Column(name = "updated_at", nullable = false)
+    var updatedAt: Instant,
     @Column(name = "view_count")
     var viewCount: Int,
 )
