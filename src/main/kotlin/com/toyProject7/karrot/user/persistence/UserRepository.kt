@@ -20,5 +20,7 @@ interface UserRepository : JpaRepository<UserEntity, String> {
     fun existsByNickname(nickname: String): Boolean
 
     @Query("SELECT n FROM NormalUser n WHERE n.userId = :userId")
-    fun existsByUserId(userId: String): Boolean
+    fun existsByUserId(
+        @Param("userId") userId: String,
+    ): Boolean
 }
