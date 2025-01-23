@@ -39,7 +39,7 @@ class AuctionController(
         return ResponseEntity.ok("Deleted Successfully")
     }
 
-    @PutMapping("auction/status/{auctionId}")
+    @PutMapping("/auction/status/{auctionId}")
     fun updateStatus(
         @RequestBody request: UpdateStatusRequest,
         @PathVariable auctionId: Long,
