@@ -69,3 +69,7 @@ logging:
     org.springframework.web.socket.server: DEBUG
     org.springframework.web.socket.config: DEBUG
     org.springframework.security: DEBUG
+    com:
+      toyProject7:
+        karrot:
+          security=DEBUG:
