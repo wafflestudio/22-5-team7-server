@@ -169,6 +169,13 @@ class AuctionService(
     }
 
     @Transactional
+    fun getPreviousAuctions(auctionId: Long): List<AuctionEntity> {
+        val auctions = auctionRepository.findTop10ByIdBeforeOrderByIdDesc(auctionId)
+        refreshPresignedUrlIfExpired(auctions)
+        return auctions
+    }
+
+    @Transactional
     fun getAuctionEntityById(auctionId: Long): AuctionEntity {
         return auctionRepository.findByIdOrNull(auctionId) ?: throw AuctionNotFoundException()
     }

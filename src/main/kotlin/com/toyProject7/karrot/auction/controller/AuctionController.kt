@@ -1,6 +1,7 @@
 package com.toyProject7.karrot.auction.controller
 
 import com.toyProject7.karrot.article.controller.UpdateStatusRequest
+import com.toyProject7.karrot.auction.persistence.AuctionEntity
 import com.toyProject7.karrot.auction.service.AuctionService
 import com.toyProject7.karrot.user.AuthUser
 import com.toyProject7.karrot.user.controller.User
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -72,6 +74,18 @@ class AuctionController(
     ): ResponseEntity<Auction> {
         val auction = auctionService.getAuction(auctionId, user.id)
         return ResponseEntity.ok(auction)
+    }
+
+    @GetMapping("/auctions")
+    fun getPreviousAuctions(
+        @RequestParam("auctionId") auctionId: Long,
+    ): ResponseEntity<List<AuctionItem>> {
+        val auctions: List<AuctionEntity> = auctionService.getPreviousAuctions(auctionId)
+        val response: List<AuctionItem> =
+            auctions.map { auction ->
+                AuctionItem.fromAuction(Auction.fromEntity(auction))
+            }
+        return ResponseEntity.ok(response)
     }
 }
 
