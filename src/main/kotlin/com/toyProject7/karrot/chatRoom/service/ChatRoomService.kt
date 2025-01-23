@@ -1,7 +1,6 @@
 package com.toyProject7.karrot.chatRoom.service
 
-import com.toyProject7.karrot.article.ArticleNotFoundException
-import com.toyProject7.karrot.article.persistence.ArticleRepository
+import com.toyProject7.karrot.article.service.ArticleService
 import com.toyProject7.karrot.chatRoom.ChatRoomNotFoundException
 import com.toyProject7.karrot.chatRoom.ThisRoomIsNotYoursException
 import com.toyProject7.karrot.chatRoom.controller.ChatMessage
@@ -11,9 +10,9 @@ import com.toyProject7.karrot.chatRoom.persistence.ChatMessageEntity
 import com.toyProject7.karrot.chatRoom.persistence.ChatMessageRepository
 import com.toyProject7.karrot.chatRoom.persistence.ChatRoomEntity
 import com.toyProject7.karrot.chatRoom.persistence.ChatRoomRepository
-import com.toyProject7.karrot.user.UserNotFoundException
 import com.toyProject7.karrot.user.controller.User
-import com.toyProject7.karrot.user.persistence.UserRepository
+import com.toyProject7.karrot.user.service.UserService
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -22,13 +21,13 @@ import java.time.Instant
 class ChatRoomService(
     private val chatMessageRepository: ChatMessageRepository,
     private val chatRoomRepository: ChatRoomRepository,
-    private val userRepository: UserRepository,
-    private val articleRepository: ArticleRepository,
+    private val userService: UserService,
+    private val articleService: ArticleService,
 ) {
     @Transactional
     fun saveMessage(chatMessage: ChatMessage): ChatMessage {
-        val chatRoomEntity = chatRoomRepository.findById(chatMessage.chatRoomId).orElseThrow { ChatRoomNotFoundException() }
-        val senderEntity = userRepository.findByNickname(chatMessage.senderNickname) ?: throw UserNotFoundException()
+        val chatRoomEntity = chatRoomRepository.findByIdOrNull(chatMessage.chatRoomId) ?: throw ChatRoomNotFoundException()
+        val senderEntity = userService.getUserEntityByNickname(chatMessage.senderNickname)
         val chatMessageEntity =
             ChatMessageEntity(
                 chatRoom = chatRoomEntity,
@@ -86,9 +85,9 @@ class ChatRoomService(
         sellerId: String,
         buyerId: String,
     ): ChatRoom {
-        val articleEntity = articleRepository.findById(articleId).orElseThrow { ArticleNotFoundException() }
-        val sellerEntity = userRepository.findById(sellerId).orElseThrow { UserNotFoundException() }
-        val buyerEntity = userRepository.findById(buyerId).orElseThrow { UserNotFoundException() }
+        val articleEntity = articleService.getArticleEntityById(articleId)
+        val sellerEntity = userService.getUserEntityById(sellerId)
+        val buyerEntity = userService.getUserEntityById(buyerId)
         val chatRoomEntity =
             ChatRoomEntity(
                 article = articleEntity,
@@ -98,5 +97,10 @@ class ChatRoomService(
             )
         chatRoomRepository.save(chatRoomEntity)
         return ChatRoom.fromEntity(chatRoomEntity, "")
+    }
+
+    @Transactional
+    fun findAllByArticleId(articleId: Long): List<ChatRoomEntity> {
+        return chatRoomRepository.findAllByArticleId(articleId)
     }
 }
