@@ -36,11 +36,6 @@ class UserController(
     ): ResponseEntity<UserMeResponse> {
         return ResponseEntity.ok(UserMeResponse(user.id, user.nickname))
     }
-
-    @GetMapping("/auth/tokenInfo")
-    fun tokenInfo(
-
-    )
 }
 
 data class SignUpRequest(
@@ -67,4 +62,8 @@ data class SignInResponse(
 data class UserMeResponse(
     val id: String,
     val nickname: String,
+)
+
+data class TokenInfoResponse(
+    val user: User,
 )
