@@ -12,9 +12,9 @@ import com.toyProject7.karrot.user.SignUpInvalidEmailException
 import com.toyProject7.karrot.user.SignUpNicknameConflictException
 import com.toyProject7.karrot.user.SignUpUserIdConflictException
 import com.toyProject7.karrot.user.UserAccessTokenUtil
+import com.toyProject7.karrot.user.UserNotFoundException
 import com.toyProject7.karrot.user.controller.User
 import com.toyProject7.karrot.user.persistence.NormalUser
-import com.toyProject7.karrot.user.persistence.NormalUserRepository
 import com.toyProject7.karrot.user.persistence.SocialUser
 import com.toyProject7.karrot.user.persistence.UserEntity
 import com.toyProject7.karrot.user.persistence.UserPrincipal
@@ -30,7 +30,6 @@ import java.time.Instant
 @Service
 class UserService(
     private val userRepository: UserRepository,
-    private val normalUserRepository: NormalUserRepository,
     @Lazy private val profileService: ProfileService,
 ) {
     @Transactional
@@ -54,7 +53,7 @@ class UserService(
             throw SignUpInvalidEmailException()
         }
 
-        if (normalUserRepository.existsByUserId(userId)) {
+        if (userRepository.existsByUserId(userId)) {
             throw SignUpUserIdConflictException()
         }
         if (userRepository.existsByNickname(nickname)) {
@@ -144,12 +143,7 @@ class UserService(
 
     @Transactional
     fun getUserEntityById(id: String): UserEntity {
-        return userRepository.findByIdOrNull(id) ?: throw AuthenticateException()
-    }
-
-    @Transactional
-    fun getUserEntityByNickname(nickname: String): UserEntity {
-        return userRepository.findByNickname(nickname) ?: throw AuthenticateException()
+        return userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
     }
 
     @Transactional
@@ -158,5 +152,10 @@ class UserService(
             userRepository.findById(id)
                 .orElseThrow { UsernameNotFoundException("User not found with id: $id") }
         return UserPrincipal.create(user)
+    }
+
+    @Transactional
+    fun getUserEntityByNickname(nickname: String): UserEntity {
+        return userRepository.findByNickname(nickname) ?: throw UserNotFoundException()
     }
 }

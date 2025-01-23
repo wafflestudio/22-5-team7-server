@@ -63,3 +63,7 @@ data class UserMeResponse(
     val id: String,
     val nickname: String,
 )
+
+data class TokenInfoResponse(
+    val user: User,
+)

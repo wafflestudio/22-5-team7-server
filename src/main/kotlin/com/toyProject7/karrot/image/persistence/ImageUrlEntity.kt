@@ -1,6 +1,7 @@
 package com.toyProject7.karrot.image.persistence
 
 import com.toyProject7.karrot.article.persistence.ArticleEntity
+import com.toyProject7.karrot.auction.persistence.AuctionEntity
 import com.toyProject7.karrot.feed.persistence.FeedEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -21,6 +22,9 @@ class ImageUrlEntity(
     @ManyToOne
     @JoinColumn(name = "feed_id", nullable = true)
     var feed: FeedEntity? = null,
+    @ManyToOne
+    @JoinColumn(name = "auction_id", nullable = true)
+    var auction: AuctionEntity? = null,
     @Column(name = "s3", nullable = false, length = 512)
     var s3: String,
     @Column(name = "presigned", nullable = false, length = 512)
