@@ -219,11 +219,14 @@ class FeedService(
         feedId: Long,
     ): List<FeedEntity> {
         val comments: List<CommentEntity> = commentService.getCommentsByUser(id)
-        return comments
-            .map { it.feed }
-            .filter { it.id!! < feedId }
-            .distinctBy { it.id }
-            .sortedByDescending { it.id }
+        val feeds: List<FeedEntity> =
+            comments
+                .map { it.feed }
+                .filter { it.id!! < feedId }
+                .distinctBy { it.id }
+                .sortedByDescending { it.id }
+        if (feeds.size < 10) return feeds
+        return feeds.subList(0, 10)
     }
 
     @Transactional
