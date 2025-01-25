@@ -28,3 +28,9 @@ class AuctionBadPriceException : AuctionException(
     httpStatusCode = HttpStatus.BAD_REQUEST,
     msg = "Your price is lower than current price",
 )
+
+class AuctionOverException : AuctionException(
+    errorCode = 0,
+    httpStatusCode = HttpStatus.BAD_REQUEST,
+    msg = "Over auction time",
+)
