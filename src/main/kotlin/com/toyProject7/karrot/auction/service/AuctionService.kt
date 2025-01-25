@@ -40,7 +40,7 @@ class AuctionService(
         auctionEntity.currentPrice = auctionMessage.price
         auctionEntity.bidder = bidder
         if (ChronoUnit.MINUTES.between(auctionEntity.endTime, Instant.now()) <= 1) {
-            auctionEntity.endTime.plus(1, ChronoUnit.MINUTES)
+            auctionEntity.endTime = Instant.now().plus(1, ChronoUnit.MINUTES)
         }
 
         return auctionMessage
