@@ -111,6 +111,19 @@ class FeedController(
             }
         return ResponseEntity.ok(response)
     }
+
+    @GetMapping("/myfeed/comment")
+    fun getFeedsThatUserComments(
+        @RequestParam("feedId") feedId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<List<FeedPreview>> {
+        val feeds: List<FeedEntity> = feedService.getFeedsThatUserComments(user.id, feedId)
+        val response =
+            feeds.map { feed ->
+                FeedPreview.fromEntity(feed)
+            }
+        return ResponseEntity.ok(response)
+    }
 }
 
 data class PostFeedRequest(

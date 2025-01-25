@@ -214,6 +214,19 @@ class FeedService(
     }
 
     @Transactional
+    fun getFeedsThatUserComments(
+        id: String,
+        feedId: Long,
+    ): List<FeedEntity> {
+        val comments: List<CommentEntity> = commentService.getCommentsByUser(id)
+        return comments
+            .map { it.feed }
+            .filter { it.id!! < feedId }
+            .distinctBy { it.id }
+            .sortedByDescending { it.id }
+    }
+
+    @Transactional
     fun getFeedEntityById(feedId: Long): FeedEntity {
         return feedRepository.findByIdOrNull(feedId) ?: throw FeedNotFoundException()
     }
