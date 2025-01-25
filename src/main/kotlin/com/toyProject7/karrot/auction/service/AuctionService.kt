@@ -2,10 +2,11 @@ package com.toyProject7.karrot.auction.service
 
 import com.toyProject7.karrot.article.ArticlePermissionDeniedException
 import com.toyProject7.karrot.article.controller.UpdateStatusRequest
-import com.toyProject7.karrot.auction.AuctionBadPriceException
 import com.toyProject7.karrot.auction.AuctionNotFoundException
 import com.toyProject7.karrot.auction.AuctionOverException
 import com.toyProject7.karrot.auction.AuctionPermissionDeniedException
+import com.toyProject7.karrot.auction.AuctionTooFineUnitExceptions
+import com.toyProject7.karrot.auction.AuctionTooLowPriceException
 import com.toyProject7.karrot.auction.controller.Auction
 import com.toyProject7.karrot.auction.controller.AuctionMessage
 import com.toyProject7.karrot.auction.controller.PostAuctionRequest
@@ -37,7 +38,10 @@ class AuctionService(
             throw AuctionOverException()
         }
         if (auctionEntity.currentPrice >= auctionMessage.price) {
-            throw AuctionBadPriceException()
+            throw AuctionTooLowPriceException()
+        }
+        if ((auctionMessage.price - auctionEntity.currentPrice) % (auctionEntity.startingPrice * 0.05).toInt() != 0) {
+            throw AuctionTooFineUnitExceptions()
         }
         val bidder = userService.getUserEntityByNickname(auctionMessage.senderNickname)
 
