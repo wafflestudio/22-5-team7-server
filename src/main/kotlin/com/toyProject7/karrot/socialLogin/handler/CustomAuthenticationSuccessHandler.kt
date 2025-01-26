@@ -92,7 +92,7 @@ class CustomAuthenticationSuccessHandler(
     ): String {
         return when (provider) {
             "google" -> attributes["name"] as String
-            "naver" -> (attributes["response"] as Map<*, *>)["name"] as String
+            "naver" -> (attributes["response"] as Map<*, *>)["nickname"] as String
             "kakao" -> {
                 val kakaoAccount = attributes["kakao_account"] as Map<*, *>
                 val profile = kakaoAccount["profile"] as Map<*, *>
