@@ -1,6 +1,5 @@
 package com.toyProject7.karrot.chatRoom.controller
 
-import com.toyProject7.karrot.article.controller.Article
 import com.toyProject7.karrot.chatRoom.service.ChatRoomService
 import com.toyProject7.karrot.user.AuthUser
 import com.toyProject7.karrot.user.controller.User
@@ -54,6 +53,6 @@ data class CreateChatRoomRequest(
 )
 
 data class ChatRoomResponse(
-    val article: Article,
+    val chatRoom: ChatRoom,
     val messages: List<ChatMessage>,
 )
