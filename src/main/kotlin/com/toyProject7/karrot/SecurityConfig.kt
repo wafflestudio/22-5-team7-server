@@ -9,9 +9,13 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
@@ -23,11 +27,15 @@ class SecurityConfig(
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         return http
+            .cors { cors ->
+                cors.configurationSource(corsConfigurationSource())
+            }
             .csrf { csrf -> csrf.disable() }
             .authorizeHttpRequests { registry ->
                 registry
                     .requestMatchers(
                         *SecurityConstants.PUBLIC_PATHS,
+                        "/ws/**",
                     ).permitAll()
                     .anyRequest().authenticated()
             }
@@ -37,6 +45,9 @@ class SecurityConfig(
             .exceptionHandling { exceptionHandling ->
                 exceptionHandling.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
             }
+            .sessionManagement { sessionManagement ->
+                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            }
             .oauth2Login { oauth2login ->
                 oauth2login
                     .userInfoEndpoint { userInfo ->
@@ -44,7 +55,23 @@ class SecurityConfig(
                     }
                     .successHandler(customAuthenticationSuccessHandler)
             }
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(jwtAuthenticationFilter, OAuth2LoginAuthenticationFilter::class.java)
             .build()
+    }
+
+    @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration()
+        configuration.allowedOrigins =
+            listOf(
+                "https://toykarrot.shop",
+                "http://localhost:5173",
+            )
+        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        configuration.allowedHeaders = listOf("*")
+        configuration.allowCredentials = true
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", configuration)
+        return source
     }
 }

@@ -1,5 +1,7 @@
 package com.toyProject7.karrot.user.service
 
+import com.toyProject7.karrot.profile.persistence.ProfileEntity
+import com.toyProject7.karrot.profile.service.ProfileService
 import com.toyProject7.karrot.user.AuthenticateException
 import com.toyProject7.karrot.user.SignInInvalidPasswordException
 import com.toyProject7.karrot.user.SignInUserNotFoundException
@@ -10,23 +12,25 @@ import com.toyProject7.karrot.user.SignUpInvalidEmailException
 import com.toyProject7.karrot.user.SignUpNicknameConflictException
 import com.toyProject7.karrot.user.SignUpUserIdConflictException
 import com.toyProject7.karrot.user.UserAccessTokenUtil
+import com.toyProject7.karrot.user.UserNotFoundException
 import com.toyProject7.karrot.user.controller.User
 import com.toyProject7.karrot.user.persistence.NormalUser
-import com.toyProject7.karrot.user.persistence.NormalUserRepository
 import com.toyProject7.karrot.user.persistence.SocialUser
 import com.toyProject7.karrot.user.persistence.UserEntity
 import com.toyProject7.karrot.user.persistence.UserPrincipal
 import com.toyProject7.karrot.user.persistence.UserRepository
 import org.mindrot.jbcrypt.BCrypt
+import org.springframework.context.annotation.Lazy
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 
 @Service
 class UserService(
     private val userRepository: UserRepository,
-    private val normalUserRepository: NormalUserRepository,
+    @Lazy private val profileService: ProfileService,
 ) {
     @Transactional
     fun signUp(
@@ -49,7 +53,7 @@ class UserService(
             throw SignUpInvalidEmailException()
         }
 
-        if (normalUserRepository.existsByUserId(userId)) {
+        if (userRepository.existsByUserId(userId)) {
             throw SignUpUserIdConflictException()
         }
         if (userRepository.existsByNickname(nickname)) {
@@ -65,8 +69,17 @@ class UserService(
                     location = "void",
                     temperature = 36.5,
                     email = email,
+                    imageUrl = null,
+                    updatedAt = Instant.now(),
                 ),
             )
+
+        val profileEntity =
+            ProfileEntity(
+                user = user,
+            )
+        profileService.saveProfileEntity(profileEntity)
+
         return User.fromEntity(user)
     }
 
@@ -86,7 +99,7 @@ class UserService(
     @Transactional
     fun authenticate(accessToken: String): User {
         val id = UserAccessTokenUtil.validateAccessTokenGetUserId(accessToken) ?: throw AuthenticateException()
-        val user = userRepository.findNormalUserById(id) ?: throw AuthenticateException()
+        val user = userRepository.findByIdOrNull(id) ?: throw AuthenticateException()
         return User.fromEntity(user)
     }
 
@@ -113,22 +126,28 @@ class UserService(
                     providerId = providerId,
                     location = "void",
                     temperature = 36.5,
+                    imageUrl = null,
+                    updatedAt = Instant.now(),
                 )
             val savedUser = userRepository.save(newUser) // This should save as SocialUser
+
+            val profileEntity =
+                ProfileEntity(
+                    user = newUser,
+                )
+            profileService.saveProfileEntity(profileEntity)
+
             User.fromEntity(savedUser) // Convert and return as User DTO
         }
     }
 
     @Transactional
-    fun loadSocialUserByUsername(email: String): UserPrincipal {
-        val user =
-            userRepository.findSocialUserByEmail(email)
-                ?: throw UsernameNotFoundException("User not found with email: $email")
-        return UserPrincipal.create(user)
+    fun getUserEntityById(id: String): UserEntity {
+        return userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
     }
 
     @Transactional
-    fun loadSocialUserById(id: String): UserPrincipal {
+    fun loadUserPrincipalById(id: String): UserPrincipal {
         val user =
             userRepository.findById(id)
                 .orElseThrow { UsernameNotFoundException("User not found with id: $id") }
@@ -136,7 +155,7 @@ class UserService(
     }
 
     @Transactional
-    fun getUserEntityById(id: String): UserEntity {
-        return userRepository.findByIdOrNull(id) ?: throw AuthenticateException()
+    fun getUserEntityByNickname(nickname: String): UserEntity {
+        return userRepository.findByNickname(nickname) ?: throw UserNotFoundException()
     }
 }

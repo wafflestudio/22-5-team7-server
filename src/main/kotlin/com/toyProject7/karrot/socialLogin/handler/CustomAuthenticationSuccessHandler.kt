@@ -5,7 +5,9 @@ import com.toyProject7.karrot.user.UserAccessTokenUtil
 import com.toyProject7.karrot.user.service.UserService
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
 import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
@@ -37,9 +39,19 @@ class CustomAuthenticationSuccessHandler(
         // Generate JWT
         val accessToken = UserAccessTokenUtil.generateAccessToken(user.id)
 
+        // Replace the OAuth2AuthenticationToken with a UsernamePasswordAuthenticationToken
+        val userDetails = userService.loadUserPrincipalById(user.id)
+        val usernamePasswordAuthenticationToken =
+            UsernamePasswordAuthenticationToken(
+                userDetails,
+                null,
+                userDetails.authorities,
+            )
+        SecurityContextHolder.getContext().authentication = usernamePasswordAuthenticationToken
+
         // Redirect to frontend with JWT included in URL fragment
         val redirectUri =
-            UriComponentsBuilder.fromUriString("https://your-frontend-domain.com/oauth2/redirect")
+            UriComponentsBuilder.fromUriString("https://toykarrot.shop/oauth2/redirect")
                 .fragment("token=$accessToken")
                 .build()
                 .toUriString()

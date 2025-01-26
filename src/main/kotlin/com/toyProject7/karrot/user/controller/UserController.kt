@@ -6,9 +6,11 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
+@RequestMapping("/api")
 class UserController(
     private val userService: UserService,
 ) {
@@ -24,17 +26,14 @@ class UserController(
     fun signIn(
         @RequestBody request: SignInRequest,
     ): ResponseEntity<SignInResponse> {
-        val (_, accessToken) = userService.signIn(request.userId, request.password)
-        return ResponseEntity.ok(SignInResponse(accessToken))
+        val (user, accessToken) = userService.signIn(request.userId, request.password)
+        return ResponseEntity.ok(SignInResponse(user, accessToken))
     }
 
     @GetMapping("/auth/me")
     fun me(
         @AuthUser user: User,
     ): ResponseEntity<UserMeResponse> {
-        if (user.userId == null) {
-            throw IllegalStateException("User ID cannot be null for NormalUser")
-        }
         return ResponseEntity.ok(UserMeResponse(user.id, user.nickname))
     }
 }
@@ -56,10 +55,15 @@ data class SignInRequest(
 )
 
 data class SignInResponse(
+    val user: User,
     val accessToken: String,
 )
 
 data class UserMeResponse(
     val id: String,
     val nickname: String,
+)
+
+data class TokenInfoResponse(
+    val user: User,
 )

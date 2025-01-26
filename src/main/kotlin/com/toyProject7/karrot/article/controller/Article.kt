@@ -9,11 +9,15 @@ data class Article(
     val seller: User,
     val title: String,
     val content: String,
+    val tag: String,
     val price: Int,
-    val status: String,
+    val status: Int,
     val location: String,
+    var imagePresignedUrl: List<String>,
     val createdAt: Instant,
     val likeCount: Int,
+    val viewCount: Int,
+    var isLiked: Boolean,
 ) {
     companion object {
         fun fromEntity(entity: ArticleEntity): Article {
@@ -22,11 +26,15 @@ data class Article(
                 seller = User.fromEntity(entity.seller),
                 title = entity.title,
                 content = entity.content,
+                tag = entity.tag,
                 price = entity.price,
                 status = entity.status,
                 location = entity.location,
+                imagePresignedUrl = entity.imageUrls.map { imageUrlEntity -> imageUrlEntity.presigned }.ifEmpty { emptyList() },
                 createdAt = entity.createdAt,
                 likeCount = entity.articleLikes.size,
+                viewCount = entity.viewCount,
+                isLiked = false,
             )
         }
     }

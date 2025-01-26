@@ -30,7 +30,6 @@ class JwtAuthenticationFilter(
         }
 
         val authHeader = request.getHeader("Authorization")
-
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             val token = authHeader.substring(7)
 
@@ -39,11 +38,12 @@ class JwtAuthenticationFilter(
                 if (UserAccessTokenUtil.validateToken(token)) {
                     // Get user ID from token
                     val userId = UserAccessTokenUtil.getUserIdFromToken(token)
+                    logger.debug("User ID extracted from token: $userId")
 
                     // Load user details
-                    val userDetails = userService.loadSocialUserById(userId)
+                    val userDetails = userService.loadUserPrincipalById(userId)
 
-                    // Create authentication token
+                    // Create authentication token with a default authority
                     val authentication =
                         UsernamePasswordAuthenticationToken(
                             userDetails,
@@ -54,13 +54,22 @@ class JwtAuthenticationFilter(
 
                     // Set the authentication in the context
                     SecurityContextHolder.getContext().authentication = authentication
+                } else {
+                    // Invalid token scenario
+                    logger.warn("Invalid JWT token: $token")
+                    response.status = HttpServletResponse.SC_UNAUTHORIZED
+                    response.writer.write("Invalid JWT Token")
+                    return
                 }
             } catch (e: Exception) {
-                // Handle exceptions (e.g., log them)
-                println("Failed to authenticate user: ${e.message}")
+                // Handle exceptions
+                logger.error("Failed to authenticate user: ${e.message}", e)
+                response.status = HttpServletResponse.SC_UNAUTHORIZED // Set 401 status
+                return
             }
         }
 
+        // Continue the filter chain regardless of authentication
         filterChain.doFilter(request, response)
     }
 

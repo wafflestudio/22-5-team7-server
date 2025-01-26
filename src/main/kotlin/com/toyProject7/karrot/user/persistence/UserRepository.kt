@@ -10,10 +10,7 @@ interface UserRepository : JpaRepository<UserEntity, String> {
         @Param("userId") userId: String,
     ): NormalUser?
 
-    @Query("SELECT s FROM NormalUser s WHERE s.id = :id")
-    fun findNormalUserById(
-        @Param("id") id: String,
-    ): NormalUser?
+    fun findByNickname(nickname: String): UserEntity?
 
     @Query("SELECT s FROM SocialUser s WHERE s.email = :email")
     fun findSocialUserByEmail(
@@ -21,4 +18,9 @@ interface UserRepository : JpaRepository<UserEntity, String> {
     ): SocialUser?
 
     fun existsByNickname(nickname: String): Boolean
+
+    @Query("SELECT COUNT (n) > 0 FROM NormalUser n WHERE n.userId = :userId")
+    fun existsByUserId(
+        @Param("userId") userId: String,
+    ): Boolean
 }

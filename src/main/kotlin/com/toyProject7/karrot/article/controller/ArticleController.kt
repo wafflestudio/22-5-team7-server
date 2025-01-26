@@ -11,33 +11,37 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
+@RequestMapping("/api")
 class ArticleController(
     private val articleService: ArticleService,
 ) {
-    @PostMapping("api/item/post")
+    @PostMapping("/item/post")
     fun postArticle(
         @RequestBody request: PostArticleRequest,
         @AuthUser user: User,
-    ): ResponseEntity<Article> {
+    ): ResponseEntity<ArticleResponse> {
         val article = articleService.postArticle(request, user.id)
-        return ResponseEntity.ok(article)
+        val chattingUsers = articleService.getChattingUsersByArticle(article)
+        return ResponseEntity.ok(ArticleResponse(article, chattingUsers))
     }
 
-    @PutMapping("api/item/edit/{articleId}")
+    @PutMapping("/item/edit/{articleId}")
     fun editArticle(
         @RequestBody request: PostArticleRequest,
         @PathVariable articleId: Long,
         @AuthUser user: User,
-    ): ResponseEntity<Article> {
+    ): ResponseEntity<ArticleResponse> {
         val article = articleService.editArticle(articleId, request, user.id)
-        return ResponseEntity.ok(article)
+        val chattingUsers = articleService.getChattingUsersByArticle(article)
+        return ResponseEntity.ok(ArticleResponse(article, chattingUsers))
     }
 
-    @DeleteMapping("api/item/delete/{articleId}")
+    @DeleteMapping("/item/delete/{articleId}")
     fun deleteArticle(
         @PathVariable articleId: Long,
         @AuthUser user: User,
@@ -46,14 +50,45 @@ class ArticleController(
         return ResponseEntity.ok("Deleted Successfully")
     }
 
-    @GetMapping("api/item/get/{articleId}")
-    fun getArticle(
+    @PutMapping("item/status/{articleId}")
+    fun updateStatus(
+        @RequestBody request: UpdateStatusRequest,
         @PathVariable articleId: Long,
-    ): ResponseEntity<Article> {
-        return ResponseEntity.ok(articleService.getArticle(articleId))
+        @AuthUser user: User,
+    ): ResponseEntity<String> {
+        articleService.updateStatus(request, articleId, user.id)
+        return ResponseEntity.ok("Status Updated Successfully")
     }
 
-    @GetMapping("/api/home")
+    @PostMapping("/item/like/{articleId}")
+    fun likeArticle(
+        @PathVariable articleId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<String> {
+        articleService.likeArticle(articleId, user.id)
+        return ResponseEntity.ok("Liked Successfully")
+    }
+
+    @DeleteMapping("/item/unlike/{articleId}")
+    fun unlikeArticle(
+        @PathVariable articleId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<String> {
+        articleService.unlikeArticle(articleId, user.id)
+        return ResponseEntity.ok("Unliked Successfully")
+    }
+
+    @GetMapping("/item/get/{articleId}")
+    fun getArticle(
+        @PathVariable articleId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<ArticleResponse> {
+        val article = articleService.getArticle(articleId, user.id)
+        val chattingUsers = articleService.getChattingUsersByArticle(article)
+        return ResponseEntity.ok(ArticleResponse(article, chattingUsers))
+    }
+
+    @GetMapping("/home")
     fun getPreviousArticles(
         @RequestParam("articleId") articleId: Long,
     ): ResponseEntity<List<Item>> {
@@ -65,7 +100,20 @@ class ArticleController(
         return ResponseEntity.ok(response)
     }
 
-    @GetMapping("/api/mypage/sells")
+    @GetMapping("/mypage/likes")
+    fun getArticlesThatUserLikes(
+        @RequestParam("articleId") articleId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<List<Item>> {
+        val articles: List<ArticleEntity> = articleService.getArticlesThatUserLikes(user.id, articleId)
+        val response =
+            articles.map { article ->
+                Item.fromArticle(Article.fromEntity(article))
+            }
+        return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("/mypage/sells")
     fun getArticlesBySeller(
         @RequestParam("articleId") articleId: Long,
         @AuthUser user: User,
@@ -78,7 +126,7 @@ class ArticleController(
         return ResponseEntity.ok(response)
     }
 
-    @GetMapping("/api/mypage/buys")
+    @GetMapping("/mypage/buys")
     fun getArticlesByBuyer(
         @RequestParam("articleId") articleId: Long,
         @AuthUser user: User,
@@ -95,6 +143,17 @@ class ArticleController(
 data class PostArticleRequest(
     val title: String,
     val content: String,
+    val tag: String,
     val price: Int,
     val location: String,
+    val imageCount: Int,
+)
+
+data class UpdateStatusRequest(
+    val status: Int,
+)
+
+data class ArticleResponse(
+    val article: Article,
+    val chattingUsers: List<User>,
 )

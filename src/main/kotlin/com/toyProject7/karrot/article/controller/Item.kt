@@ -7,8 +7,9 @@ data class Item(
     val id: Long,
     val title: String,
     val price: Int,
-    val status: String,
+    val status: Int,
     val location: String,
+    val imagePresignedUrl: String,
     val createdAt: Instant,
     val likeCount: Int,
 ) {
@@ -19,7 +20,8 @@ data class Item(
                 title = article.title,
                 price = article.price,
                 status = article.status,
-                location = article.location,
+                location = article.seller.location,
+                imagePresignedUrl = if (article.imagePresignedUrl.isEmpty()) "" else article.imagePresignedUrl.first(),
                 createdAt = article.createdAt,
                 likeCount = article.likeCount,
             )
