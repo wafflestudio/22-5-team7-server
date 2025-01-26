@@ -48,17 +48,6 @@ class ReviewService(
         return Review.fromEntity(reviewEntity)
     }
 
-    @Transactional
-    fun getPreviousReviews(
-        nickname: String,
-        reviewId: Long,
-    ): List<Review> {
-        return reviewRepository.findTop10BySellerNicknameOrBuyerNicknameAndIdBeforeOrderByCreatedAtDesc(nickname, nickname, reviewId).map {
-                reviewEntity ->
-            Review.fromEntity(reviewEntity)
-        }
-    }
-
     private fun validateContent(content: String) {
         if (content.isBlank()) {
             throw ReviewContentLengthOutOfRangeException()

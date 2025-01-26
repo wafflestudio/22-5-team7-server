@@ -122,7 +122,14 @@ class ProfileService(
         nickname: String,
         reviewId: Long,
     ): List<Review> {
-        return reviewService.getPreviousReviews(nickname, reviewId)
+        val userEntity = userService.getUserEntityByNickname(nickname)
+        val profileEntity = profileRepository.findByUserId(userEntity.id!!) ?: throw ProfileNotFoundException()
+
+        return profileEntity.reviews
+            .filter { it.id!! < reviewId }
+            .sortedByDescending { it.createdAt }
+            .take(10)
+            .map { Review.fromEntity(it) }
     }
 
     fun getItemCount(id: String): Int {
