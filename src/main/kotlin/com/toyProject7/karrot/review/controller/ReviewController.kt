@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
+import java.net.URLDecoder
 
 @RestController
 class ReviewController(
@@ -19,7 +20,10 @@ class ReviewController(
         @PathVariable sellerNickname: String,
         @AuthUser user: User,
     ): ResponseEntity<ReviewCreateResponse> {
-        val review = reviewService.createReview(sellerNickname, user.nickname, request.content, request.location)
+        // Decode the sellerNickname
+        val decodedSellerNickname = URLDecoder.decode(sellerNickname, "UTF-8")
+
+        val review = reviewService.createReview(decodedSellerNickname, user.nickname, request.content, request.location)
         return ResponseEntity.status(201).body(review)
     }
 }
