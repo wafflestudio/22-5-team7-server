@@ -29,7 +29,7 @@ class FeedController(
         return ResponseEntity.ok(feed)
     }
 
-    @PutMapping("/feed/put/{feedId}")
+    @PutMapping("/feed/edit/{feedId}")
     fun editFeed(
         @RequestBody request: PostFeedRequest,
         @PathVariable feedId: Long,
