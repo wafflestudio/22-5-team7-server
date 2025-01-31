@@ -138,6 +138,20 @@ class ArticleController(
             }
         return ResponseEntity.ok(response)
     }
+
+    @GetMapping("/item/search/{articleId}")
+    fun searchArticles(
+        @RequestBody request: SearchRequest,
+        @PathVariable articleId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<List<Item>> {
+        val articles = articleService.searchArticle(request, articleId)
+        val response: List<Item> =
+            articles.map { article ->
+                Item.fromArticle(Article.fromEntity(article))
+            }
+        return ResponseEntity.ok(response)
+    }
 }
 
 data class PostArticleRequest(
@@ -151,6 +165,10 @@ data class PostArticleRequest(
 
 data class UpdateStatusRequest(
     val status: Int,
+)
+
+data class SearchRequest(
+    val text: String,
 )
 
 data class ArticleResponse(

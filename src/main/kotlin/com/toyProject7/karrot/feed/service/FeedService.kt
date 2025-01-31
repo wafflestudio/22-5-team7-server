@@ -1,5 +1,6 @@
 package com.toyProject7.karrot.feed.service
 
+import com.toyProject7.karrot.article.persistence.ArticleEntity
 import com.toyProject7.karrot.comment.persistence.CommentEntity
 import com.toyProject7.karrot.comment.service.CommentService
 import com.toyProject7.karrot.feed.FeedNotFoundException
@@ -227,6 +228,16 @@ class FeedService(
                 .sortedByDescending { it.id }
         if (feeds.size < 10) return feeds
         return feeds.subList(0, 10)
+    }
+
+    @Transactional
+    fun searchArticle(
+        text: String,
+        feedId: Long,
+    ): List<ArticleEntity> {
+        val feeds = feedRepository.findTop10ByText(text)
+        refreshPresignedUrlIfExpired(feeds)
+        return feeds
     }
 
     @Transactional

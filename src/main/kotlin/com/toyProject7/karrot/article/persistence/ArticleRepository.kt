@@ -23,4 +23,10 @@ interface ArticleRepository : JpaRepository<ArticleEntity, Long> {
     fun incrementViewCount(id: Long): Int
 
     fun countBySellerId(id: String): Int
+
+    fun findTop10ByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseAndIdLessThanOrderByIdDesc(
+        title: String,
+        content: String,
+        id: Long,
+    ): List<ArticleEntity>
 }
