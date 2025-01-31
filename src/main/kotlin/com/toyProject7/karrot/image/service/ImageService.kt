@@ -1,13 +1,14 @@
 package com.toyProject7.karrot.image.service
 
-import com.toyProject7.karrot.article.service.ArticleService
-import com.toyProject7.karrot.auction.service.AuctionService
-import com.toyProject7.karrot.feed.service.FeedService
+import com.toyProject7.karrot.article.persistence.ArticleRepository
+import com.toyProject7.karrot.auction.persistence.AuctionRepository
+import com.toyProject7.karrot.feed.persistence.FeedRepository
 import com.toyProject7.karrot.image.ImageDeleteException
 import com.toyProject7.karrot.image.ImagePresignedUrlCreateException
 import com.toyProject7.karrot.image.ImageS3UrlCreateException
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.image.persistence.ImageUrlRepository
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import software.amazon.awssdk.services.s3.S3Client
@@ -25,9 +26,9 @@ class ImageService(
     private val s3Client: S3Client,
     private val s3Presigner: S3Presigner,
     private val imageUrlRepository: ImageUrlRepository,
-    private val articleService: ArticleService,
-    private val feedService: FeedService,
-    private val auctionService: AuctionService,
+    private val articleRepository: ArticleRepository,
+    private val feedRepository: FeedRepository,
+    private val auctionRepository: AuctionRepository,
 ) {
     @Transactional
     fun postImageUrl(
@@ -41,13 +42,13 @@ class ImageService(
             )
         when (type) {
             "article" -> {
-                imageUrlEntity.article = articleService.getArticleEntityById(typeId)
+                imageUrlEntity.article = articleRepository.findByIdOrNull(typeId)
             }
             "feed" -> {
-                imageUrlEntity.feed = feedService.getFeedEntityById(typeId)
+                imageUrlEntity.feed = feedRepository.findByIdOrNull(typeId)
             }
             "auction" -> {
-                imageUrlEntity.auction = auctionService.getAuctionEntityById(typeId)
+                imageUrlEntity.auction = auctionRepository.findByIdOrNull(typeId)
             }
         }
         imageUrlRepository.save(imageUrlEntity)
