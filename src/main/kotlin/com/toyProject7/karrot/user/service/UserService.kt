@@ -164,7 +164,9 @@ class UserService(
 
     @Transactional
     fun getUserEntityById(id: String): UserEntity {
-        return userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
+        val userEntity = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
+        profileService.refreshPresignedUrlIfExpired(userEntity)
+        return userEntity
     }
 
     @Transactional
