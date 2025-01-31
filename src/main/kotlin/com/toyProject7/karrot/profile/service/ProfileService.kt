@@ -61,7 +61,7 @@ class ProfileService(
         val articles = articleService.getArticlesBySeller(user.id!!, articleId)
         val itemList =
             articles.map { article ->
-                Item.fromArticle(Article.fromEntity(article))
+                Item.fromArticle(Article.fromEntity(article), articleService.getChattingUsersByArticle(Article.fromEntity(article)).size)
             }
         return itemList
     }
