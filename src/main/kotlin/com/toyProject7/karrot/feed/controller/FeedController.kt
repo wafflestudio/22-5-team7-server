@@ -124,6 +124,20 @@ class FeedController(
             }
         return ResponseEntity.ok(response)
     }
+
+    @GetMapping("/feed/search/{feedId}")
+    fun searchFeeds(
+        @RequestBody request: SearchRequest,
+        @PathVariable feedId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<List<FeedPreview>> {
+        val feeds = feedService.searchFeed(request, feedId)
+        val response: List<FeedPreview> =
+            feeds.map { feed ->
+                FeedPreview.fromEntity(feed)
+            }
+        return ResponseEntity.ok(response)
+    }
 }
 
 data class PostFeedRequest(
@@ -131,4 +145,8 @@ data class PostFeedRequest(
     val content: String,
     val tag: String,
     val imageCount: Int,
+)
+
+data class SearchRequest(
+    val text: String,
 )
