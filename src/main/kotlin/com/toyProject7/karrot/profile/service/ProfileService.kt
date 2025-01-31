@@ -47,7 +47,9 @@ class ProfileService(
         val user = User.fromEntity(userEntity)
         val profileEntity = profileRepository.findByUserId(user.id) ?: throw ProfileNotFoundException()
         val itemCount = getItemCount(user.id)
-        return Profile.fromEntity(profileEntity, itemCount)
+        val profile = Profile.fromEntity(profileEntity, itemCount)
+        profile.manners = profile.manners.filter { it.mannerType.name.startsWith("NEG_").not() }
+        return profile
     }
 
     @Transactional
@@ -112,11 +114,18 @@ class ProfileService(
     }
 
     @Transactional
-    fun getManner(nickname: String): List<Manner> {
-        val userEntity = userService.getUserEntityByNickname(nickname)
-        val user = User.fromEntity(userEntity)
+    fun getManner(
+        user: User,
+        nickname: String,
+    ): List<Manner> {
+        val profileUserEntity = userService.getUserEntityByNickname(nickname)
+        val profileUser = User.fromEntity(profileUserEntity)
         val profileEntity = profileRepository.findByUserId(user.id) ?: throw ProfileNotFoundException()
-        return Profile.fromEntity(profileEntity, 0).manners
+        if (profileUser == user) {
+            return Profile.fromEntity(profileEntity, 0).manners
+        } else {
+            return Profile.fromEntity(profileEntity, 0).manners.filter { it.mannerType.name.startsWith("NEG_").not() }
+        }
     }
 
     @Transactional
