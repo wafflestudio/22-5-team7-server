@@ -62,8 +62,9 @@ class ProfileController(
     @GetMapping("/api/profile/{nickname}/manners")
     fun getManners(
         @PathVariable nickname: String,
+        @AuthUser user: User,
     ): ResponseEntity<MannersResponse> {
-        val manners = profileService.getManner(nickname)
+        val manners = profileService.getManner(user, nickname)
         return ResponseEntity.ok(manners)
     }
 
