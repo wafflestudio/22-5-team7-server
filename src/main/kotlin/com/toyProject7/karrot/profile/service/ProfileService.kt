@@ -69,7 +69,7 @@ class ProfileService(
         user: User,
         request: EditProfileRequest,
     ): Profile {
-        if (userService.existUserEntityByNickname(request.nickname)) {
+        if (user.nickname != request.nickname && userService.existUserEntityByNickname(request.nickname)) {
             throw ProfileEditNicknameConflictException()
         }
 
