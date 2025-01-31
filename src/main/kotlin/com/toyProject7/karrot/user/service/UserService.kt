@@ -131,7 +131,7 @@ class UserService(
             val newUser =
                 SocialUser(
                     email = email,
-                    nickname = username, // Assign the generated username
+                    nickname = username,
                     provider = provider,
                     providerId = providerId,
                     location = "void",
