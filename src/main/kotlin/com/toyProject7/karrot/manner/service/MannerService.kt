@@ -39,5 +39,8 @@ class MannerService(
             profileEntity.manners += newMannerEntity
         }
         userEntity.temperature++
+        if (userEntity.temperature > 100) {
+            userEntity.temperature = 100.0
+        }
     }
 }
