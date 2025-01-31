@@ -8,7 +8,6 @@ import com.toyProject7.karrot.user.AuthUser
 import com.toyProject7.karrot.user.controller.User
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
@@ -33,22 +32,24 @@ class ProfileController(
         return ResponseEntity.ok(profile)
     }
 
-    @GetMapping("/api/profile/{nickname}")
+    @GetMapping("/api/profile")
     fun getProfile(
-        @PathVariable nickname: String,
+        @RequestParam nickname: String,
     ): ResponseEntity<ProfileResponse> {
         val profile = profileService.getProfile(nickname)
         return ResponseEntity.ok(profile)
     }
+    // GET /api/profile?nickname=hello%2Fworld
 
-    @GetMapping("/api/profile/{nickname}/sells")
+    @GetMapping("/api/profile/sells")
     fun getProfileSells(
-        @PathVariable nickname: String,
+        @RequestParam nickname: String,
         @RequestParam articleId: Long,
     ): ResponseEntity<List<Item>> {
         val itemList: List<Item> = profileService.getProfileSells(nickname, articleId)
         return ResponseEntity.ok(itemList)
     }
+    // GET /api/profile/sells?nickname=hello%2Fworld&articleId=123
 
     @PutMapping("/api/mypage/profile/edit")
     fun editProfile(
@@ -59,23 +60,25 @@ class ProfileController(
         return ResponseEntity.ok(profile)
     }
 
-    @GetMapping("/api/profile/{nickname}/manners")
+    @GetMapping("/api/profile/manners")
     fun getManners(
-        @PathVariable nickname: String,
+        @RequestParam nickname: String,
         @AuthUser user: User,
     ): ResponseEntity<MannersResponse> {
         val manners = profileService.getManner(user, nickname)
         return ResponseEntity.ok(manners)
     }
+    // GET /api/profile/manners?nickname=hello%2Fworld
 
-    @GetMapping("/api/profile/{nickname}/reviews")
+    @GetMapping("/api/profile/reviews")
     fun getReviews(
-        @PathVariable nickname: String,
-        @RequestParam("reviewId") reviewId: Long,
+        @RequestParam nickname: String,
+        @RequestParam reviewId: Long,
     ): ResponseEntity<ReviewsResponse> {
         val reviews = profileService.getPreviousReviews(nickname, reviewId)
         return ResponseEntity.ok(reviews)
     }
+    // GET /api/profile/reviews?nickname=hello%2Fworld&reviewId=123
 }
 
 typealias ProfileResponse = Profile
