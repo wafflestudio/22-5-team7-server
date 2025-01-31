@@ -179,4 +179,9 @@ class UserService(
     fun getUserEntityByNickname(nickname: String): UserEntity {
         return userRepository.findByNickname(nickname) ?: throw UserNotFoundException()
     }
+
+    @Transactional
+    fun existUserEntityByNickname(nickname: String): Boolean {
+        return userRepository.existsByNickname(nickname)
+    }
 }
