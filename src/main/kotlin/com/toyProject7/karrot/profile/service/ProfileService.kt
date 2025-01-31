@@ -6,17 +6,16 @@ import com.toyProject7.karrot.article.service.ArticleService
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.image.service.ImageService
 import com.toyProject7.karrot.manner.controller.Manner
+import com.toyProject7.karrot.profile.ProfileEditNicknameConflictException
 import com.toyProject7.karrot.profile.ProfileNotFoundException
 import com.toyProject7.karrot.profile.controller.EditProfileRequest
 import com.toyProject7.karrot.profile.controller.Profile
 import com.toyProject7.karrot.profile.persistence.ProfileEntity
 import com.toyProject7.karrot.profile.persistence.ProfileRepository
 import com.toyProject7.karrot.review.controller.Review
-import com.toyProject7.karrot.review.service.ReviewService
 import com.toyProject7.karrot.user.controller.User
 import com.toyProject7.karrot.user.persistence.UserEntity
 import com.toyProject7.karrot.user.service.UserService
-import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -28,7 +27,6 @@ class ProfileService(
     private val userService: UserService,
     private val articleService: ArticleService,
     private val imageService: ImageService,
-    @Lazy private val reviewService: ReviewService,
 ) {
     @Transactional
     fun getMyProfile(user: User): Profile {
@@ -71,6 +69,10 @@ class ProfileService(
         user: User,
         request: EditProfileRequest,
     ): Profile {
+        if (userService.existUserEntityByNickname(request.nickname)) {
+            throw ProfileEditNicknameConflictException()
+        }
+
         val userEntity = userService.getUserEntityById(user.id)
         val profileEntity = profileRepository.findByUserId(user.id) ?: throw ProfileNotFoundException()
         val itemCount = getItemCount(user.id)

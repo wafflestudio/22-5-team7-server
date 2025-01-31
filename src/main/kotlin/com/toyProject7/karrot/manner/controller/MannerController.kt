@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RestController
-import java.net.URLDecoder
 
 @RestController
 class MannerController(
@@ -16,10 +15,7 @@ class MannerController(
         @PathVariable nickname: String,
         @PathVariable mannerType: MannerType,
     ): ResponseEntity<String> {
-        // Decode the nickname
-        val decodedNickname = URLDecoder.decode(nickname, "UTF-8")
-
-        mannerService.increaseMannerCount(decodedNickname, mannerType)
+        mannerService.increaseMannerCount(nickname, mannerType)
         return ResponseEntity.noContent().build()
     }
 }
