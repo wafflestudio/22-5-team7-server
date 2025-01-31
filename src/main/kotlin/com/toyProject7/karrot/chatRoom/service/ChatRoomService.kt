@@ -2,6 +2,7 @@ package com.toyProject7.karrot.chatRoom.service
 
 import com.toyProject7.karrot.article.service.ArticleService
 import com.toyProject7.karrot.chatRoom.ChatRoomNotFoundException
+import com.toyProject7.karrot.chatRoom.SellerCreateChatRoomWithSellerException
 import com.toyProject7.karrot.chatRoom.ThisRoomIsNotYoursException
 import com.toyProject7.karrot.chatRoom.controller.ChatMessage
 import com.toyProject7.karrot.chatRoom.controller.ChatRoom
@@ -81,10 +82,14 @@ class ChatRoomService(
 
     @Transactional
     fun createChatRoom(
+        user: User,
         articleId: Long,
         sellerId: String,
         buyerId: String,
     ): ChatRoom {
+        if (user.id == sellerId) {
+            throw SellerCreateChatRoomWithSellerException()
+        }
         val articleEntity = articleService.getArticleEntityById(articleId)
         val sellerEntity = userService.getUserEntityById(sellerId)
         val buyerEntity = userService.getUserEntityById(buyerId)
