@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.net.URLDecoder
 
 @RestController
 class ProfileController(
@@ -38,10 +37,7 @@ class ProfileController(
     fun getProfile(
         @PathVariable nickname: String,
     ): ResponseEntity<ProfileResponse> {
-        // Decode nickname
-        val decodedNickname = URLDecoder.decode(nickname, "UTF-8")
-
-        val profile = profileService.getProfile(decodedNickname)
+        val profile = profileService.getProfile(nickname)
         return ResponseEntity.ok(profile)
     }
 
@@ -50,10 +46,7 @@ class ProfileController(
         @PathVariable nickname: String,
         @RequestParam articleId: Long,
     ): ResponseEntity<List<Item>> {
-        // Decode nickname
-        val decodedNickname = URLDecoder.decode(nickname, "UTF-8")
-
-        val itemList: List<Item> = profileService.getProfileSells(decodedNickname, articleId)
+        val itemList: List<Item> = profileService.getProfileSells(nickname, articleId)
         return ResponseEntity.ok(itemList)
     }
 
@@ -70,10 +63,7 @@ class ProfileController(
     fun getManners(
         @PathVariable nickname: String,
     ): ResponseEntity<MannersResponse> {
-        // Decode nickname
-        val decodedNickname = URLDecoder.decode(nickname, "UTF-8")
-
-        val manners = profileService.getManner(decodedNickname)
+        val manners = profileService.getManner(nickname)
         return ResponseEntity.ok(manners)
     }
 
@@ -82,10 +72,7 @@ class ProfileController(
         @PathVariable nickname: String,
         @RequestParam("reviewId") reviewId: Long,
     ): ResponseEntity<ReviewsResponse> {
-        // Decode nickname
-        val decodedNickname = URLDecoder.decode(nickname, "UTF-8")
-
-        val reviews = profileService.getPreviousReviews(decodedNickname, reviewId)
+        val reviews = profileService.getPreviousReviews(nickname, reviewId)
         return ResponseEntity.ok(reviews)
     }
 }
