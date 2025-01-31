@@ -35,7 +35,8 @@ class ArticleEntity(
     var status: Int,
     @Column(name = "location", nullable = false)
     var location: String,
-    @OneToMany(mappedBy = "article")
+    @OneToMany
+    @JoinColumn(name = "image_url", nullable = true)
     var imageUrls: MutableList<ImageUrlEntity> = mutableListOf(),
     @OneToMany(mappedBy = "article")
     var articleLikes: MutableList<ArticleLikesEntity> = mutableListOf(),

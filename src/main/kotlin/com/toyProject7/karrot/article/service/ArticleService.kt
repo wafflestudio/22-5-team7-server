@@ -28,7 +28,7 @@ class ArticleService(
     private val articleRepository: ArticleRepository,
     private val articleLikesRepository: ArticleLikesRepository,
     private val userService: UserService,
-    @Lazy private val imageService: ImageService,
+    private val imageService: ImageService,
     @Lazy private val chatRoomService: ChatRoomService,
 ) {
     @Transactional

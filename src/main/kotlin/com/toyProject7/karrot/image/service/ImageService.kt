@@ -1,8 +1,5 @@
 package com.toyProject7.karrot.image.service
 
-import com.toyProject7.karrot.article.service.ArticleService
-import com.toyProject7.karrot.auction.service.AuctionService
-import com.toyProject7.karrot.feed.service.FeedService
 import com.toyProject7.karrot.image.ImageDeleteException
 import com.toyProject7.karrot.image.ImagePresignedUrlCreateException
 import com.toyProject7.karrot.image.ImageS3UrlCreateException
@@ -25,9 +22,6 @@ class ImageService(
     private val s3Client: S3Client,
     private val s3Presigner: S3Presigner,
     private val imageUrlRepository: ImageUrlRepository,
-    private val articleService: ArticleService,
-    private val feedService: FeedService,
-    private val auctionService: AuctionService,
 ) {
     @Transactional
     fun postImageUrl(
@@ -39,17 +33,6 @@ class ImageService(
             ImageUrlEntity(
                 s3 = generateS3Path(type, typeId, imageIndex),
             )
-        when (type) {
-            "article" -> {
-                imageUrlEntity.article = articleService.getArticleEntityById(typeId)
-            }
-            "feed" -> {
-                imageUrlEntity.feed = feedService.getFeedEntityById(typeId)
-            }
-            "auction" -> {
-                imageUrlEntity.auction = auctionService.getAuctionEntityById(typeId)
-            }
-        }
         imageUrlRepository.save(imageUrlEntity)
 
         return imageUrlEntity

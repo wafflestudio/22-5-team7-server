@@ -37,7 +37,8 @@ class AuctionEntity(
     var status: Int,
     @Column(name = "location", nullable = false)
     var location: String,
-    @OneToMany(mappedBy = "auction")
+    @OneToMany
+    @JoinColumn(name = "image_url", nullable = true)
     var imageUrls: MutableList<ImageUrlEntity> = mutableListOf(),
     @OneToMany(mappedBy = "auction")
     var auctionLikes: MutableList<AuctionLikesEntity> = mutableListOf(),
