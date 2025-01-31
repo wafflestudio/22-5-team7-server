@@ -23,8 +23,20 @@ class AuctionPermissionDeniedException : AuctionException(
     msg = "Permission denied",
 )
 
-class AuctionBadPriceException : AuctionException(
+class AuctionTooLowPriceException : AuctionException(
     errorCode = 0,
     httpStatusCode = HttpStatus.BAD_REQUEST,
     msg = "Your price is lower than current price",
+)
+
+class AuctionTooFineUnitExceptions : AuctionException(
+    errorCode = 0,
+    httpStatusCode = HttpStatus.BAD_REQUEST,
+    msg = "Minimum unit is 5% of the start price",
+)
+
+class AuctionOverException : AuctionException(
+    errorCode = 0,
+    httpStatusCode = HttpStatus.BAD_REQUEST,
+    msg = "Over auction time",
 )

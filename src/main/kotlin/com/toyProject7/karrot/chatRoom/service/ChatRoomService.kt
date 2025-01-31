@@ -75,7 +75,7 @@ class ChatRoomService(
             )
         val messages = chatMessageEntities.map { chatMessageEntity -> ChatMessage.fromEntity(chatMessageEntity) }
         return ChatRoomResponse(
-            article = chatRoom.article,
+            chatRoom = chatRoom,
             messages = messages,
         )
     }

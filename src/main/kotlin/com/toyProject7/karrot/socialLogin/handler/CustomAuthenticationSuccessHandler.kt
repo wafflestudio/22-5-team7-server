@@ -31,10 +31,9 @@ class CustomAuthenticationSuccessHandler(
         val attributes = oauth2User.attributes
         val providerId = extractProviderId(attributes, provider)
         val email = extractEmail(attributes, provider)
-        val name = extractName(attributes, provider)
 
         // Create or retrieve the user
-        val user = userService.createOrRetrieveSocialUser(email, providerId, provider, name)
+        val user = userService.createOrRetrieveSocialUser(email, providerId, provider)
 
         // Generate JWT
         val accessToken = UserAccessTokenUtil.generateAccessToken(user.id)
@@ -86,13 +85,13 @@ class CustomAuthenticationSuccessHandler(
         }
     }
 
-    private fun extractName(
+    /*private fun extractName(
         attributes: Map<String, Any>,
         provider: String,
     ): String {
         return when (provider) {
             "google" -> attributes["name"] as String
-            "naver" -> (attributes["response"] as Map<*, *>)["name"] as String
+            "naver" -> (attributes["response"] as Map<*, *>)["nickname"] as String
             "kakao" -> {
                 val kakaoAccount = attributes["kakao_account"] as Map<*, *>
                 val profile = kakaoAccount["profile"] as Map<*, *>
@@ -100,5 +99,5 @@ class CustomAuthenticationSuccessHandler(
             }
             else -> "Unknown"
         }
-    }
+    }*/
 }
