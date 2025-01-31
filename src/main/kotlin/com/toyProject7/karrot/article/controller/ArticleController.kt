@@ -148,7 +148,7 @@ class ArticleController(
         val articles = articleService.searchArticle(request, articleId)
         val response: List<Item> =
             articles.map { article ->
-                Item.fromArticle(Article.fromEntity(article))
+                Item.fromArticle(Article.fromEntity(article), articleService.getChattingUsersByArticle(Article.fromEntity(article)).size)
             }
         return ResponseEntity.ok(response)
     }
