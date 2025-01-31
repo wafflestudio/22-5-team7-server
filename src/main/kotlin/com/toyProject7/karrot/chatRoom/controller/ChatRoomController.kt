@@ -40,8 +40,9 @@ class ChatRoomController(
     @PostMapping("/chat/create")
     fun createRoom(
         @RequestBody request: CreateChatRoomRequest,
+        @AuthUser user: User,
     ): ResponseEntity<ChatRoom> {
-        val chatRoom = chatRoomService.createChatRoom(request.articleId, request.sellerId, request.buyerId)
+        val chatRoom = chatRoomService.createChatRoom(user, request.articleId, request.sellerId, request.buyerId)
         return ResponseEntity.ok(chatRoom)
     }
 }

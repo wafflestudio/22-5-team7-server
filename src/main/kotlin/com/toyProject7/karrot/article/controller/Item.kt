@@ -12,9 +12,13 @@ data class Item(
     val imagePresignedUrl: String,
     val createdAt: Instant,
     val likeCount: Int,
+    val chatCount: Int,
 ) {
     companion object {
-        fun fromArticle(article: Article): Item {
+        fun fromArticle(
+            article: Article,
+            chatCount: Int,
+        ): Item {
             return Item(
                 id = article.id,
                 title = article.title,
@@ -24,6 +28,7 @@ data class Item(
                 imagePresignedUrl = if (article.imagePresignedUrl.isEmpty()) "" else article.imagePresignedUrl.first(),
                 createdAt = article.createdAt,
                 likeCount = article.likeCount,
+                chatCount = chatCount,
             )
         }
     }

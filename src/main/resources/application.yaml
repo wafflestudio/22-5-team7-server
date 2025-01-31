@@ -29,7 +29,7 @@ spring:
             authorizationGrantType: authorization_code
             redirectUri: "https://toykarrot.shop/{action}/oauth2/code/{registrationId}"
             scope:
-              - nickname
+              - profile
               - email
             clientName: Naver
           kakao:

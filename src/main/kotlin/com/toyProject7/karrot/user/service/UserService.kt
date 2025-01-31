@@ -108,16 +108,26 @@ class UserService(
         email: String,
         providerId: String,
         provider: String,
-        username: String,
     ): User {
         // Check if the user exists by email
         val existingUser = userRepository.findSocialUserByEmail(email)
 
         return existingUser?.let {
-            // Convert existingUser (of type SocialUser) to User DTO
+            // If the user exists, convert to User DTO and return
             User.fromEntity(it)
         } ?: run {
-            // If the user doesn't exist, create a new one
+            // If the user doesn't exist, generate a unique random username
+            var username = generateRandomString()
+            var isUnique = false
+
+            while (!isUnique) {
+                if (!userRepository.existsByNickname(username)) {
+                    isUnique = true
+                }
+                username = generateRandomString()
+            }
+
+            // Create a new SocialUser with the generated username
             val newUser =
                 SocialUser(
                     email = email,
@@ -129,16 +139,27 @@ class UserService(
                     imageUrl = null,
                     updatedAt = Instant.now(),
                 )
-            val savedUser = userRepository.save(newUser) // This should save as SocialUser
 
+            // Save the new user
+            val savedUser = userRepository.save(newUser)
+
+            // Create and save the associated profile
             val profileEntity =
                 ProfileEntity(
                     user = newUser,
                 )
             profileService.saveProfileEntity(profileEntity)
 
-            User.fromEntity(savedUser) // Convert and return as User DTO
+            // Convert and return as User DTO
+            User.fromEntity(savedUser)
         }
+    }
+
+    private fun generateRandomString(length: Int = 8): String {
+        val characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        return (1..length)
+            .map { characters.random() }
+            .joinToString("")
     }
 
     @Transactional
@@ -157,5 +178,10 @@ class UserService(
     @Transactional
     fun getUserEntityByNickname(nickname: String): UserEntity {
         return userRepository.findByNickname(nickname) ?: throw UserNotFoundException()
+    }
+
+    @Transactional
+    fun existUserEntityByNickname(nickname: String): Boolean {
+        return userRepository.existsByNickname(nickname)
     }
 }

@@ -6,17 +6,16 @@ import com.toyProject7.karrot.article.service.ArticleService
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.image.service.ImageService
 import com.toyProject7.karrot.manner.controller.Manner
+import com.toyProject7.karrot.profile.ProfileEditNicknameConflictException
 import com.toyProject7.karrot.profile.ProfileNotFoundException
 import com.toyProject7.karrot.profile.controller.EditProfileRequest
 import com.toyProject7.karrot.profile.controller.Profile
 import com.toyProject7.karrot.profile.persistence.ProfileEntity
 import com.toyProject7.karrot.profile.persistence.ProfileRepository
 import com.toyProject7.karrot.review.controller.Review
-import com.toyProject7.karrot.review.service.ReviewService
 import com.toyProject7.karrot.user.controller.User
 import com.toyProject7.karrot.user.persistence.UserEntity
 import com.toyProject7.karrot.user.service.UserService
-import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -28,7 +27,6 @@ class ProfileService(
     private val userService: UserService,
     private val articleService: ArticleService,
     private val imageService: ImageService,
-    @Lazy private val reviewService: ReviewService,
 ) {
     @Transactional
     fun getMyProfile(user: User): Profile {
@@ -49,7 +47,9 @@ class ProfileService(
         val user = User.fromEntity(userEntity)
         val profileEntity = profileRepository.findByUserId(user.id) ?: throw ProfileNotFoundException()
         val itemCount = getItemCount(user.id)
-        return Profile.fromEntity(profileEntity, itemCount)
+        val profile = Profile.fromEntity(profileEntity, itemCount)
+        profile.manners = profile.manners.filter { it.mannerType.name.startsWith("NEG_").not() }
+        return profile
     }
 
     @Transactional
@@ -61,7 +61,7 @@ class ProfileService(
         val articles = articleService.getArticlesBySeller(user.id!!, articleId)
         val itemList =
             articles.map { article ->
-                Item.fromArticle(Article.fromEntity(article))
+                Item.fromArticle(Article.fromEntity(article), articleService.getChattingUsersByArticle(Article.fromEntity(article)).size)
             }
         return itemList
     }
@@ -71,6 +71,10 @@ class ProfileService(
         user: User,
         request: EditProfileRequest,
     ): Profile {
+        if (user.nickname != request.nickname && userService.existUserEntityByNickname(request.nickname)) {
+            throw ProfileEditNicknameConflictException()
+        }
+
         val userEntity = userService.getUserEntityById(user.id)
         val profileEntity = profileRepository.findByUserId(user.id) ?: throw ProfileNotFoundException()
         val itemCount = getItemCount(user.id)
@@ -110,11 +114,18 @@ class ProfileService(
     }
 
     @Transactional
-    fun getManner(nickname: String): List<Manner> {
-        val userEntity = userService.getUserEntityByNickname(nickname)
-        val user = User.fromEntity(userEntity)
+    fun getManner(
+        user: User,
+        nickname: String,
+    ): List<Manner> {
+        val profileUserEntity = userService.getUserEntityByNickname(nickname)
+        val profileUser = User.fromEntity(profileUserEntity)
         val profileEntity = profileRepository.findByUserId(user.id) ?: throw ProfileNotFoundException()
-        return Profile.fromEntity(profileEntity, 0).manners
+        if (profileUser == user) {
+            return Profile.fromEntity(profileEntity, 0).manners
+        } else {
+            return Profile.fromEntity(profileEntity, 0).manners.filter { it.mannerType.name.startsWith("NEG_").not() }
+        }
     }
 
     @Transactional

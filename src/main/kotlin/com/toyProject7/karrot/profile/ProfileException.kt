@@ -16,3 +16,9 @@ class ProfileNotFoundException : ProfileException(
     httpStatusCode = HttpStatus.NOT_FOUND,
     msg = "Profile not found",
 )
+
+class ProfileEditNicknameConflictException : ProfileException(
+    errorCode = 0,
+    httpStatusCode = HttpStatus.CONFLICT,
+    msg = "Nickname conflict",
+)

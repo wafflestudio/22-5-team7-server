@@ -9,7 +9,7 @@ data class Profile(
     val id: Long,
     val user: User,
     val itemCount: Int,
-    val manners: List<Manner>,
+    var manners: List<Manner>,
     val reviews: List<Review>,
     val reviewCount: Int,
 ) {
