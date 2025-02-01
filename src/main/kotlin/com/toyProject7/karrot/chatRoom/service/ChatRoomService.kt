@@ -130,7 +130,7 @@ class ChatRoomService(
         chatRoomRepository.save(chatRoomEntity)
         return ChatRoom.fromEntity(chatRoomEntity, "")
     }
-    
+
     @Transactional
     fun getBuyerChatRooms(articleId: Long): List<ChatRoom> {
         val chatRoomEntities: List<ChatRoomEntity> = chatRoomRepository.findAllByArticleId(articleId)
