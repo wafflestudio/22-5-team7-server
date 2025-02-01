@@ -28,3 +28,9 @@ class SellerCreateChatRoomWithSellerException : ChatRoomException(
     httpStatusCode = HttpStatus.BAD_REQUEST,
     msg = "Seller can't make chatRoom with himself",
 )
+
+class ChatRoomCannotBeCreatedIfEndsException : ChatRoomException(
+    errorCode = 0,
+    httpStatusCode = HttpStatus.FORBIDDEN,
+    msg = "ChatRoom cannot be created if status is 2",
+)

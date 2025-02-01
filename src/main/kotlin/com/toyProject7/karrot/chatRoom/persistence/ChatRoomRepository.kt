@@ -11,4 +11,14 @@ interface ChatRoomRepository : JpaRepository<ChatRoomEntity, Long> {
     ): List<ChatRoomEntity>
 
     fun findAllByArticleId(articleId: Long): List<ChatRoomEntity>
+
+    fun existsByArticleIdAndBuyerId(
+        articleId: Long,
+        buyerId: String,
+    ): Boolean
+
+    fun findByArticleIdAndBuyerId(
+        articleId: Long,
+        buyerId: String,
+    ): ChatRoomEntity
 }

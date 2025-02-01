@@ -25,6 +25,7 @@ data class ReviewCreateRequest(
     val isWritedByBuyer: Boolean,
     val sellerId: String,
     val buyerId: String,
+    val articleId: Long,
 )
 
 typealias ReviewCreateResponse = Review

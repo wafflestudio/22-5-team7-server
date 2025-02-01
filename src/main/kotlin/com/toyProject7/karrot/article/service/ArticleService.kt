@@ -268,6 +268,15 @@ class ArticleService(
     }
 
     @Transactional
+    fun updateBuyer(
+        articleId: Long,
+        buyerId: String,
+    ) {
+        val articleEntity = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
+        articleEntity.buyer = userService.getUserEntityById(buyerId)
+    }
+
+    @Transactional
     fun getArticleEntityById(articleId: Long): ArticleEntity {
         return articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
     }
