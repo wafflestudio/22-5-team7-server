@@ -140,11 +140,11 @@ class FeedController(
 
     @GetMapping("/feed/search/{feedId}")
     fun searchFeeds(
-        @RequestBody request: SearchRequest,
         @PathVariable feedId: Long,
+        @RequestParam("text") text: String,
         @AuthUser user: User,
     ): ResponseEntity<List<FeedPreview>> {
-        val feeds = feedService.searchFeed(request, feedId)
+        val feeds = feedService.searchFeed(text, feedId)
         val response: List<FeedPreview> =
             feeds.map { feed ->
                 FeedPreview.fromEntity(feed)
