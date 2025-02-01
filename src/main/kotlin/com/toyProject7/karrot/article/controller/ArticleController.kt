@@ -141,11 +141,11 @@ class ArticleController(
 
     @GetMapping("/item/search/{articleId}")
     fun searchArticles(
-        @RequestBody request: SearchRequest,
         @PathVariable articleId: Long,
+        @RequestParam("text") text: String,
         @AuthUser user: User,
     ): ResponseEntity<List<Item>> {
-        val articles = articleService.searchArticle(request, articleId)
+        val articles = articleService.searchArticle(text, articleId)
         val response: List<Item> =
             articles.map { article ->
                 Item.fromArticle(Article.fromEntity(article), articleService.getChattingUsersByArticle(Article.fromEntity(article)).size)
