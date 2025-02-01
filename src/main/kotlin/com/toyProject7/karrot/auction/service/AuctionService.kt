@@ -237,13 +237,12 @@ class AuctionService(
                 isDummy = 1,
             )
         articleRepository.save(articleEntity)
-        if (auction.seller.id != auction.bidder?.id)
-            {
-                chatRoomService.createChatRoom(
-                    articleEntity.id ?: throw IllegalArgumentException("Article ID cannot be null"),
-                    articleEntity.seller.id ?: throw IllegalArgumentException("Seller ID cannot be null"),
-                    articleEntity.buyer?.id ?: throw IllegalArgumentException("Buyer ID cannot be null"),
-                )
-            }
+        if (auction.seller.id != auction.bidder?.id) {
+            chatRoomService.createChatRoom(
+                articleEntity.id ?: throw IllegalArgumentException("Article ID cannot be null"),
+                articleEntity.seller.id ?: throw IllegalArgumentException("Seller ID cannot be null"),
+                articleEntity.buyer?.id ?: throw IllegalArgumentException("Buyer ID cannot be null"),
+            )
+        }
     }
 }
