@@ -2,6 +2,8 @@ package com.toyProject7.karrot.auction.service
 
 import com.toyProject7.karrot.article.ArticlePermissionDeniedException
 import com.toyProject7.karrot.article.controller.UpdateStatusRequest
+import com.toyProject7.karrot.article.persistence.ArticleEntity
+import com.toyProject7.karrot.article.persistence.ArticleRepository
 import com.toyProject7.karrot.auction.AuctionNotFoundException
 import com.toyProject7.karrot.auction.AuctionOverException
 import com.toyProject7.karrot.auction.AuctionPermissionDeniedException
@@ -14,11 +16,13 @@ import com.toyProject7.karrot.auction.persistence.AuctionEntity
 import com.toyProject7.karrot.auction.persistence.AuctionLikesEntity
 import com.toyProject7.karrot.auction.persistence.AuctionLikesRepository
 import com.toyProject7.karrot.auction.persistence.AuctionRepository
+import com.toyProject7.karrot.chatRoom.service.ChatRoomService
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.image.service.ImageService
 import com.toyProject7.karrot.user.service.UserService
 import org.springframework.context.annotation.Lazy
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -30,6 +34,8 @@ class AuctionService(
     private val auctionLikesRepository: AuctionLikesRepository,
     private val userService: UserService,
     @Lazy private val imageService: ImageService,
+    private val articleRepository: ArticleRepository,
+    private val chatRoomService: ChatRoomService,
 ) {
     @Transactional
     fun updatePrice(auctionMessage: AuctionMessage): AuctionMessage {
@@ -200,5 +206,38 @@ class AuctionService(
     @Transactional
     fun getAuctionEntityById(auctionId: Long): AuctionEntity {
         return auctionRepository.findByIdOrNull(auctionId) ?: throw AuctionNotFoundException()
+    }
+    @Scheduled(fixedRate = 60000) // Run every minute
+    fun checkAndEndAuctions() {
+        val now = Instant.now()
+        val endedAuctions = auctionRepository.findByEndTimeBeforeAndStatus(now, 0)
+        for (auction in endedAuctions) {
+            endAuction(auction)
+        }
+    }
+    private fun endAuction(auction: AuctionEntity) {
+        auction.status = 1
+        auctionRepository.save(auction)
+        val articleEntity = ArticleEntity(
+            seller = auction.seller,
+            buyer = auction.bidder,
+            title = auction.title,
+            content = auction.content,
+            tag = auction.tag,
+            price = auction.currentPrice,
+            status = auction.status,
+            location = auction.location,
+            imageUrls = auction.imageUrls,
+            createdAt = Instant.now(),
+            updatedAt = auction.updatedAt,
+            viewCount = 0,
+            isDummy = 1,
+        )
+        articleRepository.save(articleEntity)
+        chatRoomService.createChatRoom(
+            articleEntity.id ?: throw IllegalArgumentException("Article ID cannot be null"),
+            articleEntity.seller.id ?: throw IllegalArgumentException("Seller ID cannot be null"),
+            articleEntity.buyer?.id ?: throw IllegalArgumentException("Buyer ID cannot be null"),
+        )
     }
 }

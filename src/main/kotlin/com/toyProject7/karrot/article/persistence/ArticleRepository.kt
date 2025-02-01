@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 
 interface ArticleRepository : JpaRepository<ArticleEntity, Long> {
-    fun findTop10ByIdBeforeOrderByIdDesc(id: Long): List<ArticleEntity>
+    fun findTop10ByIdBeforeAndIsDummyOrderByIdDesc(id: Long, isDummy: Int): List<ArticleEntity>
 
     fun findTop10BySellerAndIdLessThanOrderByIdDesc(
         seller: UserEntity,
