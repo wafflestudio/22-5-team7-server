@@ -207,6 +207,7 @@ class AuctionService(
     fun getAuctionEntityById(auctionId: Long): AuctionEntity {
         return auctionRepository.findByIdOrNull(auctionId) ?: throw AuctionNotFoundException()
     }
+
     @Scheduled(fixedRate = 60000) // Run every minute
     fun checkAndEndAuctions() {
         val now = Instant.now()
@@ -215,24 +216,26 @@ class AuctionService(
             endAuction(auction)
         }
     }
+
     private fun endAuction(auction: AuctionEntity) {
         auction.status = 1
         auctionRepository.save(auction)
-        val articleEntity = ArticleEntity(
-            seller = auction.seller,
-            buyer = auction.bidder,
-            title = auction.title,
-            content = auction.content,
-            tag = auction.tag,
-            price = auction.currentPrice,
-            status = auction.status,
-            location = auction.location,
-            imageUrls = auction.imageUrls,
-            createdAt = Instant.now(),
-            updatedAt = auction.updatedAt,
-            viewCount = 0,
-            isDummy = 1,
-        )
+        val articleEntity =
+            ArticleEntity(
+                seller = auction.seller,
+                buyer = auction.bidder,
+                title = auction.title,
+                content = auction.content,
+                tag = auction.tag,
+                price = auction.currentPrice,
+                status = auction.status,
+                location = auction.location,
+                imageUrls = auction.imageUrls,
+                createdAt = Instant.now(),
+                updatedAt = auction.updatedAt,
+                viewCount = 0,
+                isDummy = 1,
+            )
         articleRepository.save(articleEntity)
         chatRoomService.createChatRoom(
             articleEntity.id ?: throw IllegalArgumentException("Article ID cannot be null"),

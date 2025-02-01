@@ -103,6 +103,7 @@ class ChatRoomService(
         chatRoomRepository.save(chatRoomEntity)
         return ChatRoom.fromEntity(chatRoomEntity, "")
     }
+
     @Transactional
     fun createChatRoom(
         articleId: Long,

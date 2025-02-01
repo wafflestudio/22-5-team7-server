@@ -28,6 +28,7 @@ interface AuctionRepository : JpaRepository<AuctionEntity, Long> {
     fun countBySellerId(id: String): Int
 
     fun findByEndTimeBeforeAndStatus(
-        endTime: Instant, status: Int
-    ) : List<AuctionEntity>
+        endTime: Instant,
+        status: Int,
+    ): List<AuctionEntity>
 }
