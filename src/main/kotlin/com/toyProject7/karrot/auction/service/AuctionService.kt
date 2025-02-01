@@ -208,7 +208,7 @@ class AuctionService(
         return auctionRepository.findByIdOrNull(auctionId) ?: throw AuctionNotFoundException()
     }
 
-    @Scheduled(fixedRate = 60000) // Run every minute
+    @Scheduled(fixedRate = 10000)
     fun checkAndEndAuctions() {
         val now = Instant.now()
         val endedAuctions = auctionRepository.findByEndTimeBeforeAndStatus(now, 0)
@@ -237,10 +237,13 @@ class AuctionService(
                 isDummy = 1,
             )
         articleRepository.save(articleEntity)
-        chatRoomService.createChatRoom(
-            articleEntity.id ?: throw IllegalArgumentException("Article ID cannot be null"),
-            articleEntity.seller.id ?: throw IllegalArgumentException("Seller ID cannot be null"),
-            articleEntity.buyer?.id ?: throw IllegalArgumentException("Buyer ID cannot be null"),
-        )
+        if (auction.seller.id != auction.bidder?.id)
+            {
+                chatRoomService.createChatRoom(
+                    articleEntity.id ?: throw IllegalArgumentException("Article ID cannot be null"),
+                    articleEntity.seller.id ?: throw IllegalArgumentException("Seller ID cannot be null"),
+                    articleEntity.buyer?.id ?: throw IllegalArgumentException("Buyer ID cannot be null"),
+                )
+            }
     }
 }
