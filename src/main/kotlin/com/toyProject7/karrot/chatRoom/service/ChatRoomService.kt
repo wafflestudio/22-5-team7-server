@@ -1,6 +1,7 @@
 package com.toyProject7.karrot.chatRoom.service
 
 import com.toyProject7.karrot.article.service.ArticleService
+import com.toyProject7.karrot.chatRoom.ChatRoomCannotBeCreatedIfEndsException
 import com.toyProject7.karrot.chatRoom.ChatRoomNotFoundException
 import com.toyProject7.karrot.chatRoom.SellerCreateChatRoomWithSellerException
 import com.toyProject7.karrot.chatRoom.ThisRoomIsNotYoursException
@@ -90,7 +91,13 @@ class ChatRoomService(
         if (user.id == sellerId) {
             throw SellerCreateChatRoomWithSellerException()
         }
+        if (chatRoomRepository.existsByArticleIdAndBuyerId(articleId, buyerId)) {
+            return ChatRoom.fromEntity(chatRoomRepository.findByArticleIdAndBuyerId(articleId, buyerId), "")
+        }
         val articleEntity = articleService.getArticleEntityById(articleId)
+        if (articleEntity.status == 2) {
+            throw ChatRoomCannotBeCreatedIfEndsException()
+        }
         val sellerEntity = userService.getUserEntityById(sellerId)
         val buyerEntity = userService.getUserEntityById(buyerId)
         val chatRoomEntity =
@@ -122,6 +129,15 @@ class ChatRoomService(
             )
         chatRoomRepository.save(chatRoomEntity)
         return ChatRoom.fromEntity(chatRoomEntity, "")
+    }
+    
+    @Transactional
+    fun getBuyerChatRooms(articleId: Long): List<ChatRoom> {
+        val chatRoomEntities: List<ChatRoomEntity> = chatRoomRepository.findAllByArticleId(articleId)
+        return chatRoomEntities.map { chatRoomEntity ->
+            val latestChatMessage = chatMessageRepository.findTop1ByChatRoomIdOrderByCreatedAtDesc(chatRoomEntity.id!!)?.content ?: ""
+            ChatRoom.fromEntity(chatRoomEntity, latestChatMessage)
+        }
     }
 
     @Transactional

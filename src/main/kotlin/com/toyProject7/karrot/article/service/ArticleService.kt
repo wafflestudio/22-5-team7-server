@@ -29,7 +29,7 @@ class ArticleService(
     private val articleRepository: ArticleRepository,
     private val articleLikesRepository: ArticleLikesRepository,
     private val userService: UserService,
-    @Lazy private val imageService: ImageService,
+    private val imageService: ImageService,
     @Lazy private val chatRoomService: ChatRoomService,
 ) {
     @Transactional
@@ -266,6 +266,15 @@ class ArticleService(
             )
         refreshPresignedUrlIfExpired(articles)
         return articles
+    }
+
+    @Transactional
+    fun updateBuyer(
+        articleId: Long,
+        buyerId: String,
+    ) {
+        val articleEntity = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
+        articleEntity.buyer = userService.getUserEntityById(buyerId)
     }
 
     @Transactional

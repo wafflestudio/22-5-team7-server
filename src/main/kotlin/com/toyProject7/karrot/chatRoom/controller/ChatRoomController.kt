@@ -45,6 +45,14 @@ class ChatRoomController(
         val chatRoom = chatRoomService.createChatRoom(user, request.articleId, request.sellerId, request.buyerId)
         return ResponseEntity.ok(chatRoom)
     }
+
+    @GetMapping("/chat/buyers/{articleId}")
+    fun getBuyerChatRooms(
+        @PathVariable articleId: Long,
+    ): ResponseEntity<List<ChatRoom>> {
+        val chatRooms: List<ChatRoom> = chatRoomService.getBuyerChatRooms(articleId)
+        return ResponseEntity.ok(chatRooms)
+    }
 }
 
 data class CreateChatRoomRequest(

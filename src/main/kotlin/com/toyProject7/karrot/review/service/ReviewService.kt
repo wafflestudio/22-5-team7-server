@@ -1,5 +1,8 @@
 package com.toyProject7.karrot.review.service
 
+import com.toyProject7.karrot.article.ArticleIsNotEndException
+import com.toyProject7.karrot.article.YouAreNotBuyerOrSellerException
+import com.toyProject7.karrot.article.service.ArticleService
 import com.toyProject7.karrot.profile.service.ProfileService
 import com.toyProject7.karrot.review.ReviewContentLengthOutOfRangeException
 import com.toyProject7.karrot.review.controller.Review
@@ -16,6 +19,7 @@ class ReviewService(
     private val reviewRepository: ReviewRepository,
     private val userService: UserService,
     private val profileService: ProfileService,
+    private val articleService: ArticleService,
 ) {
     @Transactional
     fun createReview(request: ReviewCreateRequest): Review {
@@ -26,6 +30,14 @@ class ReviewService(
 
         val buyerEntity = userService.getUserEntityById(request.buyerId)
         val buyerProfileEntity = profileService.getProfileEntityByUserId(request.buyerId)
+
+        val articleEntity = articleService.getArticleEntityById(request.articleId)
+        if (articleEntity.status != 2) {
+            throw ArticleIsNotEndException()
+        }
+        if (articleEntity.buyer != sellerEntity && articleEntity.buyer != buyerEntity) {
+            throw YouAreNotBuyerOrSellerException()
+        }
 
         val reviewEntity =
             ReviewEntity(
