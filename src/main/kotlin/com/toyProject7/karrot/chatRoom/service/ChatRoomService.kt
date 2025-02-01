@@ -90,6 +90,9 @@ class ChatRoomService(
         if (user.id == sellerId) {
             throw SellerCreateChatRoomWithSellerException()
         }
+        if (chatRoomRepository.existsByArticleIdAndBuyerId(articleId, buyerId)) {
+            return ChatRoom.fromEntity(chatRoomRepository.findByArticleIdAndBuyerId(articleId, buyerId), "")
+        }
         val articleEntity = articleService.getArticleEntityById(articleId)
         val sellerEntity = userService.getUserEntityById(sellerId)
         val buyerEntity = userService.getUserEntityById(buyerId)
