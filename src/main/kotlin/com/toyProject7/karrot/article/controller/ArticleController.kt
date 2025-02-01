@@ -152,6 +152,14 @@ class ArticleController(
             }
         return ResponseEntity.ok(response)
     }
+
+    @PutMapping("/item/update/buyer")
+    fun updateBuyer(
+        @RequestBody request: UpdateBuyerRequest,
+    ): ResponseEntity<String> {
+        articleService.updateBuyer(request.articleId, request.buyerId)
+        return ResponseEntity.ok("Updated successfully")
+    }
 }
 
 data class PostArticleRequest(
@@ -174,4 +182,9 @@ data class SearchRequest(
 data class ArticleResponse(
     val article: Article,
     val chattingUsers: List<User>,
+)
+
+data class UpdateBuyerRequest(
+    val articleId: Long,
+    val buyerId: String,
 )
