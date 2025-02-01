@@ -112,6 +112,15 @@ class ChatRoomService(
     }
 
     @Transactional
+    fun getBuyerChatRooms(articleId: Long): List<ChatRoom> {
+        val chatRoomEntities: List<ChatRoomEntity> = chatRoomRepository.findAllByArticleId(articleId)
+        return chatRoomEntities.map { chatRoomEntity ->
+            val latestChatMessage = chatMessageRepository.findTop1ByChatRoomIdOrderByCreatedAtDesc(chatRoomEntity.id!!)?.content ?: ""
+            ChatRoom.fromEntity(chatRoomEntity, latestChatMessage)
+        }
+    }
+
+    @Transactional
     fun findAllByArticleId(articleId: Long): List<ChatRoomEntity> {
         return chatRoomRepository.findAllByArticleId(articleId)
     }
