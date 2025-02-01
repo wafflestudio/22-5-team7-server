@@ -38,6 +38,17 @@ class MannerService(
             mannerRepository.save(newMannerEntity)
             profileEntity.manners += newMannerEntity
         }
-        userEntity.temperature++
+
+        if (mannerType.name.startsWith("NEG_")) {
+            userEntity.temperature--
+        } else {
+            userEntity.temperature++
+        }
+
+        if (userEntity.temperature > 100) {
+            userEntity.temperature = 100.0
+        } else if (userEntity.temperature < 0) {
+            userEntity.temperature = 0.0
+        }
     }
 }

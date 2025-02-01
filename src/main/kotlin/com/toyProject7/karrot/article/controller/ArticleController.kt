@@ -95,7 +95,7 @@ class ArticleController(
         val articles: List<ArticleEntity> = articleService.getPreviousArticles(articleId)
         val response: List<Item> =
             articles.map { article ->
-                Item.fromArticle(Article.fromEntity(article))
+                Item.fromArticle(Article.fromEntity(article), articleService.getChattingUsersByArticle(Article.fromEntity(article)).size)
             }
         return ResponseEntity.ok(response)
     }
@@ -108,7 +108,7 @@ class ArticleController(
         val articles: List<ArticleEntity> = articleService.getArticlesThatUserLikes(user.id, articleId)
         val response =
             articles.map { article ->
-                Item.fromArticle(Article.fromEntity(article))
+                Item.fromArticle(Article.fromEntity(article), articleService.getChattingUsersByArticle(Article.fromEntity(article)).size)
             }
         return ResponseEntity.ok(response)
     }
@@ -121,7 +121,7 @@ class ArticleController(
         val articles: List<ArticleEntity> = articleService.getArticlesBySeller(user.id, articleId)
         val response: List<Item> =
             articles.map { article ->
-                Item.fromArticle(Article.fromEntity(article))
+                Item.fromArticle(Article.fromEntity(article), articleService.getChattingUsersByArticle(Article.fromEntity(article)).size)
             }
         return ResponseEntity.ok(response)
     }
@@ -134,7 +134,21 @@ class ArticleController(
         val articles = articleService.getArticlesByBuyer(user.id, articleId)
         val response: List<Item> =
             articles.map { article ->
-                Item.fromArticle(Article.fromEntity(article))
+                Item.fromArticle(Article.fromEntity(article), articleService.getChattingUsersByArticle(Article.fromEntity(article)).size)
+            }
+        return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("/item/search/{articleId}")
+    fun searchArticles(
+        @RequestBody request: SearchRequest,
+        @PathVariable articleId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<List<Item>> {
+        val articles = articleService.searchArticle(request, articleId)
+        val response: List<Item> =
+            articles.map { article ->
+                Item.fromArticle(Article.fromEntity(article), articleService.getChattingUsersByArticle(Article.fromEntity(article)).size)
             }
         return ResponseEntity.ok(response)
     }
@@ -151,6 +165,10 @@ data class PostArticleRequest(
 
 data class UpdateStatusRequest(
     val status: Int,
+)
+
+data class SearchRequest(
+    val text: String,
 )
 
 data class ArticleResponse(

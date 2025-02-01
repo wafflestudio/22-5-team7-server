@@ -6,6 +6,7 @@ import com.toyProject7.karrot.feed.FeedNotFoundException
 import com.toyProject7.karrot.feed.FeedPermissionDeniedException
 import com.toyProject7.karrot.feed.controller.Feed
 import com.toyProject7.karrot.feed.controller.PostFeedRequest
+import com.toyProject7.karrot.feed.controller.SearchRequest
 import com.toyProject7.karrot.feed.persistence.FeedEntity
 import com.toyProject7.karrot.feed.persistence.FeedLikesEntity
 import com.toyProject7.karrot.feed.persistence.FeedLikesRepository
@@ -227,6 +228,25 @@ class FeedService(
                 .sortedByDescending { it.id }
         if (feeds.size < 10) return feeds
         return feeds.subList(0, 10)
+    }
+
+    @Transactional
+    fun getPopularFeeds(feedId: Long): List<FeedEntity> {
+        val feeds = feedRepository.findTop10ByIdLessThanOrderByViewCountDescIdDesc(feedId)
+        refreshPresignedUrlIfExpired(feeds)
+        return feeds
+    }
+
+    @Transactional
+    fun searchFeed(
+        request: SearchRequest,
+        feedId: Long,
+    ): List<FeedEntity> {
+        val text = request.text
+        val feeds =
+            feedRepository.findTop10ByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseAndIdLessThanOrderByIdDesc(text, text, feedId)
+        refreshPresignedUrlIfExpired(feeds)
+        return feeds
     }
 
     @Transactional

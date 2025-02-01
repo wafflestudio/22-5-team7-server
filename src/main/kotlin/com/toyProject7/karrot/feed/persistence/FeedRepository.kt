@@ -16,4 +16,12 @@ interface FeedRepository : JpaRepository<FeedEntity, Long> {
     @Modifying
     @Query("UPDATE feeds f SET f.viewCount = f.viewCount + 1 WHERE f.id = :id")
     fun incrementViewCount(id: Long): Int
+
+    fun findTop10ByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseAndIdLessThanOrderByIdDesc(
+        title: String,
+        content: String,
+        id: Long,
+    ): List<FeedEntity>
+
+    fun findTop10ByIdLessThanOrderByViewCountDescIdDesc(id: Long): List<FeedEntity>
 }

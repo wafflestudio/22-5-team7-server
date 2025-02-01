@@ -22,3 +22,9 @@ class ThisRoomIsNotYoursException : ChatRoomException(
     httpStatusCode = HttpStatus.FORBIDDEN,
     msg = "Not your room",
 )
+
+class SellerCreateChatRoomWithSellerException : ChatRoomException(
+    errorCode = 0,
+    httpStatusCode = HttpStatus.BAD_REQUEST,
+    msg = "Seller can't make chatRoom with himself",
+)
