@@ -175,10 +175,6 @@ data class UpdateStatusRequest(
     val status: Int,
 )
 
-data class SearchRequest(
-    val text: String,
-)
-
 data class ArticleResponse(
     val article: Article,
     val chattingUsers: List<User>,

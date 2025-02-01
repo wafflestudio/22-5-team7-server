@@ -159,7 +159,3 @@ data class PostFeedRequest(
     val tag: String,
     val imageCount: Int,
 )
-
-data class SearchRequest(
-    val text: String,
-)
