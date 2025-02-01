@@ -1,6 +1,7 @@
 package com.toyProject7.karrot.chatRoom.service
 
 import com.toyProject7.karrot.article.service.ArticleService
+import com.toyProject7.karrot.chatRoom.ChatRoomCannotBeCreatedIfEndsException
 import com.toyProject7.karrot.chatRoom.ChatRoomNotFoundException
 import com.toyProject7.karrot.chatRoom.SellerCreateChatRoomWithSellerException
 import com.toyProject7.karrot.chatRoom.ThisRoomIsNotYoursException
@@ -94,6 +95,9 @@ class ChatRoomService(
             return ChatRoom.fromEntity(chatRoomRepository.findByArticleIdAndBuyerId(articleId, buyerId), "")
         }
         val articleEntity = articleService.getArticleEntityById(articleId)
+        if (articleEntity.status == 2) {
+            throw ChatRoomCannotBeCreatedIfEndsException()
+        }
         val sellerEntity = userService.getUserEntityById(sellerId)
         val buyerEntity = userService.getUserEntityById(buyerId)
         val chatRoomEntity =
