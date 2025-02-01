@@ -125,9 +125,9 @@ class FeedController(
         return ResponseEntity.ok(response)
     }
 
-    @GetMapping("/feed/popular/{feedId}")
+    @GetMapping("/feed/popular")
     fun getPopularFeeds(
-        @PathVariable feedId: Long,
+        @RequestParam("feedId") feedId: Long,
         @AuthUser user: User,
     ): ResponseEntity<List<FeedPreview>> {
         val feeds = feedService.getPopularFeeds(feedId)
