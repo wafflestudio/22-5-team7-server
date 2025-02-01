@@ -40,9 +40,9 @@ class MannerService(
         }
 
         if (mannerType.name.startsWith("NEG_")) {
-            userEntity.temperature--
+            userEntity.temperature -= 0.1
         } else {
-            userEntity.temperature++
+            userEntity.temperature += 0.1
         }
 
         if (userEntity.temperature > 100) {
