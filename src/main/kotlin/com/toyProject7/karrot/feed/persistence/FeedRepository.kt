@@ -22,4 +22,6 @@ interface FeedRepository : JpaRepository<FeedEntity, Long> {
         content: String,
         id: Long,
     ): List<FeedEntity>
+
+    fun findTop10ByIdLessThanOrderByViewCountDescIdDesc(id: Long): List<FeedEntity>
 }

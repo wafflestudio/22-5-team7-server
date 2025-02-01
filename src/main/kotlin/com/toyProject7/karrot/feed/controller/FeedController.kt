@@ -125,6 +125,19 @@ class FeedController(
         return ResponseEntity.ok(response)
     }
 
+    @GetMapping("/feed/popular")
+    fun getPopularFeeds(
+        @RequestParam("feedId") feedId: Long,
+        @AuthUser user: User,
+    ): ResponseEntity<List<FeedPreview>> {
+        val feeds = feedService.getPopularFeeds(feedId)
+        val response: List<FeedPreview> =
+            feeds.map { feed ->
+                FeedPreview.fromEntity(feed)
+            }
+        return ResponseEntity.ok(response)
+    }
+
     @GetMapping("/feed/search/{feedId}")
     fun searchFeeds(
         @RequestBody request: SearchRequest,

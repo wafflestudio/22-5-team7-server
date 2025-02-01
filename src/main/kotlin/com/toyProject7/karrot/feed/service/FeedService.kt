@@ -231,6 +231,13 @@ class FeedService(
     }
 
     @Transactional
+    fun getPopularFeeds(feedId: Long): List<FeedEntity> {
+        val feeds = feedRepository.findTop10ByIdLessThanOrderByViewCountDescIdDesc(feedId)
+        refreshPresignedUrlIfExpired(feeds)
+        return feeds
+    }
+
+    @Transactional
     fun searchFeed(
         request: SearchRequest,
         feedId: Long,
