@@ -27,7 +27,7 @@ class FeedService(
     private val feedLikesRepository: FeedLikesRepository,
     private val userService: UserService,
     @Lazy private val commentService: CommentService,
-    @Lazy private val imageService: ImageService,
+    private val imageService: ImageService,
 ) {
     @Transactional
     fun postFeed(

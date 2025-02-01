@@ -97,6 +97,28 @@ class UserService(
     }
 
     @Transactional
+    fun deleteAccount(id: String) {
+        val user = userRepository.findByIdOrNull(id) ?: throw UserNotFoundException()
+
+        var random = generateRandomString(3)
+        var randomNickname = "(탈퇴한 사용자 $random)"
+        while (userRepository.findByNickname(randomNickname) != null) {
+            random = generateRandomString(3)
+            randomNickname = "(탈퇴한 사용자 $random)"
+        }
+
+        user.nickname = randomNickname
+        user.temperature = 0.0
+        user.email = ""
+        user.imageUrl = null
+        user.updatedAt = Instant.now()
+
+        if (user is NormalUser) {
+            user.userId = random
+        }
+    }
+
+    @Transactional
     fun authenticate(accessToken: String): User {
         val id = UserAccessTokenUtil.validateAccessTokenGetUserId(accessToken) ?: throw AuthenticateException()
         val user = userRepository.findByIdOrNull(id) ?: throw AuthenticateException()

@@ -3,6 +3,7 @@ package com.toyProject7.karrot.user.controller
 import com.toyProject7.karrot.user.AuthUser
 import com.toyProject7.karrot.user.service.UserService
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -28,6 +29,14 @@ class UserController(
     ): ResponseEntity<SignInResponse> {
         val (user, accessToken) = userService.signIn(request.userId, request.password)
         return ResponseEntity.ok(SignInResponse(user, accessToken))
+    }
+
+    @DeleteMapping("/auth/delete")
+    fun deleteAccount(
+        @AuthUser user: User,
+    ): ResponseEntity<String> {
+        userService.deleteAccount(user.id)
+        return ResponseEntity.ok("Account has successfully deleted.")
     }
 
     @GetMapping("/auth/me")
