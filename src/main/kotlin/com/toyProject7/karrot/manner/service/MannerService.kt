@@ -12,6 +12,8 @@ import com.toyProject7.karrot.user.controller.User
 import com.toyProject7.karrot.user.service.UserService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 @Service
 class MannerService(
@@ -54,9 +56,15 @@ class MannerService(
         }
 
         if (mannerType.name.startsWith("NEG_")) {
-            userEntity.temperature -= 0.1
+            userEntity.temperature =
+                BigDecimal(userEntity.temperature - 0.1)
+                    .setScale(1, RoundingMode.HALF_UP)
+                    .toDouble()
         } else {
-            userEntity.temperature += 0.1
+            userEntity.temperature =
+                BigDecimal(userEntity.temperature + 0.1)
+                    .setScale(1, RoundingMode.HALF_UP)
+                    .toDouble()
         }
 
         if (userEntity.temperature > 100) {
