@@ -52,6 +52,7 @@ class ArticleService(
                 createdAt = Instant.now(),
                 updatedAt = Instant.now(),
                 viewCount = 0,
+                isDummy = 0,
             )
         articleRepository.save(articleEntity)
 
@@ -208,8 +209,8 @@ class ArticleService(
     }
 
     @Transactional
-    fun getPreviousArticles(articleId: Long): List<ArticleEntity> {
-        val articles = articleRepository.findTop10ByIdBeforeOrderByIdDesc(articleId)
+    fun getPreviousArticlesAndIsDummy(articleId: Long): List<ArticleEntity> {
+        val articles = articleRepository.findTop10ByIdBeforeAndIsDummyOrderByIdDesc(articleId, 0)
         refreshPresignedUrlIfExpired(articles)
         return articles
     }

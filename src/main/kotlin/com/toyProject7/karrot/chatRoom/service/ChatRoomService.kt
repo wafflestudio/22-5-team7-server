@@ -112,6 +112,26 @@ class ChatRoomService(
     }
 
     @Transactional
+    fun createChatRoom(
+        articleId: Long,
+        sellerId: String,
+        buyerId: String,
+    ): ChatRoom {
+        val articleEntity = articleService.getArticleEntityById(articleId)
+        val sellerEntity = userService.getUserEntityById(sellerId)
+        val buyerEntity = userService.getUserEntityById(buyerId)
+        val chatRoomEntity =
+            ChatRoomEntity(
+                article = articleEntity,
+                seller = sellerEntity,
+                buyer = buyerEntity,
+                updatedAt = Instant.now(),
+            )
+        chatRoomRepository.save(chatRoomEntity)
+        return ChatRoom.fromEntity(chatRoomEntity, "")
+    }
+
+    @Transactional
     fun getBuyerChatRooms(articleId: Long): List<ChatRoom> {
         val chatRoomEntities: List<ChatRoomEntity> = chatRoomRepository.findAllByArticleId(articleId)
         return chatRoomEntities.map { chatRoomEntity ->

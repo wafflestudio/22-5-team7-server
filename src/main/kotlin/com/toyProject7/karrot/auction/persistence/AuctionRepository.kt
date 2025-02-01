@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
+import java.time.Instant
 
 @Repository
 interface AuctionRepository : JpaRepository<AuctionEntity, Long> {
@@ -25,4 +26,9 @@ interface AuctionRepository : JpaRepository<AuctionEntity, Long> {
     fun incrementViewCount(id: Long): Int
 
     fun countBySellerId(id: String): Int
+
+    fun findByEndTimeBeforeAndStatus(
+        endTime: Instant,
+        status: Int,
+    ): List<AuctionEntity>
 }

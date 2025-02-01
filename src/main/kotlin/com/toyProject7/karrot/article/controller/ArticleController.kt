@@ -92,7 +92,7 @@ class ArticleController(
     fun getPreviousArticles(
         @RequestParam("articleId") articleId: Long,
     ): ResponseEntity<List<Item>> {
-        val articles: List<ArticleEntity> = articleService.getPreviousArticles(articleId)
+        val articles: List<ArticleEntity> = articleService.getPreviousArticlesAndIsDummy(articleId)
         val response: List<Item> =
             articles.map { article ->
                 Item.fromArticle(Article.fromEntity(article), articleService.getChattingUsersByArticle(Article.fromEntity(article)).size)

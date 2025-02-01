@@ -45,4 +45,6 @@ class ArticleEntity(
     var updatedAt: Instant,
     @Column(name = "view_count")
     var viewCount: Int,
+    @Column(name = "is_dummy")
+    var isDummy: Int,
 )
