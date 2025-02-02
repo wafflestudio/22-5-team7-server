@@ -4,7 +4,6 @@ import com.toyProject7.karrot.article.ArticleNotFoundException
 import com.toyProject7.karrot.article.ArticlePermissionDeniedException
 import com.toyProject7.karrot.article.controller.Article
 import com.toyProject7.karrot.article.controller.PostArticleRequest
-import com.toyProject7.karrot.article.controller.SearchRequest
 import com.toyProject7.karrot.article.controller.UpdateStatusRequest
 import com.toyProject7.karrot.article.persistence.ArticleEntity
 import com.toyProject7.karrot.article.persistence.ArticleLikesEntity
@@ -254,10 +253,9 @@ class ArticleService(
 
     @Transactional
     fun searchArticle(
-        request: SearchRequest,
+        text: String,
         articleId: Long,
     ): List<ArticleEntity> {
-        val text = request.text
         val articles =
             articleRepository.findTop10ByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseAndIdLessThanOrderByIdDesc(
                 text,

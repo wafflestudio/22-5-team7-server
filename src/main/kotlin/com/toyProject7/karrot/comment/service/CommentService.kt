@@ -54,9 +54,8 @@ class CommentService(
         if (comment.user.id != user.id) {
             throw CommentWriterDoesNotMatchException()
         }
-        comment.feed.content = request.content
+        comment.content = request.content
         comment.updatedAt = Instant.now()
-        commentRepository.save(comment)
         feedService.saveCommentInFeed(comment.feed, comment)
         return Comment.fromEntity(comment)
     }
