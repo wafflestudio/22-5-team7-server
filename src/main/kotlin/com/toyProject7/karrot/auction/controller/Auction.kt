@@ -7,6 +7,7 @@ import java.time.Instant
 data class Auction(
     val id: Long,
     val seller: User,
+    val bidder: User?,
     val title: String,
     val content: String,
     val tag: String,
@@ -26,6 +27,7 @@ data class Auction(
             return Auction(
                 id = entity.id!!,
                 seller = User.fromEntity(entity.seller),
+                bidder = entity.bidder?.let { User.fromEntity(it) },
                 title = entity.title,
                 content = entity.content,
                 tag = entity.tag,
