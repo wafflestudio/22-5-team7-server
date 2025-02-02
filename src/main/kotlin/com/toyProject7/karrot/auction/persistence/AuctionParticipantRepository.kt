@@ -14,5 +14,5 @@ interface AuctionParticipantRepository : JpaRepository<AuctionParticipantEntity,
     fun findByUserAndAuction(
         user: UserEntity,
         auction: AuctionEntity,
-    ): List<AuctionParticipantEntity>
+    ): AuctionParticipantEntity?
 }

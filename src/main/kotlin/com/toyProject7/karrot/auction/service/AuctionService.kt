@@ -58,17 +58,14 @@ class AuctionService(
         auctionEntity.bidder = bidder
 
         val existingParticipant = participantRepository.findByUserAndAuction(bidder, auctionEntity)
-        if (existingParticipant != null) {
-            throw IllegalStateException("User is already participating in this auction")
+        if (existingParticipant == null) {
+            val participation =
+                AuctionParticipantEntity(
+                    user = bidder,
+                    auction = auctionEntity,
+                )
+            participantRepository.save(participation)
         }
-
-        val participation =
-            AuctionParticipantEntity(
-                user = bidder,
-                auction = auctionEntity,
-            )
-
-        participantRepository.save(participation)
 
         if (ChronoUnit.SECONDS.between(Instant.now(), auctionEntity.endTime) <= 60) {
             auctionEntity.endTime = Instant.now().plus(1, ChronoUnit.MINUTES)
@@ -264,6 +261,7 @@ class AuctionService(
     }
 
     fun getAuctionsParticipatedByUserNickname(nickname: String): List<AuctionEntity> {
+        val auctions = participantRepository.findByUserNickname(nickname)
         return participantRepository.findByUserNickname(nickname)
             .map { it.auction }
     }
