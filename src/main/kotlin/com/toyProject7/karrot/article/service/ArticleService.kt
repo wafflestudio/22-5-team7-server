@@ -14,6 +14,7 @@ import com.toyProject7.karrot.chatRoom.persistence.ChatRoomEntity
 import com.toyProject7.karrot.chatRoom.service.ChatRoomService
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.image.service.ImageService
+import com.toyProject7.karrot.profile.service.ProfileService
 import com.toyProject7.karrot.user.controller.User
 import com.toyProject7.karrot.user.service.UserService
 import org.springframework.context.annotation.Lazy
@@ -29,6 +30,7 @@ class ArticleService(
     private val articleLikesRepository: ArticleLikesRepository,
     private val userService: UserService,
     private val imageService: ImageService,
+    @Lazy private val profileService: ProfileService,
     @Lazy private val chatRoomService: ChatRoomService,
 ) {
     @Transactional
@@ -204,6 +206,7 @@ class ArticleService(
                 article.updatedAt = Instant.now()
                 articleRepository.save(article)
             }
+            profileService.refreshPresignedUrlIfExpired(article.seller)
         }
     }
 

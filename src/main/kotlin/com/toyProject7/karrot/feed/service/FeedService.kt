@@ -12,6 +12,7 @@ import com.toyProject7.karrot.feed.persistence.FeedLikesRepository
 import com.toyProject7.karrot.feed.persistence.FeedRepository
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.image.service.ImageService
+import com.toyProject7.karrot.profile.service.ProfileService
 import com.toyProject7.karrot.user.service.UserService
 import org.springframework.context.annotation.Lazy
 import org.springframework.data.repository.findByIdOrNull
@@ -27,6 +28,7 @@ class FeedService(
     private val userService: UserService,
     @Lazy private val commentService: CommentService,
     private val imageService: ImageService,
+    private val profileService: ProfileService,
 ) {
     @Transactional
     fun postFeed(
@@ -184,6 +186,7 @@ class FeedService(
                 feed.updatedAt = Instant.now()
                 feedRepository.save(feed)
             }
+            profileService.refreshPresignedUrlIfExpired(feed.author)
         }
     }
 
