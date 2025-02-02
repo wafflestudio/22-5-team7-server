@@ -273,6 +273,7 @@ class ArticleService(
     ) {
         val articleEntity = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
         articleEntity.buyer = userService.getUserEntityById(buyerId)
+        articleRepository.save(articleEntity)
     }
 
     @Transactional
