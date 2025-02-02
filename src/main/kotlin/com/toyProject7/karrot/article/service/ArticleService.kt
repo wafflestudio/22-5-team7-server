@@ -19,6 +19,7 @@ import com.toyProject7.karrot.user.service.UserService
 import org.springframework.context.annotation.Lazy
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -133,7 +134,7 @@ class ArticleService(
         articleRepository.delete(articleEntity)
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     fun updateStatus(
         request: UpdateStatusRequest,
         articleId: Long,
@@ -266,7 +267,7 @@ class ArticleService(
         return articles
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     fun updateBuyer(
         articleId: Long,
         buyerId: String,
