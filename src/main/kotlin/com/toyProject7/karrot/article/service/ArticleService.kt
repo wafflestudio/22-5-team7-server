@@ -20,7 +20,6 @@ import com.toyProject7.karrot.user.service.UserService
 import org.springframework.context.annotation.Lazy
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -135,7 +134,7 @@ class ArticleService(
         articleRepository.delete(articleEntity)
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     fun updateStatus(
         request: UpdateStatusRequest,
         articleId: Long,
@@ -143,7 +142,7 @@ class ArticleService(
     ) {
         val articleEntity = getArticleEntityById(articleId)
         if (articleEntity.seller.id != id) throw ArticlePermissionDeniedException()
-        articleEntity.status = request.status
+        articleRepository.updateStatus(articleId, request.status)
     }
 
     @Transactional
@@ -269,13 +268,12 @@ class ArticleService(
         return articles
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     fun updateBuyer(
         articleId: Long,
         buyerId: String,
     ) {
-        val articleEntity = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
-        articleEntity.buyer = userService.getUserEntityById(buyerId)
+        articleRepository.updateBuyer(articleId, userService.getUserEntityById(buyerId))
     }
 
     @Transactional

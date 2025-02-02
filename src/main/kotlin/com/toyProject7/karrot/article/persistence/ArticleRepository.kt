@@ -4,6 +4,7 @@ import com.toyProject7.karrot.user.persistence.UserEntity
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 
 interface ArticleRepository : JpaRepository<ArticleEntity, Long> {
     fun findTop10ByIdBeforeAndIsDummyOrderByIdDesc(
@@ -32,4 +33,18 @@ interface ArticleRepository : JpaRepository<ArticleEntity, Long> {
         content: String,
         id: Long,
     ): List<ArticleEntity>
+
+    @Modifying
+    @Query("UPDATE articles a SET a.buyer = :buyer WHERE a.id = :articleId")
+    fun updateBuyer(
+        @Param("articleId") articleId: Long,
+        @Param("buyer") buyer: UserEntity,
+    )
+
+    @Modifying
+    @Query("UPDATE articles a SET a.status = :status WHERE a.id = :articleId")
+    fun updateStatus(
+        @Param("articleId") articleId: Long,
+        @Param("status") status: Int,
+    )
 }
