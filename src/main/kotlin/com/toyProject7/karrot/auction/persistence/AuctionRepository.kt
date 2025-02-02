@@ -9,7 +9,10 @@ import java.time.Instant
 
 @Repository
 interface AuctionRepository : JpaRepository<AuctionEntity, Long> {
-    fun findTop10ByIdBeforeOrderByIdDesc(id: Long): List<AuctionEntity>
+    fun findTop10ByIdBeforeAndStatusOrderByIdDesc(
+        id: Long,
+        status: Int,
+    ): List<AuctionEntity>
 
     fun findTop10BySellerAndIdLessThanOrderByIdDesc(
         seller: UserEntity,

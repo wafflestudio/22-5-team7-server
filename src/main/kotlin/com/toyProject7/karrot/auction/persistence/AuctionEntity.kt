@@ -2,8 +2,10 @@ package com.toyProject7.karrot.auction.persistence
 
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
 import com.toyProject7.karrot.user.persistence.UserEntity
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -49,4 +51,6 @@ class AuctionEntity(
     var updatedAt: Instant,
     @Column(name = "view_count")
     var viewCount: Int,
+    @OneToMany(mappedBy = "auction", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
+    var participations: MutableList<AuctionParticipantEntity> = mutableListOf(),
 )

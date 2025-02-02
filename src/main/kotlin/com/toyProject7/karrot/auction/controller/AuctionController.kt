@@ -87,6 +87,18 @@ class AuctionController(
             }
         return ResponseEntity.ok(response)
     }
+
+    @GetMapping("/mypage/auctions")
+    fun getAuctions(
+        @AuthUser user: User,
+    ): ResponseEntity<List<AuctionItem>> {
+        val auctions: List<AuctionEntity> = auctionService.getAuctionsParticipatedByUserNickname(user.nickname)
+        val response: List<AuctionItem> =
+            auctions.map { auction ->
+                AuctionItem.fromAuction(Auction.fromEntity(auction))
+            }
+        return ResponseEntity.ok(response)
+    }
 }
 
 data class PostAuctionRequest(

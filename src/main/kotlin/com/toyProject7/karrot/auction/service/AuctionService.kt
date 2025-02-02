@@ -15,6 +15,8 @@ import com.toyProject7.karrot.auction.controller.PostAuctionRequest
 import com.toyProject7.karrot.auction.persistence.AuctionEntity
 import com.toyProject7.karrot.auction.persistence.AuctionLikesEntity
 import com.toyProject7.karrot.auction.persistence.AuctionLikesRepository
+import com.toyProject7.karrot.auction.persistence.AuctionParticipantEntity
+import com.toyProject7.karrot.auction.persistence.AuctionParticipantRepository
 import com.toyProject7.karrot.auction.persistence.AuctionRepository
 import com.toyProject7.karrot.chatRoom.service.ChatRoomService
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
@@ -36,6 +38,7 @@ class AuctionService(
     @Lazy private val imageService: ImageService,
     private val articleRepository: ArticleRepository,
     private val chatRoomService: ChatRoomService,
+    private val participantRepository: AuctionParticipantRepository,
 ) {
     @Transactional
     fun updatePrice(auctionMessage: AuctionMessage): AuctionMessage {
@@ -53,6 +56,17 @@ class AuctionService(
 
         auctionEntity.currentPrice = auctionMessage.price
         auctionEntity.bidder = bidder
+
+        val existingParticipant = participantRepository.findByUserAndAuction(bidder, auctionEntity)
+        if (existingParticipant == null) {
+            val participation =
+                AuctionParticipantEntity(
+                    user = bidder,
+                    auction = auctionEntity,
+                )
+            participantRepository.save(participation)
+        }
+
         if (ChronoUnit.SECONDS.between(Instant.now(), auctionEntity.endTime) <= 60) {
             auctionEntity.endTime = Instant.now().plus(1, ChronoUnit.MINUTES)
         }
@@ -198,7 +212,7 @@ class AuctionService(
 
     @Transactional
     fun getPreviousAuctions(auctionId: Long): List<AuctionEntity> {
-        val auctions = auctionRepository.findTop10ByIdBeforeOrderByIdDesc(auctionId)
+        val auctions = auctionRepository.findTop10ByIdBeforeAndStatusOrderByIdDesc(auctionId, 0)
         refreshPresignedUrlIfExpired(auctions)
         return auctions
     }
@@ -244,5 +258,11 @@ class AuctionService(
                 articleEntity.buyer?.id ?: throw IllegalArgumentException("Buyer ID cannot be null"),
             )
         }
+    }
+
+    fun getAuctionsParticipatedByUserNickname(nickname: String): List<AuctionEntity> {
+        val auctions = participantRepository.findByUserNickname(nickname)
+        return participantRepository.findByUserNickname(nickname)
+            .map { it.auction }
     }
 }

@@ -1,15 +1,19 @@
 package com.toyProject7.karrot.user.persistence
 
+import com.toyProject7.karrot.auction.persistence.AuctionParticipantEntity
 import com.toyProject7.karrot.image.persistence.ImageUrlEntity
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.DiscriminatorColumn
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Inheritance
 import jakarta.persistence.InheritanceType
 import jakarta.persistence.JoinColumn
+import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import java.time.Instant
@@ -35,4 +39,6 @@ class UserEntity(
     var imageUrl: ImageUrlEntity? = null,
     @Column(name = "updated_at", nullable = false)
     var updatedAt: Instant,
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
+    val participations: MutableList<AuctionParticipantEntity> = mutableListOf(),
 )
