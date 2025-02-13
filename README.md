@@ -1,10 +1,10 @@
-# 와플마켓
+# 🥕 와플마켓
 
 이 프로젝트는 온라인 중고거래 및 커뮤니티 플랫폼인 "당근 마켓"을 클론한 프로젝트입니다. 기존의 중고거래 기능에 더해 **경매 기능**을 추가하여 사용자들이 물품을 경매 형식으로 거래할 수 있도록 확장했습니다. 이 프로젝트는 필수 스펙과 권장 스펙을 충족하며, 새로운 기능인 경매를 통해 사용자 경험을 향상시켰습니다. [서비스 바로가기](https://toykarrot.shop/)
 
 ---
 
-## 팀원 소개
+## 👨‍💼 팀원 소개
 
 - **김정훈**: 소셜 로그인, 환경 설정, 보안 설정
 - **박원석**: aws 담당, 마이페이지, 채팅, 경매
@@ -12,7 +12,24 @@
 
 ---
 
-## 클론 코딩 필수 스펙
+## ⚙ 기술 스택
+### BackEnd
+<div>
+<img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
+<img src="https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white">
+<img src="https://img.shields.io/badge/Amazon%20EC2-FF9900?style=for-the-badge&logo=Amazon%20EC2&logoColor=white">
+<img src="https://img.shields.io/badge/Amazon%20S3-569A31?style=for-the-badge&logo=amazons3&logoColor=white">    
+</div>
+
+### CI/CD
+<div>
+<img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white"> 
+<img src="https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white">
+</div>
+
+---
+
+## 🛠 클론 코딩 필수 스펙
 
 ### <span>**필수 스펙**</span>
 
@@ -41,7 +58,7 @@
 
 ---
 
-## 새로운 기능: **경매**
+## ✨ 새로운 기능: **경매**
 
 - **경매 물품 올리기**
     - 판매자가 경매 물품을 등록할 수 있습니다.
@@ -55,7 +72,7 @@
 
 ---
 
-## 전체 기능
+## 💻 전체 기능
 
 ### 회원가입
 - 닉네임, 아이디, 비밀번호, 이메일을 받아 회원가입을 진행합니다.
