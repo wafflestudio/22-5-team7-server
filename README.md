@@ -112,10 +112,34 @@
 - **판매자와 채팅**: 구매자와 판매자가 실시간으로 채팅할 수 있습니다.
 
 ### 동네 생활
-- **글쓰기**: 사용자가 동네 생활 게시글을 작성할 수 있습니다.
-- **글 조회**: 게시글을 조회하고 댓글을 작성할 수 있습니다.
-- **댓글 좋아요**: 댓글에 좋아요를 누를 수 있습니다.
-- **공감**: 게시글에 공감을 표시할 수 있습니다.
+- **글 작성/수정**: 사용자가 동네 생활 게시글을 작성/수정할 수 있습니다.
+<img src="https://github.com/user-attachments/assets/c05727b9-9084-469e-bf47-6702b1b744be" width="300"/>
+
+---
+- **피드/인기글 목록**: 피드 목록 및 인기글 목록을 반환합니다.
+<img src="https://github.com/user-attachments/assets/ea8f95bb-59e5-492a-97bd-aec22a004f9f" width="300"/>
+<img src="https://github.com/user-attachments/assets/44606ea3-9ae5-4977-b3ea-8559c38b088d" width="300"/>
+
+---
+- **글 조회 및 공감**: 게시글을 조회하고 공감할 수 있습니다.
+<img src="https://github.com/user-attachments/assets/cc071b38-2420-4fd7-9e83-258e1a69a685" width="300"/>
+
+---
+- **댓글 작성 및 좋아요**: 게시글에 댓글을 작성할 수 있고, 좋아요를 누를 수 있습니다.
+<img src="https://github.com/user-attachments/assets/4fbf13b9-bafe-4539-8037-cab65ca7c1c6" width="300"/>
+
+---
+- **댓글 수정**: 게시글에 달린 자신의 댓글을 수정할 수 있습니다.
+<img src="https://github.com/user-attachments/assets/edb7d071-4e29-45fb-b100-e8613ac18dae" width="300"/>
+<img src="https://github.com/user-attachments/assets/2a50de2f-cef0-48a8-96a6-8c5aee1b41f4" width="300"/>
+<img src="https://github.com/user-attachments/assets/fc8f4f70-e537-470b-accd-0e235f4ee9fc" width="300"/>
+
+---
+- **댓글 삭제**: 게시글에 달린 자신의 댓글을 삭제할 수 있습니다.
+<img src="https://github.com/user-attachments/assets/fc8f4f70-e537-470b-accd-0e235f4ee9fc" width="300"/>
+<img src="https://github.com/user-attachments/assets/3bf6849f-4ae5-41ff-a245-9a5c740785de" width="300"/>
+
+---
 
 ### 경매 (새로운 기능)
 - **경매 물품 올리기**: 판매자가 경매 물품을 등록합니다.
