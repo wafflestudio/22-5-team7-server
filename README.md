@@ -12,10 +12,16 @@
 - **박원석**: aws 담당, 마이페이지, 채팅, 경매
 - **이준용**: 회원가입, 로그인, 중고거래, 동네생활, 이미지
 
+### 프론트엔드 팀 구성
+
+|           김채민 (GlassyFoozle)           | 허용재 (Quad72) |
+| :---------------------------------------: | :-------------: |
+| 로그인, 동네생활, 프로필 관련 페이지 담당 |   중고거래, 채팅, 경매 관련 페이지 담당   |
+
 ---
 
 ## ⚙ 기술 스택
-### BackEnd
+## BackEnd
 <div>
 <img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
 <img src="https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white">
@@ -28,6 +34,20 @@
 <img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white"> 
 <img src="https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white">
 </div>
+
+
+## FrontEnd
+- 개발 언어
+<img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white"/>
+
+- 프레임워크 및 라이브러리
+
+
+<img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB"/> <img src="https://img.shields.io/badge/Yarn-2C8EBB?style=for-the-badge&logo=yarn&logoColor=white"/> <img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E"/> 
+
+- Linter
+
+<img src="https://img.shields.io/badge/eslint-3A33D1?style=for-the-badge&logo=eslint&logoColor=white"/>
 
 ---
 
