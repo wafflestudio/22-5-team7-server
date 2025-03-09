@@ -97,12 +97,25 @@
 
 ### 경매 (새로운 기능)
 - **경매 물품 올리기**: 판매자가 경매 물품을 등록합니다.
+
+
+![경매 글쓰기 화면](https://github.com/user-attachments/assets/9c704363-233e-4989-b4df-d2e49e257d42)
 - **경매 참여**: 구매자가 경매에 참여하여 입찰합니다.
+
+![경매 메인](https://github.com/user-attachments/assets/1f044faa-f201-4658-a7e6-1958fbdf8a9d)
+<img width="381" alt="경매상세고화질" src="https://github.com/user-attachments/assets/5c0450a7-ff30-483b-aeb7-233c9253ce59" />
+
 - **경매 종료**: 가장 높은 가격을 부른 구매자와 판매자 간의 채팅방이 생성됩니다.
 
 ### 채팅
 - **채팅 기록 저장**: 물건을 구매할 때 채팅했던 기록이 저장됩니다.
 - **실시간 채팅**: WebSocket을 이용하여 실시간 채팅을 구현하였습니다.
+
+  
+![채팅홈](https://github.com/user-attachments/assets/be005833-5171-49b4-9956-ca0fe5795943)
+![채팅상세2](https://github.com/user-attachments/assets/42ad0132-f713-4a31-bc60-1a1178b1e4bc)
+![채팅상세](https://github.com/user-attachments/assets/7ee4e38c-12f6-409f-95b8-a129de530701)
+
 
 ### 나의 당근
 - **프로필 수정**: 사진, 닉네임, 동네를 수정할 수 있습니다.
