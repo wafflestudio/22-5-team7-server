@@ -183,4 +183,7 @@
 - **AWS S3 활용**: Presigned Url을 발급하고 넘겨줘 프론트에서 AWS S3 버킷에 바로 이미지를 업로드할 수 있도록 했습니다.
 
 ### 회원탈퇴
+<img width="300" src="https://github.com/user-attachments/assets/0b0415ca-4968-48d7-b68b-4672830269ab" />
+<img width="300" src="https://github.com/user-attachments/assets/0b6d016d-6794-4ab2-aa18-69ede57b5caa" />
+
 - **회원탈퇴**: 기존 활동 기록은 남습니다. 회원 정보(닉네임, 이메일 등)를 바꾸어 사용자가 누군지 알 수 없게 만듭니다.  
