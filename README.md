@@ -193,7 +193,7 @@
 - **구매자측**: 구매자는 거래 완료된 상품의 판매자에 대한 매너 평가 및 후기를 남길 수 있습니다.
 
 
-<img src="https://github.com/user-attachments/assets/5cf3a3d7-8d9d-42ef-a67c-e36247dae926" width="300"/>)
+<img src="https://github.com/user-attachments/assets/5cf3a3d7-8d9d-42ef-a67c-e36247dae926" width="300"/>
 <img src="https://github.com/user-attachments/assets/551e7530-ac13-4e05-9c09-4c00306c25dd" width="300"/>
 <img src="https://github.com/user-attachments/assets/00d2467b-eb94-48e5-9854-a79b8fa43862" width="300"/>
 
