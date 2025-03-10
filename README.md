@@ -142,26 +142,36 @@
 ---
 
 ### 경매 (새로운 기능)
+<img src="https://github.com/user-attachments/assets/b927cde9-6396-4a98-a323-a436b154da86" width="300"/>
+
+---
+
 - **경매 물품 올리기**: 판매자가 경매 물품을 등록합니다.
+<img src="https://github.com/user-attachments/assets/c9153332-ae0b-4c32-a057-f0ccbc86f2e1" width="300"/>
 
+---
 
-![경매 글쓰기 화면](https://github.com/user-attachments/assets/9c704363-233e-4989-b4df-d2e49e257d42)
-- **경매 참여**: 구매자가 경매에 참여하여 입찰합니다.
+- **경매 참여**: 구매자가 경매에 참여하여 입찰합니다. 경매 종료까지 남은 시간과 현재 입찰자 및 입찰가가 websocket을 통해 실시간 반영됩니다.
+<img src="https://github.com/user-attachments/assets/e5eb021d-1c13-4212-9c8e-5f6b30260e16" width="300"/>
 
-![경매 메인](https://github.com/user-attachments/assets/1f044faa-f201-4658-a7e6-1958fbdf8a9d)
-<img width="381" alt="경매상세고화질" src="https://github.com/user-attachments/assets/5c0450a7-ff30-483b-aeb7-233c9253ce59" />
+---
 
 - **경매 종료**: 가장 높은 가격을 부른 구매자와 판매자 간의 채팅방이 생성됩니다.
+<img src="https://github.com/user-attachments/assets/47692644-8b0b-4c47-a1f2-ac073fff5d24" width="300"/>
+
+---
 
 ### 채팅
-- **채팅 기록 저장**: 물건을 구매할 때 채팅했던 기록이 저장됩니다.
-- **실시간 채팅**: WebSocket을 이용하여 실시간 채팅을 구현하였습니다.
+- **실시간 채팅**: WebSocket을 이용하여 실시간 채팅을 구현하였습니다. 물건을 구매할 때 채팅했던 기록이 저장됩니다.
+<img src="https://github.com/user-attachments/assets/da802a11-4e9a-4d75-99b8-a525d6f78573" width="300"/>
+<img src="https://github.com/user-attachments/assets/6567f0f4-d6ea-4a76-ab32-c16172b380bf" width="300"/>
 
-  
-![채팅홈](https://github.com/user-attachments/assets/be005833-5171-49b4-9956-ca0fe5795943)
-![채팅상세2](https://github.com/user-attachments/assets/42ad0132-f713-4a31-bc60-1a1178b1e4bc)
-![채팅상세](https://github.com/user-attachments/assets/7ee4e38c-12f6-409f-95b8-a129de530701)
+- **물건 상태 변경**: 판매자는 채팅방 내에서 물건 상태를 판매중/예약중/거래완료 중 하나로 변경할 수 있습니다.
+<img src="https://github.com/user-attachments/assets/9371a7ab-4902-4a0a-b5fa-4af1c0c87525" width="300"/>
 
+판매자가 거래완료로 상태를 변경하거나 구매자가 거래 완료된 물품에 대한 채팅방에서 후기 보내기를 선택 시 매너 평가 창으로 이동합니다.
+
+---
 
 ### 나의 당근
 - **프로필 수정**: 사진, 닉네임, 동네를 수정할 수 있습니다.
@@ -178,6 +188,19 @@
 - **판매물품 목록**: 해당 사용자가 판매 중인 물품을 조회할 수 있습니다.
 - **받은 매너 평가**: 해당 사용자가 받은 매너 평가를 확인할 수 있습니다.
 - **받은 거래 후기 조회**: 해당 사용자가 받은 거래 후기를 조회할 수 있습니다.
+
+### 후기 남기기
+- **구매자측**: 구매자는 거래 완료된 상품의 판매자에 대한 매너 평가 및 후기를 남길 수 있습니다.
+
+
+<img src="https://github.com/user-attachments/assets/5cf3a3d7-8d9d-42ef-a67c-e36247dae926" width="300"/>)
+<img src="https://github.com/user-attachments/assets/551e7530-ac13-4e05-9c09-4c00306c25dd" width="300"/>
+<img src="https://github.com/user-attachments/assets/00d2467b-eb94-48e5-9854-a79b8fa43862" width="300"/>
+
+---
+
+- **판매자측**
+
 
 ### 이미지
 - **AWS S3 활용**: Presigned Url을 발급하고 넘겨줘 프론트에서 AWS S3 버킷에 바로 이미지를 업로드할 수 있도록 했습니다.
