@@ -175,32 +175,66 @@
 
 ### 나의 당근
 - **프로필 수정**: 사진, 닉네임, 동네를 수정할 수 있습니다.
-- **매너온도 확인**: 사용자의 매너온도를 확인할 수 있습니다.
-- **내 매너 평가 조회**: 다른 사용자로부터 받은 매너 평가를 확인할 수 있습니다.
-- **거래 후기 조회**: 거래 후기를 조회할 수 있습니다.
-- **관심목록**: 하트를 누른 중고거래 글 목록을 반환합니다.
+<img src="https://github.com/user-attachments/assets/e2104ed2-c1ae-4739-afb5-494d419d7d4d" width="300"/>
+<img src="https://github.com/user-attachments/assets/45d35780-f55e-444f-a118-c13c3e31bf20" width="300"/>
+<img src="https://github.com/user-attachments/assets/395c167d-9c25-4b3d-b532-7df42d400a44" width="300"/>
+<img src="https://github.com/user-attachments/assets/16e151e0-218d-47e0-ae93-f252caecdda6" width="300"/>
+<img src="https://github.com/user-attachments/assets/e8f3653a-c04d-45f5-92b0-5842d3346f92" width="300"/>
+
+- **매너온도 확인**: 사용자의 매너온도를 확인할 수 있습니다.  
+<img src="https://github.com/user-attachments/assets/efb3efb9-f2ce-42eb-ad4b-1511e9081291" width="300"/>
+
+- **내 매너 평가 조회**: 다른 사용자로부터 받은 매너 평가를 확인할 수 있습니다.  
+<img src="https://github.com/user-attachments/assets/4dcdcaad-ea98-48aa-888c-e01e25743ea3" width="300"/>
+
+- **거래 후기 조회**: 거래 후기를 조회할 수 있습니다.  
+<img src="https://github.com/user-attachments/assets/9cd06a60-5457-4d65-9f5f-37b32d4107be" width="300"/>
+<img src="https://github.com/user-attachments/assets/7c1a6bd0-17df-4680-99f1-c19ebeac6e9a" width="300"/>
+
+- **관심목록**: 하트를 누른 중고거래 글 목록을 반환합니다.  
+<img src="https://github.com/user-attachments/assets/0875e077-a67c-4fac-b1a9-45c850d4590c" width="300"/>
+
 - **판매내역**: 판매한 물품의 내역을 조회할 수 있습니다.
-- **구매내역**: 구매한 물품의 내역을 조회할 수 있습니다.
+<img src="https://github.com/user-attachments/assets/ff650d58-e88a-4f8e-85f4-0968e0a58f97" width="300"/>
+<img src="https://github.com/user-attachments/assets/976cda50-4f5a-4177-ba42-1a8260541151" width="300"/>
+
+- **구매내역**: 구매한 물품의 내역을 조회할 수 있습니다.  
+<img src="https://github.com/user-attachments/assets/97a30e52-0073-4b76-8abe-9cfab3fcda48" width="300"/>
+
 - **내 동네생활 글**: 동네생활에 작성한 글, 댓글단 글, 공감한 글을 조회할 수 있습니다.
+<img src="https://github.com/user-attachments/assets/66d5e78e-5edf-42fd-9fcb-ecd766699f66" width="300"/>  
+<img src="https://github.com/user-attachments/assets/6fa62d5f-852d-4599-a9e2-92fc309da53f" width="300"/>
+<img src="https://github.com/user-attachments/assets/7b6da878-f0a1-420a-944d-ce225c27ccd5" width="300"/>
 
 ### 타사용자 프로필
-- **매너 칭찬**: 다른 사용자의 매너를 칭찬할 수 있습니다.
-- **판매물품 목록**: 해당 사용자가 판매 중인 물품을 조회할 수 있습니다.
-- **받은 매너 평가**: 해당 사용자가 받은 매너 평가를 확인할 수 있습니다.
-- **받은 거래 후기 조회**: 해당 사용자가 받은 거래 후기를 조회할 수 있습니다.
+- **판매물품 목록**: 해당 사용자가 판매 중인 물품을 조회할 수 있습니다.  
+<img src="https://github.com/user-attachments/assets/d04a17c6-951b-4e04-95e1-96e811001d40" width="300"/>
+<img src="https://github.com/user-attachments/assets/3f8b26b3-632d-49c8-bfcd-9ff68522e4be" width="300"/>
+
+- **받은 매너 평가**: 해당 사용자가 받은 매너 평가를 확인할 수 있습니다.  
+<img src="https://github.com/user-attachments/assets/c8256c63-6b1c-406c-a5ce-bbd4b8b74deb" width="300"/>
+
+- **받은 거래 후기 조회**: 해당 사용자가 받은 거래 후기를 조회할 수 있습니다.  
+<img src="https://github.com/user-attachments/assets/c8e2fe06-1801-4ae7-89f0-a835fa8c532f" width="300"/>
 
 ### 후기 남기기
-- **구매자측**: 구매자는 거래 완료된 상품의 판매자에 대한 매너 평가 및 후기를 남길 수 있습니다.
-
-
+- **구매자측**: 구매자는 거래 완료된 상품의 판매자에 대한 매너 평가 및 후기를 남길 수 있습니다.  
 <img src="https://github.com/user-attachments/assets/5cf3a3d7-8d9d-42ef-a67c-e36247dae926" width="300"/>
 <img src="https://github.com/user-attachments/assets/551e7530-ac13-4e05-9c09-4c00306c25dd" width="300"/>
 <img src="https://github.com/user-attachments/assets/00d2467b-eb94-48e5-9854-a79b8fa43862" width="300"/>
 
 ---
 
-- **판매자측**
-
+- **판매자측**: 판매자도 구매자와 동일한 방식으로 거래 완료된 상품의 구매자에 대한 매너 평가 및 후기를 남길 수 있습니다.  
+<img src="https://github.com/user-attachments/assets/d8eab787-b286-4694-b0b3-b9b887f9dacf" width="300"/>
+<img src="https://github.com/user-attachments/assets/b66a88bb-a350-4b70-90a9-bad053acb2bf" width="300"/>
+<img src="https://github.com/user-attachments/assets/32342a32-f9e5-418b-a640-a2dc3da0134b" width="300"/>
+<img src="https://github.com/user-attachments/assets/950f76cf-35b4-4ca7-bad4-882383efd24e" width="300"/>
+<img src="https://github.com/user-attachments/assets/12ee8238-4a50-45bf-8088-d3ec6877b031" width="300"/>
+<img src="https://github.com/user-attachments/assets/b172d678-bc5b-4b62-b5e7-5a03303d2340" width="300"/>
+<img src="https://github.com/user-attachments/assets/240be594-2222-4547-b02b-a6b7816daf3a" width="300"/>
+<img src="https://github.com/user-attachments/assets/077ad687-f8d6-46e1-8b96-2692f89e29b2" width="300"/>
+<img src="https://github.com/user-attachments/assets/915cf274-ac4c-45db-ac11-82639bdf1139" width="300"/>
 
 ### 이미지
 - **AWS S3 활용**: Presigned Url을 발급하고 넘겨줘 프론트에서 AWS S3 버킷에 바로 이미지를 업로드할 수 있도록 했습니다.
